@@ -1,0 +1,25 @@
+.email-chat-btn{
+	display: block;
+	padding: 10px;
+	border: 1px solid #DDD;
+	background-color: #FAFAFA;
+	text-decoration: none;
+	&:hover{
+		text-decoration: none;
+	}
+	.icon{
+		display: block;
+		height: 50px;
+		width: 50px;
+		color: #AAA;
+		margin: 10px auto;
+		font-size: 30px;
+		line-height: 50px;
+	}
+	.text{
+		display: block;
+		text-align: center;
+		color: #AAA;
+		font-weight: 700;
+	}
+}

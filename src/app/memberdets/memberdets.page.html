@@ -1,0 +1,157 @@
+<ion-content>
+	<div class="page-title">
+		<span routerLink="/members" class="back"><i class="fas fa-angle-left"></i></span>
+		<span *ngIf="show == 1" class="text">{{ member.name }}</span>
+		<ion-toggle *ngIf="show == 1" color="primary" [(ngModel)]="member.is_active" style="float: right; margin-right: -50px; background: #FFF; box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.18); border-radius: 5px;" (ionChange)="enableDisableUser($event)" [disabled]="togDis"></ion-toggle>
+	</div>
+	<div class="page-content">
+		<div *ngIf="show == 0">
+			<div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div>
+		</div>
+		<div *ngIf="show == 1">
+			<div class="row">
+				<div class="col-12 member-dets-top">
+					<div class="row align-mid">
+						<div class="col-8">
+							<div class="welc-wrap">
+								<span class="img">
+									<img *ngIf="member.image_url == null" src="assets/images/dp.png" />
+									<img *ngIf="!(member.image_url == null)" [src]="member.image_url" />
+								</span>
+								<span class="text black-text">
+									Employee name, <b>{{ member.name }}</b>
+								</span>
+							</div>
+						</div>
+						<div class="col-2 text-right">
+							<span class="wallet-head-wrap">
+								<!-- <span class="title">Your balance</span> -->
+								<span class="icon-btn black-text" (click)="addPop = 1"><i class="fas fa-wallet"></i></span>
+							</span>
+						</div>
+						<div class="col-2 text-right">
+							<span class="wallet-head-wrap">
+								<!-- <span class="title">Your balance</span> -->
+								<span class="icon-btn black-text" (click)="delPop = 1"><i class="fas fa-trash"></i></span>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="summary-wrap">
+						<div class="summary-item">
+							<div class="title">Total hiring</div>
+							<div class="value">{{ member.total_hiring }}</div>
+						</div>
+						<div class="summary-item">
+							<div class="title">Total Spend</div>
+							<div class="value">&#8364; {{ member.total_spend }}</div>
+						</div>
+						<div class="summary-item">
+							<div class="title">Credit Remaining</div>
+							<div class="value">&#8364; {{ member.credit_balance }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-3">
+					<div class="form-title nowrap text-left" (click)="setActType('all')" [class.no-bold]="!(checkText == '')">All Activities</div>
+				</div>
+				<div class="col-3"></div>
+				<div class="col-3"></div>
+				<div class="col-3">
+					<div class="form-title nowrap text-center" (click)="setActType('hired')" [class.no-bold]="!(checkText == 'hired')">Hire</div>
+				</div>
+			</div>
+	  		<div class="row" *ngIf="(activities!=undefined) && activities.length > 0">
+	  			<div class="col-12">
+	  				<div *ngFor="let activity of activities">
+		  				<div class="note-thumb" *ngIf="(activity.text).includes(checkText)">
+		  					<span class="img">
+		  						<!-- <img src="assets/images/dp.png" /> -->
+		  						<img *ngIf="activity.image_url == null" src="assets/images/dp.png" />
+								<img *ngIf="!(activity.image_url == null)" [src]="activity.image_url" />
+		  					</span>
+		  					<p>{{ activity.text }}</p>
+		  					<div class="row">
+		  						<div class="col-6"><span>{{ activity.created_at | date:'medium' }}</span></div>
+		  						<!-- <div class="col-6"><span>Total spent: &#8364; 40</span></div> -->
+		  					</div>
+		  				</div>
+	  				</div>
+	  			</div>
+	  		</div>
+  		</div>
+	</div>
+	<div class="overlay" [class.active]="delPop == 1 || addPop == 1" (click)="delPop = 0; addPop = 0;"></div>
+	<div *ngIf="delPop == 1" class="popup" [class.active]="delPop == 1">
+		<div class="popup-title text-center">
+			<span class="text">Delete this member?</span>
+		</div>
+		<div class="popup-content">
+			<div class="row">
+				<div class="col-12">
+					<p>Are you sure you want to delete this member? This process cannot be undone.</p>
+				</div>
+				<!-- <div class="col-4">
+					<p>
+						<span>Duration: </span>
+						<span *ngIf="bookingRequest.plan_id==1">15</span>
+						<span *ngIf="bookingRequest.plan_id==2">30</span>
+						<span *ngIf="bookingRequest.plan_id==3">45</span>
+						<span *ngIf="bookingRequest.plan_id==4">60</span>
+						<span> mins</span>
+					</p>
+				</div>
+				<div class="col-8">
+					<p>
+						<span>Requested Slot: </span>
+						<span>{{ bookingRequest.date + " " + bookingRequest.from_time + " UTC" | date: 'shortTime' }} </span>
+						<span>{{ bookingRequest.date + " " + bookingRequest.from_time + " UTC" | date: 'dd' }} {{ bookingRequest.date + " " + bookingRequest.from_time + " UTC" | date: 'LLL' }}</span>
+						<span> mins</span>
+					</p>
+				</div> -->
+				<div class="col-12">
+					<div class="row">
+						<div class="col-6">
+							<button (click)="delPop = 0" class="btn btn-outline">Cancel</button>
+						</div>
+						<div class="col-6">
+							<button (click)="deleteMember()" class="btn btn-outline">Yes, Delete</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div *ngIf="addPop == 1" class="popup" [class.active]="addPop == 1">
+		<div class="popup-title text-center">
+			<span class="text">Add Wallet balance.</span>
+		</div>
+		<div class="popup-content">
+			<form (submit)="addBalanceToEmployee()">
+				<div class="row">
+					<div class="col-12 m20">
+						<label class="form-row-label">Amount to add <sup>*</sup></label>
+						<input type="text" autocomplete="false" name="credit" [(ngModel)]="FormModel.credit" class="form-control" placeholder="Amount to add" required="required" />
+					</div>
+					<div class="col-12">
+						<div class="row">
+							<div class="col-6">
+								<button type="button" (click)="addPop = 0" class="btn btn-outline">Cancel</button>
+							</div>
+							<div class="col-6">
+								<button type="submit" class="btn btn-outline">Add</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</ion-content>

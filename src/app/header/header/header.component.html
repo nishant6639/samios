@@ -1,0 +1,79 @@
+<div *ngIf="userDets.user_type != 3" class="header">
+	<span routerLink="/profile" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-user"></i>
+			<!-- <app-icon name="user2"></app-icon> -->
+		</span>
+		<span class="text">Profile</span>
+	</span>
+
+	<span routerLink="/notification" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-bell"></i>
+			<!-- <app-icon name="bell"></app-icon> -->
+		</span>
+		<span class="text">Notification</span>
+	</span>
+
+	<span routerLink="/home" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-home"></i>
+			<!-- <app-icon name="home"></app-icon> -->
+		</span>
+		<span class="text">Home</span>
+	</span>
+
+	<span routerLink="/wallet" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-wallet"></i>
+			<!-- <app-icon name="wallet"></app-icon> -->
+		</span>
+		<span class="text">Wallet</span>
+	</span>
+
+	<span routerLink="/bookings" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-calendar-check"></i>
+			<!-- <app-icon name="calendar"></app-icon> -->
+		</span>
+		<span class="text">Booking</span>
+	</span>
+</div>
+
+<div *ngIf="userDets.user_type == 3" class="header">
+	<span routerLink="/profile" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-user"></i>
+		</span>
+		<span class="text">Profile</span>
+	</span>
+
+	<span routerLink="/notification" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-bell"></i>
+		</span>
+		<span class="text">Notification</span>
+	</span>
+
+	<span routerLink="/provider/home" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-home"></i>
+		</span>
+		<span class="text">Home</span>
+	</span>
+
+	<span routerLink="/wallet" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-wallet"></i>
+		</span>
+		<span class="text">Wallet</span>
+	</span>
+
+	<span routerLink="/bookings" class="header-item" routerLinkActive="active">
+		<span class="icon">
+			<i class="fas fa-calendar-check"></i>
+		</span>
+		<span class="text">Booking</span>
+	</span>
+
+</div>

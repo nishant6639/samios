@@ -1,3 +1,48 @@
+<ngx-loading-bar color="#FFF" height="5px" [includeSpinner]="false" diameter="0px"></ngx-loading-bar>
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
 </ion-app>
+<app-caller></app-caller>
+<div class="splash-screen" *ngIf="keepSplash == 1" [class.hide-splash]="splash == 1">
+	<img [src]="'assets/splash/splash.gif'" />
+<!-- 	<video poster="noposter" muted="true" preload="metadata" autoplay="autoplay" webkit-playsinline="webkit-playsinline">
+		<source src="assets/splash/splash.mp4" type="video/mp4" />
+	</video> -->
+</div>
+<div class="loader" id="taskLoader">
+	<div class="loader-in">
+		<img src="assets/images/loader.gif" />
+	</div>
+</div>
+<div class="ploader" [class.active]="loading">
+	<div class="ploader-in">
+		<img src="assets/images/ploader.gif" />
+	</div>
+</div>
+<div class="note-perm" id="notePerm">
+	<div class="no-data-thumb">
+		<span class="icon">
+			<i class="fas fa-bell"></i>
+		</span>
+		<span class="text">
+			<span class="title">Notifications disabled.</span>
+			<span class="subtitle">You must enable notification for proper functioning of this application. Go to <b>Settings -> Samanta</b> to enable notification and restart the application.</span>
+		</span>
+		<button class="btn btn-primary" (click)="hideNoteMsg()">Proceed.</button>
+	</div>
+</div>
+<div class="note-perm" id="updApp">
+	<div class="no-data-thumb">
+		<span class="icon">
+			<i class="fas fa-bell"></i>
+		</span>
+		<span class="text">
+			<span class="title">App Update Required.</span>
+			<span class="subtitle">You must update the application to continue.</span>
+		</span>
+		<button class="btn btn-primary" (click)="openStore()">Update now.</button>
+	</div>
+</div>
+
+
+

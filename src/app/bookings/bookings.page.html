@@ -1,0 +1,556 @@
+<ion-content>
+	<ion-refresher *ngIf="unavailPop == 0" slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+	<div class="page-title">
+		<span routerLink="/" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Bookings List</span>
+	</div>
+	<div class="page-content with-header">
+		<div *ngIf="show == 0">
+			<!-- <div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div> -->
+			<div class="row cal-top-date-wrap align-mid">
+				<div class="col-8">
+					<div class="cal-top-date">
+						<div class="day gray-load">01</div>
+						<div class="mt-yr">
+							<div class="mt gray-load">wed</div>
+							<div class="yr gray-load">Aug, 2021</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-4">
+					<span class="cal-top-btn gray-load">Today</span>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-7">
+					<div class="form-title gray-load">Booking schedule</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="calendar-wrap gray-load"></div>
+				</div>
+			</div>
+		</div>
+		<div *ngIf="show == 1" [class.with-unavail]="userDets.user_type == 3">
+			<div class="row cal-top-date-wrap align-mid">
+				<div class="col-8">
+					<div class="cal-top-date">
+						<div class="day">{{ selectedDate | date:"dd" }}</div>
+						<div class="mt-yr">
+							<div class="mt">{{ selectedDate | date:"E" }}</div>
+							<div class="yr">{{ selectedDate | date:"LLL, YYYY" }}</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-4">
+					<span class="cal-top-btn" (click)="setToday()">Today</span>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-7">
+					<div class="form-title">Booking schedule</div>
+				</div>
+				<div class="col-5 text-right">
+					<!-- <span class="form-req">
+						View all
+					</span> -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="calendar-wrap">
+						<div class="calendar-in">
+							<div class="row text-center">
+							  <div class="col-12">
+							  	<div class="month-wrap">
+							  		<span class="arrow">
+							  			<span class="in" mwlCalendarPreviousView [view]="view" [(viewDate)]="today">
+							  				<i class="fas fa-angle-left"></i>
+						  				</span>
+							  		</span>
+							  		<span class="month-name" mwlCalendarToday [(viewDate)]="today">{{ today | calendarDate:(view + 'ViewTitle'):'en' }}</span>
+							  		<span class="arrow text-right">
+							  			<span class="in" mwlCalendarNextView [view]="view" [(viewDate)]="today">
+							  				<i class="fas fa-angle-right"></i>
+						  				</span>
+							  		</span>
+							  	</div>
+							    <!-- <div class="btn-group">
+							      <div
+							        class="btn btn-primary"
+							        mwlCalendarPreviousView
+							        [view]="view"
+							        [(viewDate)]="today"
+							      >
+							        Previous
+							      </div>
+							      <div
+							        class="btn btn-outline-secondary"
+							        mwlCalendarToday
+							        [(viewDate)]="today"
+							      >
+							        {{ today | calendarDate:(view + 'ViewTitle'):'en' }}
+							      </div>
+							      <div
+							        class="btn btn-primary"
+							        mwlCalendarNextView
+							        [view]="view"
+							        [(viewDate)]="today"
+							      >
+							        Next
+							      </div>
+							    </div> -->
+							  </div>
+							</div>
+							<mwl-calendar-month-view [viewDate]="today" [events]="calls" [headerTemplate]="headerTemplate" (dayClicked)="getDayEvents($event)"></mwl-calendar-month-view>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-6">
+					<div class="form-title" (click)="selectedTab = 0">Calls</div>
+				</div>
+				<div class="col-6" *ngIf="userDets.user_type == 3">
+					<div class="form-title text-right" *ngIf="show == 1 && unavailabilities.length > 0" (click)="selectedTab = 1">Unavailability ({{ unavailabilities.length }})</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="show == 1 && selectedTab == 0">
+				<div class="col-12">
+					<div *ngIf="!(date_events.includes(selectedDate))">
+						<div class="no-data-thumb">
+							<span class="icon">
+								<i class="fas fa-calendar"></i>
+							</span>
+							<span class="text">
+								<span class="title">No calls for selected date.</span>
+								<span class="subtitle" *ngIf="userDets.user_type == 3">A list will appear here if you have any order for the selected date.</span>
+								<span class="subtitle" *ngIf="!(userDets.user_type == 3)">A list will appear here if you place any order for the selected date.</span>
+							</span>
+						</div>
+						<!-- No calls for this date -->
+					</div>
+					<div *ngIf="(date_events.includes(selectedDate)) && calls.length > 0">
+						<div *ngFor="let call of calls">
+							<div class="upcoming-wrap" *ngIf="selectedDate == call.date_to_select">
+								<div class="upcoming-cont">
+									<div>
+										<div class="upcoming-item" [class.faded]="call.first.status == 0 && !(userDets.user_type == 3)">
+											<span class="date-wrap" [class.today]="call.today">
+												<span class="month" *ngIf="!call.today">{{ call.first.start | date: 'LLL' }}</span>
+												<span class="date" *ngIf="!call.today">{{ call.first.start | date: 'dd' }}</span>
+												<span class="today" *ngIf="call.today">Today</span>
+											</span>
+											<div class="title" *ngIf="userDets.user_type == 3">{{ call.first.user_name }}</div>
+											<div class="title" *ngIf="!(userDets.user_type == 3)">{{ call.first.service_provider_name }}</div>
+											<div class="sub">
+												<span>{{ call.first.start | date: 'shortTime' }} - for </span>
+												<!-- <span *ngIf="call.first.plan_id==1">15</span>
+												<span *ngIf="call.first.plan_id==2">30</span>
+												<span *ngIf="call.first.plan_id==3">45</span>
+												<span *ngIf="call.first.plan_id==4">60</span>
+												<span *ngIf="call.first.plan_id==5">2</span> -->
+												<span>{{ call.first.plan_time_to }} mins</span>
+											</div>
+
+											<div class="btn-wrap" *ngIf="call.first.disputed == 1">
+												<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+													<!-- <i class="fas fa-info"></i> -->
+													<img src="assets/images/info.png" class="call-anim-icon" />
+													<span class="text">info</span>
+												</span>
+											</div>
+											<div class="btn-wrap" *ngIf="call.first.disputed == 0">
+												<span *ngIf="userDets.user_type == 3">
+													
+													<span *ngIf="call.first.status == 0">
+
+														<span class="order-btn call" *ngIf="call.first.passed == false" (click)="acceptOrder(call.first.id, 1)">
+															<!-- <i class="fas fa-check"></i> -->
+															<img src="assets/images/check1.png" class="call-anim-icon" />
+															<span class="text">Accept</span>
+														</span>
+														
+														<span class="order-btn cancel" *ngIf="call.first.passed == false" (click)="acceptOrder(call.first.id, -1)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Decline</span>
+														</span>
+
+													</span>
+
+													<span *ngIf="call.first.status == 1">
+
+														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span>
+
+
+														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<!-- <i class="fas fa-phone"></i> -->
+															<img src="assets/images/call.gif" class="call-anim-icon" />
+															<span class="text">Call</span>
+														</span>
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+													</span>
+													<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+														<!-- <i class="fas fa-info"></i> -->
+														<img src="assets/images/info.png" class="call-anim-icon" />
+														<span class="text">info</span>
+													</span>
+
+												</span>
+
+												<span *ngIf="!(userDets.user_type == 3)">
+
+													<span *ngIf="call.first.status == 0">
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+
+													</span>
+
+													<span *ngIf="call.first.status == 1">
+
+														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span>
+
+
+														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<!-- <i class="fas fa-phone"></i> -->
+															<img src="assets/images/call.gif" class="call-anim-icon" />
+															<span class="text">Call</span>
+														</span>
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+													</span>
+
+
+
+													<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+														<!-- <i class="fas fa-info"></i> -->
+														<img src="assets/images/info.png" class="call-anim-icon" />
+														<span class="text">info</span>
+													</span>
+
+												</span>
+											</div>
+										</div>
+										<div class="subupcoming">
+											<div *ngFor="let this_call of call.calls">
+												<div *ngIf="!(this_call.id == call.first.id)" class="upcoming-item" [class.faded]="this_call.status == 0 && !(userDets.user_type == 3)">
+													<span class="arrow-diag"></span>
+													<div class="title" *ngIf="userDets.user_type == 3">{{ this_call.user_name }}</div>
+													<div class="title" *ngIf="!(userDets.user_type == 3)">{{ this_call.service_provider_name }}</div>
+													<div class="sub">
+														<span>{{ this_call.start | date: 'shortTime' }} - for </span>
+														<!-- <span *ngIf="this_call.plan_id==1">15</span>
+														<span *ngIf="this_call.plan_id==2">30</span>
+														<span *ngIf="this_call.plan_id==3">45</span>
+														<span *ngIf="this_call.plan_id==4">60</span>
+														<span *ngIf="this_call.plan_id==5">2</span> -->
+														<span>{{ this_call.plan_time_to }} mins</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.disputed == 1">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#alert-triangle"/>
+															</svg>
+														</span>
+														<span class="text">Disputed</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.status == 0 && this_call.sec > 0 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Requested</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.status == 1 && this_call.sec > 0 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Waiting for Call</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 1 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Call Time Over</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<!-- <img src="assets/images/cancel.png" class="call-anim-icon" /> -->
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+															</svg>
+														</span>
+														<span class="text">Users did not connect.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.call_status == 0 && this_call.status == 1 && this_call.sec <= 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Waiting for users to connect.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.call_status == 1 && this_call.status == 1 && this_call.sec <= 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+															</svg>
+														</span>
+														<span class="text">Ongoing Call.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 2 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+															</svg>
+														</span>
+														<span class="text">Completed</span>
+													</div>
+													<div class="btn-wrap" *ngIf="this_call.disputed == 1">
+														<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+															<!-- <i class="fas fa-info"></i> -->
+															<img src="assets/images/info.png" class="call-anim-icon" />
+															<span class="text">info</span>
+														</span>
+													</div>
+													<div class="btn-wrap" *ngIf="this_call.disputed == 0">
+														<span *ngIf="userDets.user_type == 3">
+															
+															<span *ngIf="this_call.status == 0">
+
+																<span class="order-btn call" *ngIf="this_call.passed == false" (click)="acceptOrder(this_call.id, 1)">
+																	<!-- <i class="fas fa-check"></i> -->
+																	<img src="assets/images/check1.png" class="call-anim-icon" />
+																	<span class="text">Accept</span>
+																</span>
+																
+																<span class="order-btn cancel" *ngIf="this_call.passed == false" (click)="acceptOrder(this_call.id, -1)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Decline</span>
+																</span>
+
+															</span>
+
+															<span *ngIf="this_call.status == 1">
+
+																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+																</span>
+
+
+																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																	<!-- <i class="fas fa-phone"></i> -->
+																	<img src="assets/images/call.gif" class="call-anim-icon" />
+																	<span class="text">Call</span>
+																</span>
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Cancel</span>
+																</span>
+															</span>
+															<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+																<!-- <i class="fas fa-info"></i> -->
+																<img src="assets/images/info.png" class="call-anim-icon" />
+																<span class="text">info</span>
+															</span>
+
+														</span>
+
+														<span *ngIf="!(userDets.user_type == 3)">
+
+															<span *ngIf="this_call.status == 0">
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Cancel</span>
+																</span>
+
+															</span>
+
+															<span *ngIf="this_call.status == 1">
+
+																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+																</span>
+
+
+																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																	<!-- <i class="fas fa-phone"></i> -->
+																	<img src="assets/images/call.gif" class="call-anim-icon" />
+																	<span class="text">Call</span>
+																</span>
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Cancel</span>
+																</span>
+															</span>
+
+
+
+															<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+																<!-- <i class="fas fa-info"></i> -->
+																<img src="assets/images/info.png" class="call-anim-icon" />
+																<span class="text">info</span>
+															</span>
+
+														</span>
+
+														<!-- <span *ngIf="this_call.status == 1"> -->
+
+															<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+															</span> -->
+
+
+															<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																<i class="fas fa-phone"></i>
+															</span> -->
+														<!-- </span> -->
+														<!-- <span class="order-btn info" routerLink="/summary/{{ this_call.id }}"> -->
+															<!-- <i class="fas fa-info"></i> -->
+															<!-- <svg class="feather"> -->
+															  	<!-- <use xlink:href="assets/icon/feather-sprite.svg#info"/> -->
+															<!-- </svg> -->
+															<!-- <span class="text">info</span> -->
+														<!-- </span> -->
+
+
+														<!-- <span class="order-btn call" *ngIf="this_call.status == 0 && userDets.user_type == 3 && this_call.passed == false" (click)="acceptOrder(this_call.id, 1)">
+															<i class="fas fa-check"></i>
+														</span>
+														<span class="order-btn cancel" *ngIf="this_call.status == 0 && userDets.user_type == 3 && this_call.passed == false" (click)="acceptOrder(this_call.id, -1)">
+															<i class="fas fa-times"></i>
+														</span> -->
+														<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0 && this_call.status == 1">
+															<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span> -->
+												
+														<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.status == 1 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+															<i class="fas fa-phone"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.status == 1 && this_call.enable == 1 && !(userDets.user_type == 3) && this_call.passed == false" (click)="callUser(this_call.service_provider_id, this_call.id)">
+															<i class="fas fa-phone"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}" *ngIf="!(userDets.user_type == 3) && this_call.call_status == 1">
+															<i class="fas fa-thumbs-up"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}" *ngIf="!(userDets.user_type == 3) && (this_call.rating == null) && this_call.call_status == 2 && this_call.passed == true">
+															<i class="far fa-star"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn cancel" *ngIf="userDets.user_type == 3 && this_call.status == 1 && this_call.call_status < 2 && this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+															<i class="fas fa-times"></i>
+														</span> -->
+
+														<!-- <span class="order-btn cancel" *ngIf="!(userDets.user_type == 3) && this_call.call_status < 2 && this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+															<i class="fas fa-times"></i>
+														</span> -->
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}">
+															<i class="fas fa-info"></i>
+														</span> -->
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="show == 1 && selectedTab == 1">
+				<div class="upcoming-wrap">
+					<div class="upcoming-cont" *ngFor="let unavail of unavailabilities">
+						<div>
+							<div class="upcoming-item">
+								<span class="date-wrap">
+									<span class="month">{{ unavail.unavailable_date | date: 'LLL' }}</span>
+									<span class="date">{{ unavail.unavailable_date | date: 'dd' }}</span>
+								</span>
+								<div class="title">{{ unavail.start_time | date:'shortTime' }} to {{ unavail.end_time | date:'shortTime' }}</div>
+								<div class="sub">
+									<span>{{ unavail.unavailable_date | date: 'longDate' }}</span>
+								</div>
+
+								<div class="btn-wrap">
+									<span class="order-btn cancel" (click)="deleteUnavailability(unavail.id)">
+										<!-- <i class="fas fa-times"></i> -->
+										<img src="assets/images/cancel.png" class="call-anim-icon" />
+										<span class="text">Delete</span>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="unavail-btn" *ngIf="userDets.user_type == 3">
+				<button class="btn btn-primary" (click)="unavailPop = 1">Add Unavailability</button>
+			</div>
+		</div>
+	</div>
+	<div class="overlay" [class.active]="unavailPop == 1" (click)="unavailPop = 0;"></div>
+	<div class="popup" [class.active]="unavailPop == 1">
+		<div class="popup-title">
+			<span class="text">Select date and time</span>
+		</div>
+		<div class="popup-content">
+			<ion-datepick type="3" (dateSet)="addUnavailability($event)" (close)="unavailPop = 0"></ion-datepick>
+		</div>
+	</div>
+	<app-header></app-header>
+</ion-content>
+<ng-template #headerTemplate>
+	<div class="day-header">
+		<div class="day-item">S</div>
+		<div class="day-item">M</div>
+		<div class="day-item">T</div>
+		<div class="day-item">W</div>
+		<div class="day-item">T</div>
+		<div class="day-item">F</div>
+		<div class="day-item">S</div>
+	</div>
+</ng-template>

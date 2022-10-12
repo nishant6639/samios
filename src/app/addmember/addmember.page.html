@@ -1,0 +1,62 @@
+<ion-content>
+	<div class="page-title">
+  		<span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Add Member</span>
+  	</div>
+  	<div class="page-content with-header">
+		<div class="row align-mid form-title-wrap">
+			<div class="col-7">
+				<div class="form-title">Enter the details</div>
+			</div>
+			<div class="col-5 text-right">
+				<span class="form-req">
+					* Required
+				</span>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<form (submit)="addMember()">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-row">
+								<label class="form-row-label">Full Name <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Full Name" required="required" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Email Id <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" required="required" />
+							</div>
+							<div class="row">
+								<div class="col-5">
+									<div class="form-row">
+										<label class="form-row-label">Phone Number <sup>*</sup></label>
+										<span class="down">
+					  						<app-icon name="seldown"></app-icon>
+					  					</span>
+										<select class="form-control" name="country_code" [(ngModel)]="FormModel.country_code">
+											<option *ngFor="let country of countries" [value]="country.dial_code">{{ country.name }} ({{ country.dial_code }})</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-7">
+									<div class="form-row">
+										<label class="form-row-label">&nbsp;</label>
+										<input type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Credit <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="credit" [(ngModel)]="FormModel.credit" class="form-control" placeholder="Credit" required="required" />
+							</div>
+							<div class="form-row">
+								<button type="submit" class="btn btn-primary">Add Member</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+  	</div>
+</ion-content>

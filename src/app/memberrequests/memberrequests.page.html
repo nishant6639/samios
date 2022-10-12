@@ -1,0 +1,64 @@
+<ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+	<div class="page-title">
+		<span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Fund requests</span>
+	</div>
+	<div class="page-content with-header">
+		<div class="row">
+			<div class="col-12">
+				<div *ngIf="show == 0">
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+					<div class="note-thumb gray-load"></div>
+				</div>
+				<div *ngIf="show == 1">
+					<div *ngIf="requests.length > 0">
+						<div class="note-thumb" *ngFor="let request of requests">
+							<span routerLink="memberdets/{{ request.id }}" class="img">
+								<img *ngIf="request.image_url == null" src="assets/images/dp.png" />
+							  	<img *ngIf="!(request.image_url == null)" [src]="request.image_url" />
+							</span>
+							<p><a>{{ request.name }}</a> requested <b>&#8364; {{ request.amount }}</b></p>
+							<span class="m20">{{ request.created_at | date:'medium' }}</span>
+							<div class="row">
+								<div class="col-6">
+									<button class="btn btn-primary" (click)="appDecReq(request.req_id, 1)">Approve</button>
+								</div>
+								<div class="col-6">
+									<button class="btn btn-primary" (click)="appDecReq(request.req_id, 0)">Decline</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="requests.length == 0">
+						<div class="no-data-thumb">
+							<span class="icon">
+								<i class="fas fa-check"></i>
+							</span>
+							<span class="text">
+								<span class="title">No Fund requests.</span>
+								<span class="subtitle">No employee has made any requests for additional funds.</span>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</ion-content>

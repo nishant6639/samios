@@ -1,0 +1,51 @@
+<ion-content>
+	<ion-content>
+  	<div class="page-title">
+  		<!-- <span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span> -->
+		<span class="text">Upload Dp</span>
+  	</div>
+  	<div class="page-content">
+  		<div class="page-center-wrap" *ngIf="prevImg == ''">
+			<div class="page-center-cont">
+				<div class="row m20">
+					<div class="col-6">
+						<button class="btn btn-outline" (click)="useCamera()">Use Camera</button>
+						<!-- <input type="file" name="dp" #userfile id="userfileInp" (change)="onDpChange(userfile.files)" /> -->
+					</div>
+					<div class="col-6">
+						<label class="btn btn-primary" style="width: 100%; display: block;" for="userfileInp">Upload</label>
+						<input type="file" style="display: none;" name="dp" #userfile id="userfileInp" (change)="onDpChange(userfile.files)" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12">
+						<p class="text-center">Or</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6 offset-3">
+						<button class="btn btn-outline" (click)="skip()">Skip for now</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-center-wrap" *ngIf="!(prevImg == '')">
+			<div class="page-center-cont">
+				<div class="row m20">
+					<div class="col-12">
+						<img [src]="prevImg" class="img-fluid" />
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-6">
+						<button class="btn btn-outline" (click)="prevImg = ''">Retake</button>
+						<!-- <input type="file" name="dp" #userfile id="userfileInp" (change)="onDpChange(userfile.files)" /> -->
+					</div>
+					<div class="col-6">
+						<button class="btn btn-primary" (click)="saveImage()">Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</ion-content>

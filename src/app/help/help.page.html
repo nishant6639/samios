@@ -1,0 +1,43 @@
+<ion-content>
+  	<div class="page-title">
+  		<span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Help</span>
+  	</div>
+  	<div class="page-content">
+  		<div class="email-chat-selector" *ngIf="selectedScreen == 0">
+  			<h4 class="text-center m20">Which way do you want to connect?</h4>
+  			<div class="row">
+  				<div class="col-6">
+  					<a href="mailto:noreply@samanta.ie" class="email-chat-btn">
+  						<span class="icon"><i class="fas fa-at"></i></span>
+  						<span class="text">Connect via Email</span>
+  					</a>
+				</div>
+  				<div class="col-6">
+  					<a class="email-chat-btn" (click)="selectedScreen = 1">
+  						<span class="icon"><i class="far fa-envelope"></i></span>
+  						<span class="text">Connect via Chat</span>
+  					</a>
+				</div>
+  			</div>
+  		</div>
+  		<div class="chat-window help" *ngIf="selectedScreen == 1">
+			<div class="msg-cont">
+				<div class="msg-wrap">
+					<div class="msgs" *ngFor="let msg of chatMsgs" [class.to_me]="(msg.from == 'admin')" [class.from_me]="!(msg.from == 'admin')">
+						<span class="bubble">{{ msg.message }}</span>
+					</div>
+				</div>
+			</div>
+			<form (submit)="sendMsg()">
+				<div class="msg-form">
+					<input type="text" autocomplete="false" name="message" [(ngModel)]="message" placeholder="Write" />
+					<button type="submit" class="msg-button" style="font-size: 24px;">
+						<i class="far fa-paper-plane" style="display: inline-block; transform: rotate(-45deg) translateX(2px); transform-origin: center center; line-height: 0px !important;"></i>
+					</button>
+				</div>
+			</form>
+		</div>
+  	</div>
+  	<!-- <app-header></app-header> -->
+</ion-content>

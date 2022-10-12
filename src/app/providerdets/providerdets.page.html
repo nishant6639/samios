@@ -1,0 +1,373 @@
+<ion-content>
+	<div class="page-title">
+		<span routerLink="/" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text" *ngIf="show == 0">&nbsp;</span>
+		<span class="text" *ngIf="show == 1">{{ provider.user.name }}</span>
+	</div>
+	<div class="page-content">
+		<div *ngIf="show == 0">
+			<div class="prov-dets">
+				<div class="img gray-load"></div>
+			</div>
+			<div class="title text-center"><span class="gray-load">provider.user.name</span></div>
+			<div class="rating text-center">
+				<span class="star gray-load"><i class="fas fa-star"></i> 5.0</span>
+			</div><hr>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title"><span class="gray-load">Languages</span></div>
+				</div>
+			</div>
+			<div class="lang-select-list">
+	  			<div class="lang-set-title">
+		  			<span class="gray-load">language_to_name</span>
+	  			</div>
+	  		</div>
+	  		<hr>
+	  		<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title"><span class="gray-load">About</span></div>
+				</div>
+			</div>
+			<p class="gray-load">lorem ipsum</p>
+			<p class="gray-load">lorem ipsum</p>
+			<p class="gray-load">lorem ipsum</p>
+			<p class="gray-load">lorem ipsum</p>
+			<p class="gray-load">lorem ipsum</p>
+			<hr>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title"><span class="gray-load">Availability</span></div>
+				</div>
+			</div>
+			<div class="avail-item">
+				<span class="gray-load">Sun (00:00:00 to 23:59:59)</span>
+				<span class="gray-load">Sun (00:00:00 to 23:59:59)</span>
+				<span class="gray-load">Sun (00:00:00 to 23:59:59)</span>
+				<span class="gray-load">Sun (00:00:00 to 23:59:59)</span>
+				<span class="gray-load">Sun (00:00:00 to 23:59:59)</span>
+				<span class="gray-load">Sun (00:00:00 to 23:59:59)</span>
+				<span class="gray-load">Sun (00:00:00 to 23:59:59)</span>
+			</div>
+		</div>
+		<div *ngIf="show == 1" class="prov-dets">
+	        <span class="share-btn" (click)="shareProfile()">
+	          <i class="fas fa-share-alt-square"></i>
+	          <span class="text">Share this profile</span>
+	        </span>
+			<div class="img">
+				<!-- <img src="assets/images/dp1.png" /> -->
+				<img *ngIf="provider.user.image_url == null" src="assets/images/dp1.png" />
+				<img *ngIf="!(provider.user.image_url == null)" [src]="provider.user.image_url" />
+			</div>
+			<div class="title">{{ provider.user.name }}</div>
+			<div class="rating">
+				<span class="star"><i class="fas fa-star"></i> {{ provider.user.rating }}</span> <span *ngIf="provider.reviews.length > 0">({{ provider.reviews_count }})</span>
+			</div>
+			<hr>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">Languages</div>
+				</div>
+			</div>
+			<div class="lang-select-list">
+	  			<div class="lang-set-title with-exp" [class.active]="exp_lang == language.id" *ngFor="let language of provider.languages">
+		  			<span class="sm-btn">{{ language.language_from_name }}</span>
+		  			<span class="icon">
+		  				<!-- <i class="fas fa-exchange-alt"></i> -->
+						<app-icon name="repeat"></app-icon>
+		  			</span>
+		  			<span class="sm-btn">{{ language.language_to_name }}</span>
+		  			<div class="lang-exp-list" [class.active]="exp_lang == language.id">
+		  				<div class="lang-exp-list-in" [class.active]="exp_lang == language.id">
+		  					<ul>
+		  						<li *ngIf="(language.exps).includes('1')">
+		  							<span class="icon">
+		  								<svg class="feather">
+										  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+										</svg>
+		  							</span>
+		  							Higher level written and spoken
+		  						</li>
+		  						<li *ngIf="(language.exps).includes('2')">
+		  							<span class="icon">
+		  								<svg class="feather">
+										  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+										</svg>
+		  							</span>
+		  							Legal Experience
+		  						</li>
+		  						<li *ngIf="(language.exps).includes('3')">
+		  							<span class="icon">
+		  								<svg class="feather">
+										  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+										</svg>
+		  							</span>
+		  							Business Experience
+		  						</li>
+		  						<li *ngIf="(language.exps).includes('4')">
+		  							<span class="icon">
+		  								<svg class="feather">
+										  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+										</svg>
+		  							</span>
+		  							Medical Experience
+		  						</li>
+		  						<li *ngIf="(language.exps).includes('0')">
+		  							<span class="icon">
+		  								<svg class="feather">
+										  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+										</svg>
+		  							</span>
+		  							No Experience
+		  						</li>
+		  					</ul>
+		  				</div>
+			  			<span class="open-exp-icon" *ngIf="!(exp_lang == language.id)" (click)="exp_lang = language.id">
+			  				<svg class="feather">
+							  	<use xlink:href="assets/icon/feather-sprite.svg#chevron-down"/>
+							</svg>
+			  			</span>
+			  			<span class="open-exp-icon" *ngIf="(exp_lang == language.id)" (click)="exp_lang = 0">
+			  				<svg class="feather">
+							  	<use xlink:href="assets/icon/feather-sprite.svg#chevron-up"/>
+							</svg>
+			  			</span>
+		  			</div>
+	  			</div>
+	  		</div>
+			<hr>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">About</div>
+				</div>
+			</div>
+			<p *ngIf="!(provider.user.about == null)">{{ provider.user.about }}</p>
+			<p *ngIf="provider.user.about == null">Not Available</p>
+			<hr>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">Availability</div>
+				</div>
+			</div>
+			<div class="avail-item" *ngFor="let avail of provider.availability">
+				<!-- <i class="far fa-clock"></i> -->
+				<span class="icon">
+					<app-icon name="clock"></app-icon>
+				</span>
+				<span>
+					<span *ngIf="avail.day == 0">Sun</span>
+					<span *ngIf="avail.day == 1">Mon</span>
+					<span *ngIf="avail.day == 2">Tue</span>
+					<span *ngIf="avail.day == 3">Wed</span>
+					<span *ngIf="avail.day == 4">Thu</span>
+					<span *ngIf="avail.day == 5">Fri</span>
+					<span *ngIf="avail.day == 6">Sat</span>
+					({{ avail.start_time }} - {{ avail.end_time }})
+				</span>
+			</div>
+			<hr *ngIf="provider.reviews.length > 0">
+			<div class="row align-mid form-title-wrap" *ngIf="provider.reviews.length > 0">
+				<div class="col-8">
+					<div class="form-title">Reviews <span class="lt">({{ provider.reviews_text_count }})</span></div>
+				</div>
+				<div class="col-4 text-right">
+					<!-- <a href="#" class="link">See all</a> -->
+				</div>
+			</div>
+			<div class="review-wrap" *ngIf="provider.reviews.length > 0">
+				<div class="review-item" *ngFor="let review of provider.reviews">
+					<div class="head">
+						<span class="img">
+							<img src="assets/images/dp.png" />
+						</span>
+						<span class="text">
+							<b>{{ review.reviewer_name }}</b>
+						</span>
+						<span class="time-ago">
+							1 day ago
+						</span>
+					</div>
+					<div class="row">
+						<div class="col-8">
+							<p><b>{{ review.conversion_language }}</b></p>
+						</div>
+						<div class="col-4 text-right">
+							<div class="star"><i class="fas fa-star"></i> {{ review.rating }}</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<p *ngIf="!(review.review_text == null)">{{ review.review_text }}</p>
+							<p *ngIf="review.review_text == null">No review by user.</p>
+						</div>
+					</div>
+					<div class="response" *ngIf="!(review.interpreter_response == null)">
+						<p><b>Interpreter's response</b></p>
+						<p>{{ review.interpreter_response }}</p>
+					</div>
+				</div>
+				<div *ngIf="showLoadMore == 1 && showMoreLoad == 0">
+					<button class="btn btn-primary btn-load" (click)="getMoreReviews()">Show More</button>
+				</div>
+				<div *ngIf="showLoadMore == 1 && showMoreLoad == 1">
+					<span class="more-loader">
+						<img src="assets/images/cloader.gif" />
+					</span>
+				</div>
+			</div>
+			<!-- <hr> -->
+			<div class="filler"></div>
+			<div class="row fixed-bottom-row">
+				<div [class.col-6]="provider.user.logged_in == 1" [class.col-12]="provider.user.logged_in == 0">
+					<button class="btn btn-outline" (click)="popup.advance = 1">Book in Advance</button>
+				</div>
+				<div class="col-6" *ngIf="provider.user.logged_in == 1">
+					<button class="btn btn-primary" routerLink="/hire/{{ provider_id }}">Hire Now</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="overlay" [class.active]="popup.advance == 1" (click)="popup.advance = 0"></div>
+	<div *ngIf="show == 1" class="popup" [class.active]="popup.advance == 1">
+		<div class="popup-title">
+			<span class="text">Select Language</span>
+		</div>
+		<div class="popup-content">
+			<div class="row">
+				<div class="col-6" *ngFor="let language of provider.languages">
+					<!-- <div class="form-row">
+						<span class="checkbox-wrap">
+							<input type="radio" id="langSelect{{language.id}}" name="tnc" [(ngModel)]="ordLangSet" [value]="language.translate_from+','+language.translate_to+','+language.language_from_name+','+language.language_to_name" />
+							<label for="langSelect{{language.id}}">
+								<div class="lang-set-title">
+						  			<span class="sm-btn">{{ language.language_from_name }}</span>
+						  			<span class="icon"><i class="fas fa-exchange-alt"></i></span>
+						  			<span class="sm-btn">{{ language.language_to_name }}</span>
+					  			</div>
+							</label>
+						</span>
+					</div> -->
+					<div class="form-row">
+						<span class="checkbox-wrap">
+							<input type="radio" id="langSelect{{language.id}}" name="ordLangSet{{language.id}}" [(ngModel)]="ordLangSet" [value]="language.translate_from+','+language.translate_to" />
+							<label for="langSelect{{language.id}}">
+								<div class="lang-set-title with-exp full" [class.active]="exp_lang == language.id">
+						  			<span class="sm-btn">{{ language.language_from_name }}</span>
+						  			<span class="icon">
+						  				<!-- <i class="fas fa-exchange-alt"></i> -->
+										<app-icon name="repeat"></app-icon>
+						  			</span>
+						  			<span class="sm-btn">{{ language.language_to_name }}</span>
+						  			<div class="lang-exp-list" [class.active]="exp_lang == language.id">
+						  				<div class="lang-exp-list-in" [class.active]="exp_lang == language.id">
+						  					<ul>
+						  						<li *ngIf="(language.exps).includes('1')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Higher level written and spoken
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('2')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Legal Experience
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('3')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Business Experience
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('4')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Medical Experience
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('0')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							No Experience
+						  						</li>
+						  					</ul>
+						  				</div>
+							  			<span class="open-exp-icon" *ngIf="!(exp_lang == language.id)" (click)="exp_lang = language.id">
+							  				<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#chevron-down"/>
+											</svg>
+							  			</span>
+							  			<span class="open-exp-icon" *ngIf="(exp_lang == language.id)" (click)="exp_lang = 0">
+							  				<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#chevron-up"/>
+											</svg>
+							  			</span>
+						  			</div>
+					  			</div>
+								<!-- <div class="lang-set-title">
+						  			<span class="sm-btn">{{ language.language_from_name }}</span>
+						  			<span class="icon"><i class="fas fa-exchange-alt"></i></span>
+						  			<span class="sm-btn">{{ language.language_to_name }}</span>
+					  			</div> -->
+							</label>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="popup-title">
+				<span class="text">Select your required day and time</span>
+			</div>
+			<ion-datepick type="2" (dateSet)="addDate($event)" (close)="popup.advance = 0"></ion-datepick>
+		</div>
+	</div>
+
+	<div #popupTemp *ngIf="show == 1" style="display: none;">
+		<div class="ord-dets-wrap">
+			<div class="ord-people">
+				<div class="ord-person">
+					<span class="img-wrap">
+						<img *ngIf="userDets.image_url == null" src="assets/images/dp1.png" />
+						<img *ngIf="!(userDets.image_url == null)" [src]="userDets.image_url" />
+					</span>
+					<span class="name">{{ userDets.name }}</span>
+					<span class="type">You</span>
+				</div>
+				<div class="ord-person">
+					<span class="img-wrap">
+						<img *ngIf="provider.user.image_url == null" src="assets/images/dp1.png" />
+						<img *ngIf="!(provider.user.image_url == null)" [src]="provider.user.image_url" />
+					</span>
+					<span class="name">{{ provider.user.name }}</span>
+					<span class="type">Interpreter</span>
+				</div>
+			</div>
+			<div class="ord-lang text-center">
+				<div class="lang-select-list">
+		  			<div class="lang-set-title">
+			  			<span class="sm-btn">English</span>
+			  			<span class="icon bg"></span>
+			  			<span class="sm-btn">Spanish</span>
+		  			</div>
+		  		</div>
+			</div>
+			<p class="date text-center">{{ ordSelDate | date:"mediumDate" }} {{ ordSelDate | date:"shortTime" }} - for 
+				<span *ngFor="let plan of plans">
+					<span *ngIf="ordSelPlan == plan.id">{{ plan.time_to }} min</span>
+				</span>
+			</p>
+			<p class="text-center m20 msg-box" style="color: #FD1231; font-style: italic;">If the interpreter does not accept the request before the call start time, the money will be automatically reverted within 5 minutes.</p>
+		</div>
+	</div>
+</ion-content>

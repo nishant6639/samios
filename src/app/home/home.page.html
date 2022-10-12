@@ -1,20 +1,804 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+<ion-content>
+	<ion-refresher slot="fixed" pullMin="80" pullMax="80" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+  	<div class="page-title">
+		<div class="home-head">
+			<div class="row align-mid">
+				<div class="col-7">
+					<div class="welc-wrap" routerLink="/profile">
+						<span class="img">
+							<img *ngIf="userDets.image_url == null" src="assets/images/dp.png" />
+							<img *ngIf="!(userDets.image_url == null)" [src]="userDets.image_url" />
+						</span>
+						<span class="text">
+							Welcome, <b>{{ userDets.name }}</b>
+						</span>
+					</div>
+				</div>
+				<div class="col-5 text-right">
+					<span class="wallet-head-wrap" routerLink="/wallet">
+						<span class="title">Your balance</span>
+						<span class="value">&#8364; {{ userDets.credit_balance }} 
+							<!-- <i class="fas fa-wallet"></i> -->
+							<i><app-icon name="wallet"></app-icon></i>
+						</span>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+  	<div class="page-content both-rad with-header">
+  		<div *ngIf="show == 1">
+	  		<div class="lang-select-wrap m10">
+	  			<div class="lang-select-box">
+	  				<div class="form-row m0">
+	  					<span class="down">
+	  						<app-icon name="seldown"></app-icon>
+	  					</span>
+		  				<select class="form-control" name="translate_from" [(ngModel)]="filData.translate_from" (change)="getProviders()">
+		  					<option *ngFor="let language of languages" [value]="language.id">{{ language.language_name }}</option>
+		  				</select>
+	  				</div>
+	  			</div>
+	  			<span class="icon">
+	  				<!-- <i class="fas fa-exchange-alt"></i> -->
+	  				<app-icon name="repeat"></app-icon>
+	  			</span>
+	  			<div class="lang-select-box">
+	  				<div class="form-row m0">
+	  					<span class="down">
+	  						<app-icon name="seldown"></app-icon>
+	  					</span>
+		  				<select class="form-control" name="translate_to" [(ngModel)]="filData.translate_to" (change)="getProviders()">
+		  					<option *ngFor="let language of languages" [value]="language.id">{{ language.language_name }}</option>
+		  				</select>
+	  				</div>
+	  			</div>
+	  		</div>
+	  		<div class="row align-mid form-title-wrap m10">
+				<div class="col-12">
+					<div class="form-title">Booking Required</div>
+				</div>
+			</div>
+			<div class="when-cont">
+				<div class="when-wrap m20">
+					<span class="value" *ngIf="showDate == ''">Immediately</span>
+					<span class="value" *ngIf="!(showDate == '')">{{ showDate.date | date:'E, dd MMM YYYY, h:mm a' }} - {{ showDate.time }} mins</span>
+					<span class="change-btn" (click)="popup.time = 1">Change</span>
+				</div>
+			</div>
+			<div class="row" *ngIf="show == 1">
+				<div class="col-12">
+					<!-- <div class="no-data-thumb" *ngIf="calls.length == 0">
+						<span class="icon">
+							<i class="fas fa-calendar-check"></i>
+						</span>
+						<span class="text">
+							<span class="title">No upcoming booking.</span>
+							<span class="subtitle">Your upcoming booking will be shown here.</span>
+						</span>
+					</div> -->
+					<!-- <div class="upcoming-wrap" *ngIf="calls.length > 0"> -->
+						<div *ngFor="let call of calls">
+							<div class="upcoming-wrap">
+								<div class="upcoming-cont">
+									<div>
+										<div class="upcoming-item" [class.faded]="call.first.status == 0 && !(userDets.user_type == 3)">
+											<span class="date-wrap" [class.today]="call.today">
+												<span class="month" *ngIf="!call.today">{{ call.first.start | date: 'LLL' }}</span>
+												<span class="date" *ngIf="!call.today">{{ call.first.start | date: 'dd' }}</span>
+												<span class="today" *ngIf="call.today">Today</span>
+											</span>
+											<div class="title" *ngIf="userDets.user_type == 3">{{ call.first.user_name }}</div>
+											<div class="title" *ngIf="!(userDets.user_type == 3)">{{ call.first.service_provider_name }}</div>
+											<div class="sub">
+												<span>{{ call.first.start | date: 'shortTime' }} - for </span>
+												<!-- <span *ngIf="call.first.plan_id==1">15</span>
+												<span *ngIf="call.first.plan_id==2">30</span>
+												<span *ngIf="call.first.plan_id==3">45</span>
+												<span *ngIf="call.first.plan_id==4">60</span>
+												<span *ngIf="call.first.plan_id==5">2</span> -->
+												<span>{{ call.first.plan_time_to }} mins</span>
+											</div>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+											<div class="btn-wrap" *ngIf="call.first.disputed == 1">
+												<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+													<!-- <i class="fas fa-info"></i> -->
+													<img src="assets/images/info.png" class="call-anim-icon" />
+													<span class="text">info</span>
+												</span>
+											</div>
+											<div class="btn-wrap" *ngIf="call.first.disputed == 0">
+												<span *ngIf="userDets.user_type == 3">
+													
+													<span *ngIf="call.first.status == 0">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+														<span class="order-btn call" *ngIf="call.first.passed == false" (click)="acceptOrder(call.first.id, 1)">
+															<!-- <i class="fas fa-check"></i> -->
+															<img src="assets/images/check1.png" class="call-anim-icon" />
+															<span class="text">Accept</span>
+														</span>
+														
+														<span class="order-btn cancel" *ngIf="call.first.passed == false" (click)="acceptOrder(call.first.id, -1)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Decline</span>
+														</span>
+
+													</span>
+
+													<span *ngIf="call.first.status == 1">
+
+														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span>
+
+
+														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<img src="assets/images/call.gif" class="call-anim-icon" />
+															<span class="text">Call</span>
+														</span>
+
+														<!-- <span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<i class="fas fa-phone"></i>
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
+															</svg>
+															<span class="text">Call</span>
+														</span> -->
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+													</span>
+													<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+														<!-- <i class="fas fa-info"></i> -->
+														<img src="assets/images/info.png" class="call-anim-icon" />
+														<span class="text">info</span>
+													</span>
+
+												</span>
+
+												<span *ngIf="!(userDets.user_type == 3)">
+
+													<span *ngIf="call.first.status == 0">
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+
+													</span>
+
+													<span *ngIf="call.first.status == 1">
+
+														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span>
+
+
+														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<img src="assets/images/call.gif" class="call-anim-icon" />
+															<span class="text">Call</span>
+														</span>
+
+														<!-- <span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<i class="fas fa-phone"></i>
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
+															</svg>
+															<span class="text">Call</span>
+														</span> -->
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+													</span>
+
+
+
+													<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+														<!-- <i class="fas fa-info"></i> -->
+														<img src="assets/images/info.png" class="call-anim-icon" />
+														<span class="text">info</span>
+													</span>
+
+												</span>
+											</div>
+										</div>
+										<div class="subupcoming">
+											<div *ngFor="let this_call of call.calls">
+												<div *ngIf="!(this_call.id == call.first.id)" class="upcoming-item" [class.faded]="this_call.status == 0 && !(userDets.user_type == 3)">
+													<span class="arrow-diag"></span>
+													<div class="title" *ngIf="userDets.user_type == 3">{{ this_call.user_name }}</div>
+													<div class="title" *ngIf="!(userDets.user_type == 3)">{{ this_call.service_provider_name }}</div>
+													<div class="sub">
+														<span>{{ this_call.start | date: 'shortTime' }} - for </span>
+														<!-- <span *ngIf="this_call.plan_id==1">15</span>
+														<span *ngIf="this_call.plan_id==2">30</span>
+														<span *ngIf="this_call.plan_id==3">45</span>
+														<span *ngIf="this_call.plan_id==4">60</span>
+														<span *ngIf="this_call.plan_id==5">2</span> -->
+														<span>{{ this_call.plan_time_to }} mins</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.disputed == 1">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#alert-triangle"/>
+															</svg>
+														</span>
+														<span class="text">Disputed</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.status == 0 && this_call.sec > 0 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Requested</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.status == 1 && this_call.sec > 0 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Waiting for Call</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 1 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Call Time Over</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+															</svg>
+															<!-- <img src="assets/images/cancel.png" class="call-anim-icon" /> -->
+														</span>
+														<span class="text">Users did not connect.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.call_status == 0 && this_call.status == 1 && this_call.sec <= 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Waiting for users to connect.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.call_status == 1 && this_call.status == 1 && this_call.sec <= 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+														</svg>
+														</span>
+														<span class="text">Ongoing Call.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 2 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+														</svg>
+														</span>
+														<span class="text">Completed</span>
+													</div>
+													<div class="btn-wrap" *ngIf="this_call.disputed == 1">
+														<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+															<!-- <i class="fas fa-info"></i> -->
+															<!-- <svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#info"/>
+															</svg> -->
+															<img src="assets/images/info.png" class="call-anim-icon" />
+															<span class="text">info</span>
+														</span>
+													</div>
+													<div class="btn-wrap" *ngIf="this_call.disputed == 0">
+														<span *ngIf="userDets.user_type == 3">
+															
+															<span *ngIf="this_call.status == 0">
+
+																<span class="order-btn call" *ngIf="this_call.passed == false" (click)="acceptOrder(this_call.id, 1)">
+																	<!-- <i class="fas fa-check"></i> -->
+																	<img src="assets/images/check1.png" class="call-anim-icon" />
+																	<span class="text">Accept</span>
+																</span>
+																
+																<span class="order-btn cancel" *ngIf="this_call.passed == false" (click)="acceptOrder(this_call.id, -1)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Decline</span>
+																</span>
+
+															</span>
+
+															<span *ngIf="this_call.status == 1">
+
+																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+																</span>
+
+
+																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																	<!-- <i class="fas fa-phone"></i> -->
+																	<!-- <svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
+																	</svg> -->
+																	<img src="assets/images/call.gif" class="call-anim-icon" />
+																	<span class="text">Call</span>
+																</span>
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Cancel</span>
+																</span>
+															</span>
+															<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+																<!-- <i class="fas fa-info"></i> -->
+																<img src="assets/images/info.png" class="call-anim-icon" />
+																<span class="text">info</span>
+															</span>
+
+														</span>
+
+														<span *ngIf="!(userDets.user_type == 3)">
+
+															<span *ngIf="this_call.status == 0">
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Cancel</span>
+																</span>
+
+															</span>
+
+															<span *ngIf="this_call.status == 1">
+
+																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+																</span>
+
+
+																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																	<!-- <i class="fas fa-phone"></i> -->
+																	<img src="assets/images/call.gif" class="call-anim-icon" />
+																	<span class="text">Call</span>
+																</span>
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Cancel</span>
+																</span>
+															</span>
+
+
+
+															<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+																<!-- <i class="fas fa-info"></i> -->
+																<img src="assets/images/info.png" class="call-anim-icon" />
+																<span class="text">info</span>
+															</span>
+
+														</span>
+
+														<!-- <span *ngIf="this_call.status == 1"> -->
+
+															<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+															</span> -->
+
+
+															<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																<i class="fas fa-phone"></i>
+															</span> -->
+														<!-- </span> -->
+														<!-- <span class="order-btn info" routerLink="/summary/{{ this_call.id }}"> -->
+															<!-- <i class="fas fa-info"></i> -->
+															<!-- <svg class="feather"> -->
+															  	<!-- <use xlink:href="assets/icon/feather-sprite.svg#info"/> -->
+															<!-- </svg> -->
+															<!-- <span class="text">info</span> -->
+														<!-- </span> -->
+
+
+														<!-- <span class="order-btn call" *ngIf="this_call.status == 0 && userDets.user_type == 3 && this_call.passed == false" (click)="acceptOrder(this_call.id, 1)">
+															<i class="fas fa-check"></i>
+														</span>
+														<span class="order-btn cancel" *ngIf="this_call.status == 0 && userDets.user_type == 3 && this_call.passed == false" (click)="acceptOrder(this_call.id, -1)">
+															<i class="fas fa-times"></i>
+														</span> -->
+														<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0 && this_call.status == 1">
+															<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span> -->
+												
+														<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.status == 1 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+															<i class="fas fa-phone"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.status == 1 && this_call.enable == 1 && !(userDets.user_type == 3) && this_call.passed == false" (click)="callUser(this_call.service_provider_id, this_call.id)">
+															<i class="fas fa-phone"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}" *ngIf="!(userDets.user_type == 3) && this_call.call_status == 1">
+															<i class="fas fa-thumbs-up"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}" *ngIf="!(userDets.user_type == 3) && (this_call.rating == null) && this_call.call_status == 2 && this_call.passed == true">
+															<i class="far fa-star"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn cancel" *ngIf="userDets.user_type == 3 && this_call.status == 1 && this_call.call_status < 2 && this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+															<i class="fas fa-times"></i>
+														</span> -->
+
+														<!-- <span class="order-btn cancel" *ngIf="!(userDets.user_type == 3) && this_call.call_status < 2 && this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+															<i class="fas fa-times"></i>
+														</span> -->
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}">
+															<i class="fas fa-info"></i>
+														</span> -->
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					<!-- </div> -->
+				</div>
+			</div>
+	  		<div class="row align-mid form-title-wrap">
+				<div class="col-9">
+					<div class="form-title">Book Interpreters</div>
+				</div>
+				<div class="col-3 text-right">
+					<span class="filter-btn" (click)="popup.filter = 1">
+						<!-- <i class="fas fa-filter"></i> -->
+						<i class="fas fa-align-right"></i>
+						<!-- <app-icon name="filter"></app-icon> -->
+					</span>
+				</div>
+			</div>
+			<div class="row" *ngIf="providers.length > 0">
+				<div class="col-12">
+					<div class="row">
+						<div class="col-6" *ngFor="let provider of providers">
+							<div class="inter-thumb">
+								<div class="row">
+									<div class="col-12">
+										<div class="name-wrap">
+											<span class="img" *ngIf="provider.image_url == null" routerLink="/providerdets/{{ provider.id }}" style="background-image: url(assets/images/dp1.png);">
+											</span>
+
+											<span class="img" *ngIf="!(provider.image_url == null)" routerLink="/providerdets/{{ provider.id }}" style="background-image: url( {{ provider.image_url }} );">
+												<!-- <img [src]="" /> -->
+											</span>
+											
+											<div class="title" routerLink="/providerdets/{{ provider.id }}">{{ provider.name }}</div>
+											<div class="rating" routerLink="/providerdets/{{ provider.id }}">
+												<span class="star"><i class="fas fa-star"></i></span>
+												<span class="primary">{{ provider.rating }}</span> ({{ provider.rev_count }})
+											</div>
+
+											<span class="fav-btn" (click)="setFav(provider.id,provider.name, 'add')" *ngIf="!(provider.fav) && !(fav_loader_id == provider.id)">
+												<!-- <app-icon name='heart'></app-icon> -->
+												<i class="far fa-heart"></i>
+											</span>
+											<span class="fav-loader" *ngIf="fav_loader_id == provider.id">
+												<img src="assets/images/cloader.gif" />
+											</span>
+											<span class="fav-btn" (click)="setFav(provider.id,provider.name, 'remove')" *ngIf="provider.fav && !(fav_loader_id == provider.id)">
+												<i class="fas fa-heart"></i>
+												<!-- <app-icon name='heart'></app-icon> -->
+											</span>
+
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="dets">
+											<div class="subdets" routerLink="/providerdets/{{ provider.id }}">{{ provider.acceptance_rate }}% acceptance rate</div>
+											<!-- <div class="subdets">English, spanish, Italic+</div> -->
+											<div class="subdets" routerLink="/providerdets/{{ provider.id }}">{{ provider.order_count }} successful jobs</div>
+											<div class="go-btn-wrap">
+												<span class="go-btn" routerLink="/providerdets/{{ provider.id }}">
+													<!-- <i class="fas fa-arrow-right"></i> -->
+													<span class="text">View Profile</span>
+													<span class="icon">
+														<app-icon name='right'></app-icon>
+													</span>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="providers.length == 0 && providerLoading == 0">
+				<div class="col-md-12">
+					<div class="no-data-thumb">
+						<span class="icon">
+							<i class="fas fa-user-alt-slash"></i>
+						</span>
+						<span class="text">
+							<span class="title">No interpreter available.</span>
+							<span class="subtitle">Search using a different filter to get relevant data.</span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="providerLoading == 1">
+				<div class="col-12">
+					<div class="row">
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="row" *ngIf="providerLoading == 1">
+				<div class="col-md-12">
+					<div class="no-data-thumb">
+						<span class="icon">
+							<i class="fas fa-user-alt-slash"></i>
+						</span>
+						<span class="text">
+							<span class="title">Loading interpreters.</span>
+							<span class="subtitle">Loading...</span>
+						</span>
+					</div>
+				</div>
+			</div> -->
+		</div>
+		<div *ngIf="show == 0">
+			<div class="lang-select-wrap m10">
+	  			<div class="lang-select-box">
+	  				<div class="form-row m0">
+		  				<div class="form-control gray-load"></div>
+	  				</div>
+	  			</div>
+	  			<span class="icon">
+	  				<!-- <i class="fas fa-exchange-alt"></i> -->
+	  				<app-icon name="repeat"></app-icon>
+	  			</span>
+	  			<div class="lang-select-box">
+	  				<div class="form-row m0">
+		  				<div class="form-control gray-load"></div>
+	  				</div>
+	  			</div>
+	  		</div>
+	  		<div class="row align-mid form-title-wrap m10">
+				<div class="col-12">
+					<div class="form-title">Booking Required</div>
+				</div>
+			</div>
+			<div class="when-cont">
+				<div class="when-wrap m20 gray-load">
+					<span class="value" *ngIf="showDate == ''">Immediately</span>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-9">
+					<div class="form-title">Book Interpreters</div>
+				</div>
+				<div class="col-3 text-right">
+					<span class="filter-btn">
+						<!-- <i class="fas fa-filter"></i> -->
+						<i class="fas fa-align-right"></i>
+						<!-- <app-icon name="filter"></app-icon> -->
+					</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="row">
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+						<div class="col-6">
+							<div class="inter-thumb gray-load">&nbsp;</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+  	</div>
+
+
+
+
+
+
+
+
+  	<div class="overlay" [class.active]="popup.time == 1 || popup.filter == 1" (click)="popup.time = 0; popup.filter = 0;"></div>
+	<div class="popup" [class.active]="popup.time == 1">
+		<div class="popup-title">
+			<span class="text">Select day and time</span>
+			<span class="btn-sm fl-rt" (click)="setImmediately()">Immediately</span>
+		</div>
+		<div class="popup-content">
+			<ion-datepick type="2" (dateSet)="filterByDate($event)" (close)="popup.time = 0"></ion-datepick>
+			<!-- <div class="row">
+				<div class="col-6">
+					<button class="btn btn-outline">Cancel</button>
+				</div>
+				<div class="col-6">
+					<button class="btn btn-primary">Add</button>
+				</div>
+			</div> -->
+		</div>
+	</div>
+	<div class="popup side" [class.active]="popup.filter == 1">
+		<div class="popup-title">
+			<span class="back" (click)="popup.filter = 0;"><i class="fas fa-angle-left"></i></span>
+			<span class="text">Refine your search</span>
+			<span class="btn-sm fl-rt" (click)="clearFilter()">Clear</span>
+		</div>
+		<div class="popup-content">
+			<div class="row">
+				<div class="col-12">
+					<div class="row align-mid form-title-wrap">
+						<div class="col-12">
+							<div class="form-title">Availability</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-row">
+						<span class="checkbox-wrap">
+							<input type="checkbox" id="filter1" name="" />
+							<label for="filter1">Show only available now</label>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="row align-mid form-title-wrap">
+						<div class="col-12">
+							<div class="form-title">Experience Level</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter21" name="exp_level2" [(ngModel)]="filData.exp_level" value="1" />
+							<label for="filter21">Higher level written and spoken</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter22" name="exp_level2" [(ngModel)]="filData.exp_level" value="2" />
+							<label for="filter22">Legal Experience</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter23" name="exp_level2" [(ngModel)]="filData.exp_level" value="3" />
+							<label for="filter23">Business Experience</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter24" name="exp_level2" [(ngModel)]="filData.exp_level" value="4" />
+							<label for="filter24">Medical Experience</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter20" name="exp_level2" [(ngModel)]="filData.exp_level" value="0" />
+							<label for="filter20">No Experience</label>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="row align-mid form-title-wrap">
+						<div class="col-12">
+							<div class="form-title">Ratings</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter31" name="rating_fil" [(ngModel)]="rate_temp" (change)="setRating(0,0)" value="1" />
+							<label for="filter31">No ratings</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter32" name="rating_fil" [(ngModel)]="rate_temp" (change)="setRating(1,4.5)" value="2" />
+							<label for="filter32">Below 4.5</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter33" name="rating_fil" [(ngModel)]="rate_temp" (change)="setRating(4.5,5)" value="3" />
+							<label for="filter33">4.5 to 5</label>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="row align-mid form-title-wrap">
+						<div class="col-12">
+							<div class="form-title">Acceptance Rate</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter41" name="acceptance_rate2" [(ngModel)]="filData.acceptance_rate" value="80" />
+							<label for="filter41">80% and up</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="radio" id="filter42" name="acceptance_rate2" [(ngModel)]="filData.acceptance_rate" value="90" />
+							<label for="filter42">90% and Up</label>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6 offset-3">
+					<button class="btn btn-outline" (click)="getProviders()">Search</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<app-header></app-header>
 </ion-content>

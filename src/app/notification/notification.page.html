@@ -1,0 +1,88 @@
+<ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+	<div class="page-title">
+		<span *ngIf="!(userDets.user_type == 3)" routerLink="/home" class="back"><i class="fas fa-angle-left"></i></span>
+		<span *ngIf="userDets.user_type == 3" routerLink="/provider/home" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Notification</span>
+	</div>
+	<div class="page-content with-header">
+		<div *ngIf="show == 0">
+			<!-- <div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div> -->
+			<div class="row">
+				<div class="col-12">
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+				</div>
+			</div>
+		</div>
+		<div *ngIf="show == 1">  
+			<div class="row" *ngIf="(notes!=undefined) && notes.length > 0">
+				<div class="col-12">
+					<div class="note-thumb" *ngFor="let note of notes">
+						<span class="img">
+							<img *ngIf="note.image_url == null" src="assets/images/dp.png" />
+						  	<img *ngIf="!(note.image_url == null)" [src]="note.image_url" />
+						</span>
+						<p>{{ note.text }}</p>
+						<span>{{ note.created_at | date:'medium' }}</span>
+					</div>
+					<div *ngIf="showLoadMore == 1 && showMoreLoad == 0">
+						<button class="btn btn-primary btn-load" (click)="getMoreNotes()">Load More Notifications</button>
+					</div>
+					<div *ngIf="showLoadMore == 1 && showMoreLoad == 1">
+						<!-- <span class="more-loader">
+							<img src="assets/images/cloader.gif" />
+						</span> -->
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+					</div>
+					<div *ngIf="showLoadMore == 0 && showMoreLoad == 0">
+						<div class="end-of-list-wrap">
+							<span>End of list</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="(notes!=undefined) && notes.length == 0">
+				<div class="col-12">
+					<div class="no-data-thumb">
+						<span class="icon">
+							<i class="fas fa-bell"></i>
+						</span>
+						<span class="text">
+							<span class="title">No notifications.</span>
+							<span class="subtitle">Any notifications you receive on the app will be displayed here.</span>
+						</span>
+						<button class="btn btn-primary" routerLink="/">Return to home.</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+    <app-header></app-header>
+</ion-content>

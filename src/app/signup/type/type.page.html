@@ -1,0 +1,332 @@
+<ion-content>
+	<div class="page-title">
+		<span routerLink="/signup" class="back"><i class="fas fa-angle-left"></i></span>
+		<span *ngIf="!(user_type == 'company')" class="text">Sign Up</span>
+		<span *ngIf="user_type == 'company'" class="text">Company registration</span>
+	</div>
+	<div class="page-content">
+		<div class="row align-mid form-title-wrap">
+			<div class="col-7">
+				<div class="form-title">Enter the details</div>
+			</div>
+			<div class="col-5 text-right">
+				<span class="form-req">
+					* Required
+				</span>
+			</div>
+		</div>
+		<div class="row" *ngIf="user_type == 'user' || user_type == 'interpreter'">
+			<div class="col-12">
+				<form (submit)="saveUser()">
+					<input type="hidden" *ngIf="user_type == 'user'" name="user_type" [(ngModel)]="FormModel.user_type" value="2">
+					<input type="hidden" *ngIf="user_type == 'interpreter'" name="user_type" [(ngModel)]="FormModel.user_type" value="3">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-row">
+								<label class="form-row-label">Username <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="username" [(ngModel)]="FormModel.username" class="form-control" placeholder="Username" required="required" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Full Name <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Full Name" required="required" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Email Id <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" required="required" />
+							</div>
+							<div class="row">
+								<div class="col-5">
+									<div class="form-row">
+										<label class="form-row-label">Phone Number <sup>*</sup></label>
+										<span class="down">
+					  						<app-icon name="seldown"></app-icon>
+					  					</span>
+										<select class="form-control" name="country_code" [(ngModel)]="FormModel.country_code">
+											<option *ngFor="let country of countries" [value]="country.dial_code">{{ country.name }} ({{ country.dial_code }})</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-7">
+									<div class="form-row">
+										<label class="form-row-label">&nbsp;</label>
+										<input type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Address</label>
+								<input type="text" autocomplete="false" name="address" [(ngModel)]="FormModel.address" class="form-control" placeholder="Address" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Country <sup>*</sup></label>
+								<span class="down">
+			  						<app-icon name="seldown"></app-icon>
+			  					</span>
+								<select class="form-control" name="country_id" [(ngModel)]="FormModel.country_id">
+									<option *ngFor="let country of countries" [value]="country.name">{{ country.name }}</option>
+								</select>
+							</div>
+							<hr>
+							<div class="form-row">
+								<label class="form-row-label">Password <sup>*</sup></label>
+								<input type="password" autocomplete="false" name="password" [(ngModel)]="FormModel.password" (input)="passwordCheck()" class="form-control" placeholder="Password" />
+								<span class="password-meter">
+									<span class="meter-in" style="width: {{ pass_meter_width }}%"></span>
+								</span>
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Re-type Password <sup>*</sup></label>
+								<div class="form-with-icon append">
+									<input type="password" autocomplete="false" name="confirm_password" (input)="passwordCheck()" [(ngModel)]="FormModel.confirm_password" class="form-control" placeholder="Re-type Password" />
+									<span class="icon right success" *ngIf="pass_flag == 1"><i class="far fa-check-circle"></i></span>
+								</div>
+							</div>
+							<div class="row" *ngIf="user_type == 'interpreter'">
+								<div class="col-12">
+									<div class="row align-mid form-title-wrap">
+										<div class="col-7">
+											<div class="form-title">Availaibility</div>
+										</div>
+										<div class="col-5 text-right">
+											<div class="form-title text-right"><i class="fas fa-plus" (click)="popup.avail = 1"></i></div>
+										</div>
+									</div>
+									<div class="row avail-check-item align-mid" *ngFor="let day of daysValArr">
+										<div class="col-3">
+											<span class="checkbox-wrap">
+												<input type="checkbox" id="checkAvail{{ day }}" name="tnc" (change)="availCheck(day)" [checked]="availCheckList.includes(day)" />
+												<label for="checkAvail{{ day }}">{{ days[day] }}</label>
+											</span>
+										</div>
+										<div class="col-8">
+											<div class="avail-check-item-dets">
+												<span (click)="selectDateFor(day)" *ngIf="availabilities[day] == undefined" [class.disabled]="!(availCheckList.includes(day))">(Select Time)</span>
+												<span *ngIf="!(availabilities[day] == undefined)" [class.disabled]="!(availCheckList.includes(day))">{{ availabilities[day]['start_time'] }} to {{ availabilities[day]['end_time'] }} <span (click)="selectDateFor(day)">(Change)</span></span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- <div class="avail-item" *ngFor="let avail of availabilities">
+								<i class="far fa-clock"></i>
+								<span>
+									<span *ngIf="avail.day == 0">Sun</span>
+									<span *ngIf="avail.day == 1">Mon</span>
+									<span *ngIf="avail.day == 2">Tue</span>
+									<span *ngIf="avail.day == 3">Wed</span>
+									<span *ngIf="avail.day == 4">Thu</span>
+									<span *ngIf="avail.day == 5">Fri</span>
+									<span *ngIf="avail.day == 6">Sat</span>
+									({{ avail.start_time }} - {{ avail.end_time }})
+								</span>
+							</div> -->
+							<div class="form-row">
+								<span class="checkbox-wrap">
+									<input type="checkbox" id="check2" name="tnc" (change)="tncCheck()" [checked]="tnc == 1" />
+									<label for="check2">I agree with <a routerLink="/tnc">terms and conditions</a> <span *ngIf="!(user_type == 'interpreter')">and</span> <a routerLink="/privacy">privacy policy</a> <span *ngIf="user_type == 'interpreter'">and <a routerLink="/conf">confidentiality agreement</a></span>.</label>
+								</span>
+							</div>
+							<div class="form-row">
+								<button type="submit" class="btn btn-primary">Next</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!-- <div class="row" *ngIf="user_type == 'interpreter'">
+			<div class="col-12">
+				<form (submit)="saveInterpreter()">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-row">
+								<label class="form-row-label">Username <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="" class="form-control" placeholder="Username" required="required" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Full Name <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="" class="form-control" placeholder="Full Name" required="required" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Email Id <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="" class="form-control" placeholder="Email id" required="required" />
+							</div>
+							<div class="row">
+								<div class="col-4">
+									<div class="form-row">
+										<label class="form-row-label">Phone Number <sup>*</sup></label>
+										<span class="down">
+			  						<app-icon name="seldown"></app-icon>
+			  					</span>
+										<select class="form-control">
+											<option>US +123</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-8">
+									<div class="form-row">
+										<label class="form-row-label">&nbsp;</label>
+										<input type="text" autocomplete="false" name="" class="form-control" placeholder="Phone number" required="required" />
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Address</label>
+								<input type="text" autocomplete="false" name="" class="form-control" placeholder="Address" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Country <sup>*</sup></label>
+								<span class="down">
+			  						<app-icon name="seldown"></app-icon>
+			  					</span>
+								<select class="form-control">
+									<option>Ireland</option>
+								</select>
+							</div>
+							<hr>
+							<div class="form-row">
+								<label class="form-row-label">Password <sup>*</sup></label>
+								<input type="password" autocomplete="false" name="" class="form-control" placeholder="Password" />
+								<span class="password-meter">
+									<span class="meter-in"></span>
+								</span>
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Re-type Password <sup>*</sup></label>
+								<input type="password" autocomplete="false" name="" class="form-control" placeholder="Re-type Password" />
+							</div>
+							<div class="row align-mid form-title-wrap">
+								<div class="col-7">
+									<div class="form-title">Availaibility</div>
+								</div>
+								<div class="col-5 text-right">
+									<div class="form-title text-right"><i class="fas fa-plus" (click)="popup.avail = 1"></i></div>
+								</div>
+							</div>
+							<div class="form-row">
+								<span class="checkbox-wrap">
+									<input type="checkbox" id="check1" name="" />
+									<label for="check1">I agree with terms and conditions.</label>
+								</span>
+							</div>
+							<div class="form-row">
+								<button class="btn btn-primary">Next</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div> -->
+
+
+		<div class="row" *ngIf="user_type == 'company'">
+			<div class="col-12">
+				<form (submit)="saveCompany()">
+					<div class="row">
+						<div class="col-12">
+							<div class="form-row">
+								<label class="form-row-label">Company Name <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Company Name" required="required" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Company Address <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="address" [(ngModel)]="FormModel.address" class="form-control" placeholder="Company Address" required="required" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Company Email Id <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" required="required" />
+							</div>
+							<div class="row">
+								<div class="col-5">
+									<div class="form-row">
+										<label class="form-row-label">Phone Number <sup>*</sup></label>
+										<span class="down">
+					  						<app-icon name="seldown"></app-icon>
+					  					</span>
+										<select class="form-control" name="country_code" [(ngModel)]="FormModel.country_code">
+											<option *ngFor="let country of countries" [value]="country.dial_code">{{ country.name }} ({{ country.dial_code }})</option>
+										</select>
+									</div>
+								</div>
+								<div class="col-7">
+									<div class="form-row">
+										<label class="form-row-label">&nbsp;</label>
+										<input type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
+									</div>
+								</div>
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Country <sup>*</sup></label>
+								<span class="down">
+			  						<app-icon name="seldown"></app-icon>
+			  					</span>
+								<select class="form-control" name="country_id" [(ngModel)]="FormModel.country_id">
+									<option *ngFor="let country of countries" [value]="country.name">{{ country.name }}</option>
+								</select>
+							</div>
+							<hr>
+							<div class="form-row">
+								<label class="form-row-label">Company Reg. No <sup>*</sup></label>
+								<input type="text" autocomplete="false" name="reg_id" [(ngModel)]="FormModel.reg_id" class="form-control" placeholder="Company Reg. No" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Company TIN</label>
+								<input type="text" autocomplete="false" name="tin_no" [(ngModel)]="FormModel.tin_no" class="form-control" placeholder="Company TIN" />
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Type of Company <sup>*</sup></label>
+								<span class="down">
+			  						<app-icon name="seldown"></app-icon>
+			  					</span>
+								<select class="form-control" name="type" [(ngModel)]="FormModel.type" >
+									<option value="{{ companyType.id }}" *ngFor="let companyType of companyTypes">{{ companyType.name }}</option>
+								</select>
+							</div>
+							<!-- <div class="form-row">
+								<label class="form-row-label">Company Logo</label>
+								<div class="row align-mid">
+									<div class="col-7">
+										<span>Nothing is uploaded</span>
+									</div>
+									<div class="col-5">
+										<button type="button" class="btn btn-outline">Upload</button>
+									</div>
+								</div>
+							</div> -->
+							<hr>
+							<div class="form-row">
+								<label class="form-row-label">Password <sup>*</sup></label>
+								<input type="password" autocomplete="false" name="password" [(ngModel)]="FormModel.password" class="form-control" (input)="passwordCheck()" placeholder="Password" />
+								<span class="password-meter">
+									<span class="meter-in" style="width: {{ pass_meter_width }}%"></span>
+								</span>
+							</div>
+							<div class="form-row">
+								<label class="form-row-label">Re-type Password <sup>*</sup></label>
+								<input type="password" autocomplete="false" name="confirm_password" [(ngModel)]="FormModel.confirm_password" class="form-control" (input)="passwordCheck()" placeholder="Re-type Password" />
+							</div>
+							<div class="form-row">
+								<span class="checkbox-wrap">
+									<input type="checkbox" id="checksign1" name="tnc" (change)="tncCheck()" [checked]="tnc == 1" />
+									<label for="checksign1">I agree with <a routerLink="/tnc">terms and conditions</a> and <a routerLink="/privacy">privacy policy</a>.</label>
+								</span>
+							</div>
+							<div class="form-row">
+								<button class="btn btn-primary">Next</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div class="overlay" [class.active]="popup.avail == 1" (click)="popup.avail = 0"></div>
+	<div class="popup" [class.active]="popup.avail == 1">
+		<div class="popup-title">
+			<span class="text">Select day and time</span>
+		</div>
+		<div class="popup-content">
+			<ion-datepick type="1" (dateSet)="addDate($event)" (close)="popup.avail = 0"></ion-datepick>
+		</div>
+	</div>
+</ion-content>

@@ -1,0 +1,27 @@
+<ion-content>
+  	<div class="page-title">
+  		<span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Faqs</span>
+  	</div>
+  	<div class="page-content">
+  		<div *ngIf="show == 0">
+			<div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div>
+		</div>
+		<div *ngIf="show == 1">
+	  		<div class="faq-card" *ngFor="let faq of faqs">
+	  			<div class="question" (click)="selectedFaq = (selectedFaq==faq.id)?-1:faq.id">
+	  				{{ faq.question }}
+	  				<span class="icon">
+	  					<i class="fas" [class.fa-chevron-right]="!(selectedFaq == faq.id)" [class.fa-chevron-down]="selectedFaq == faq.id"></i>
+	  				</span>
+	  			</div>
+	  			<div class="answer" *ngIf="selectedFaq == faq.id">
+	  				{{ faq.answer }}
+	  			</div>
+	  		</div>
+  		</div>
+  	</div>
+  	<!-- <app-header></app-header> -->
+</ion-content>

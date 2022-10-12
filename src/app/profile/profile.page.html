@@ -1,0 +1,206 @@
+<ion-content>
+  	<div class="page-title">
+      <span *ngIf="!(userDets.user_type == 3)" routerLink="/home" class="back"><i class="fas fa-angle-left"></i></span>
+  		<span *ngIf="userDets.user_type == 3" routerLink="/provider/home" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Profile</span>
+  	</div>
+  	<div class="page-content with-header">
+      <div *ngIf="(userDets == '')">
+        <!-- <div class="circle-loader">
+          <img src="assets/images/cloader.gif" />
+        </div> -->
+        <div class="profile-head">
+          <span class="img gray-load">
+          </span>
+          <span class="hi gray-load">Hi,</span>
+          <span class="name gray-load">firstname lastname</span>
+        </div>
+        <div class="wallet gray-load">&nbsp;</div>
+        <div class="prof-card gray-load"></div>
+        <div class="prof-card gray-load"></div>
+      </div>
+      <div *ngIf="!(userDets == '')">
+    		<div class="profile-head">
+    			<span class="img" *ngIf="userDets.image_url">
+    				<img [src]="userDets.image_url" />
+    			</span>
+          <span class="img" *ngIf="!(userDets.image_url)">
+            <img src="assets/images/dp.png" />
+          </span>
+    			<span class="hi">Hi,</span>
+    			<span class="name">{{ userDets.name }}</span>
+          <span *ngIf="userDets.user_type == 3" class="share-btn" (click)="shareProfile()">
+            <i class="fas fa-share-alt-square"></i>
+            <span class="text">Share your profile</span>
+          </span>
+    		</div>
+    		<div class="wallet">
+    			<div class="row">
+    				<div class="col-8">
+              <p *ngIf="!(userDets.user_type == 3)">Remaining balance</p>
+    					<p *ngIf="userDets.user_type == 3">Available balance</p>
+    				</div>
+    				<div class="col-4 text-right">
+    					<span class="amount">
+    						<sup>&#8364;</sup>
+    						<span>{{ userDets.credit_balance }}</span>
+    					</span>
+    				</div>
+    			</div>
+    		</div>
+    		<div class="prof-card">
+    			<ul>
+    				<li *ngIf="userDets.user_type == 4">
+    					<a routerLink="/editprofile">
+    						<span class="icon">
+                  <app-icon name="company"></app-icon>
+                </span>
+    						<span class="text">Company Details</span>
+    					</a>
+    				</li>
+            <li *ngIf="!(userDets.user_type == 4)">
+              <a routerLink="/editprofile">
+                <span class="icon">
+                  <!-- <i class="fas fa-user"></i> -->
+                  <app-icon name="user1"></app-icon>
+                </span>
+                <span class="text">Personal Details</span>
+              </a>
+            </li>
+            <li *ngIf="!(userDets.user_type == 3)">
+              <a routerLink="/favs">
+                <span class="icon">
+                  <!-- <i class="fas fa-user"></i> -->
+                  <app-icon name="heart"></app-icon>
+                </span>
+                <span class="text">My Favourites</span>
+              </a>
+            </li>
+    				<li>
+    					<a routerLink="/activity">
+    						<span class="icon">
+                  <!-- <i class="fas fa-clock"></i> -->
+                  <app-icon name="clock"></app-icon>
+                </span>
+    						<span class="text">Activity History</span>
+    					</a>
+    				</li>
+    				<li>
+    					<a routerLink="/wallet">
+    						<span class="icon">
+                  <!-- <i class="fas fa-wallet"></i> -->
+                  <app-icon name="wallet"></app-icon>
+                </span>
+    						<span class="text">Wallet</span>
+    					</a>
+    				</li>
+    			</ul>
+    		</div>
+        <div class="prof-card" *ngIf="userDets.user_type == 4">
+          <ul>
+            <li>
+              <a routerLink="/members">
+                <span class="icon">
+                  <!-- <i class="fas fa-user"></i> -->
+                  <app-icon name="list"></app-icon>
+                </span>
+                <span class="text">Member list</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/addmember">
+                <span class="icon">
+                  <!-- <i class="fas fa-clock"></i> -->
+                  <app-icon name="useradd"></app-icon>
+                </span>
+                <span class="text">Add new member</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/memberrequests">
+                <span class="icon">
+                  <!-- <i class="fas fa-clock"></i> -->
+                  <!-- <app-icon name="useradd"></app-icon> -->
+                  <!-- <i class="fas fa-receipt"></i> -->
+                  <i class="far fa-money-bill-alt"></i>
+                </span>
+                <span class="text">Fund Requests</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+    		<div class="prof-card">
+    			<ul>
+    				<li>
+    					<a routerLink="/faq">
+    						<span class="icon">
+                  <app-icon name="faq"></app-icon>
+                  <!-- <i class="fas fa-exclamation-circle"></i> -->
+                </span>
+    						<span class="text">Faqs</span>
+    					</a>
+    				</li>
+            <li>
+              <a routerLink="/tnc">
+                <span class="icon">
+                  <app-icon name="tnc"></app-icon>
+                  <!-- <i class="fas fa-exclamation-circle"></i> -->
+                </span>
+                <span class="text">Terms and conditions</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/privacy">
+                <span class="icon">
+                  <app-icon name="privacy"></app-icon>
+                  <!-- <i class="fas fa-exclamation-circle"></i> -->
+                </span>
+                <span class="text">Privacy Policy</span>
+              </a>
+            </li>
+            <li>
+              <a routerLink="/conf">
+                <span class="icon">
+                  <app-icon name="privacy"></app-icon>
+                  <!-- <i class="fas fa-exclamation-circle"></i> -->
+                </span>
+                <span class="text">Confidentiality Agreement</span>
+              </a>
+            </li>
+    				<li>
+    					<a routerLink="/help">
+    						<span class="icon">
+                  <app-icon name="help"></app-icon>
+                  <!-- <i class="fas fa-question-circle"></i> -->
+                </span>
+    						<span class="text">Help</span>
+    					</a>
+    				</li>
+    			</ul>
+    		</div>
+    		<div class="prof-card">
+    			<ul>
+            <li>
+              <a (click)="deleteUserMid()">
+                <span class="icon">
+                  <app-icon name="help"></app-icon>
+                  <!-- <i class="fas fa-question-circle"></i> -->
+                </span>
+                <span class="text">Delete Account</span>
+              </a>
+            </li>
+    				<li>
+    					<a (click)="logoutUser()">
+    						<span class="icon alt">
+                  <app-icon name="logout"></app-icon>
+                  <!-- <i class="fas fa-sign-out-alt"></i> -->
+                </span>
+    						<span class="text">Sign out</span>
+    					</a>
+    				</li>
+    			</ul>
+    		</div>
+      </div>
+  	</div>
+  	<app-header></app-header>
+</ion-content>

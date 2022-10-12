@@ -1,0 +1,93 @@
+.splash-screen{
+	position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    // background: url(../assets/splash/splash.gif);
+    right: 0;
+    background-size: 100%;
+    background-position: center center;
+    z-index: 12342;
+    background-repeat: no-repeat;
+    opacity: 1;
+    display: block;
+    // pointer-events: unset;
+    background-color: #fd1231;
+    transition: all 0.3s linear;
+	&.hide-splash{
+		// opacity: 0;
+		display: none;
+		// pointer-events: none;
+	}
+	img{
+		position: absolute;
+		width: 100%;
+		top: 50%;
+		left: 0;
+		transform: translateY(-50%);
+	}
+	video{
+		left: 0;
+	    width: 100%;
+	    position: absolute;
+	    top: 50%;
+	    transform: translateY(-50%);
+	}
+}
+
+.ploader{
+	display: block;
+	position: fixed;
+	top: 0px;
+    left: 0;
+    // display: none;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    background-color: white;
+    // border-radius: 25px;
+	// backdrop-filter: blur(5px);
+	transition: all 0.2s linear;
+	&.active{
+    	pointer-events: auto;
+		opacity: 1;
+	}
+	.ploader-in{
+		display: inline-block;
+		width: 100px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		img{
+			width: 100%;
+			height: auto;
+		}
+	}
+}
+
+.loader{
+	display: block;
+	position: fixed;
+	top: 0;
+	left: 0;
+	display: none;
+	right: 0;
+	z-index: 21312312312;
+	bottom: 0;
+	background-color: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(5px);
+	.loader-in{
+		display: inline-block;
+		width: 100px;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		img{
+			width: 100%;
+			height: auto;
+		}
+	}
+}

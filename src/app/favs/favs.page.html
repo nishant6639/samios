@@ -1,0 +1,112 @@
+<ion-content>
+  	<div class="page-title">
+      <span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">My Favourites</span>
+  	</div>
+  	<div class="page-content with-header">
+
+		<div *ngIf="show == 0">
+			<div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div>
+		</div>
+
+		<div *ngIf="show == 1">
+			
+			<div class="row" *ngIf="providers.length == 0">
+				<div class="col-md-12">
+					<div class="no-data-thumb">
+						<span class="icon">
+							<i class="fas fa-user-alt-slash"></i>
+						</span>
+						<span class="text">
+							<span class="title">No favourite interpreter.</span>
+							<span class="subtitle">Add interpreter as favourite and it'll be displayed here.</span>
+						</span>
+						<button class="btn btn-primary" routerLink="/home">Browse Interpreters</button>
+					</div>
+				</div>
+			</div>
+	  		<div class="row" *ngIf="providers.length > 0">
+	  			<div class="col-12">
+	  				<div class="row">
+						<div class="col-6" *ngFor="let provider of providers">
+							<div class="inter-thumb">
+								<div class="row">
+									<div class="col-12">
+										<div class="name-wrap">
+											<span class="img" *ngIf="provider.image_url == null" routerLink="/providerdets/{{ provider.id }}" style="background-image: url(assets/images/dp1.png);">
+											</span>
+
+											<span class="img" *ngIf="!(provider.image_url == null)" routerLink="/providerdets/{{ provider.id }}" style="background-image: url( {{ provider.image_url }} );">
+												<!-- <img [src]="" /> -->
+											</span>
+											
+											<div class="title" routerLink="/providerdets/{{ provider.id }}">{{ provider.name }}</div>
+											<div class="rating" routerLink="/providerdets/{{ provider.id }}">
+												<span class="star"><i class="fas fa-star"></i></span>
+												<span class="primary">{{ provider.rating }}</span> ({{ provider.rev_count }})
+											</div>
+
+											<span class="fav-btn" (click)="setFav(provider.id, 'add')" *ngIf="!(provider.fav)">
+												<!-- <app-icon name='heart'></app-icon> -->
+												<i class="far fa-heart"></i>
+											</span>
+											<span class="fav-btn" (click)="setFav(provider.id, 'remove')" *ngIf="provider.fav">
+												<i class="fas fa-heart"></i>
+												<!-- <app-icon name='heart'></app-icon> -->
+											</span>
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="dets">
+											<div class="subdets" routerLink="/providerdets/{{ provider.id }}">{{ provider.acceptance_rate }}% acceptance rate</div>
+											<!-- <div class="subdets">English, spanish, Italic+</div> -->
+											<div class="subdets" routerLink="/providerdets/{{ provider.id }}">{{ provider.order_count }} successful jobs</div>
+											<div class="go-btn-wrap">
+												<span class="go-btn" routerLink="/providerdets/{{ provider.id }}">
+													<!-- <i class="fas fa-arrow-right"></i> -->
+													<app-icon name='right'></app-icon>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+	  				<!-- <div class="inter-thumb" *ngFor="let provider of providers">
+						<div class="row">
+							<div class="col-3">
+								<span class="img" routerLink="/providerdets/{{ provider.id }}">
+									<img *ngIf="provider.image_url == null" src="assets/images/dp1.png" />
+									<img *ngIf="!(provider.image_url == null)" [src]="provider.image_url" />
+								</span>
+							</div>
+							<div class="col-9">
+								<div class="dets">
+									<div class="title" routerLink="/providerdets/{{ provider.id }}">{{ provider.name }}</div>
+									<div class="rating" routerLink="/providerdets/{{ provider.id }}">
+										<span class="star"><i class="fas fa-star"></i></span>
+										<span class="primary">{{ provider.rating }}</span> ({{ provider.rev_count }})
+									</div>
+									<div class="subdets" routerLink="/providerdets/{{ provider.id }}">{{ provider.acceptance_rate }}% acceptance rate</div>
+									<div class="subdets" routerLink="/providerdets/{{ provider.id }}">{{ provider.order_count }} successful jobs</div>
+									<span class="fav-btn" (click)="setFav(provider.id, 'add')" *ngIf="!(provider.fav)">
+										<i class="far fa-heart"></i>
+									</span>
+									<span class="fav-btn" (click)="setFav(provider.id, 'remove')" *ngIf="provider.fav">
+										<i class="fas fa-heart"></i>
+									</span>
+									<span class="go-btn" routerLink="/providerdets/{{ provider.id }}">
+										<app-icon name='right'></app-icon>
+									</span>
+								</div>
+							</div>
+						</div>
+					</div> -->
+	  			</div>
+	  		</div>
+  		</div>
+	</div>
+</ion-content>

@@ -1,0 +1,213 @@
+<div *ngIf="type == 1" class="datepick-wrap">
+	<div class="row">
+		<!-- <div class="col-4"> -->
+			<!-- <span class="date-val-btn">
+				<span class="value" *ngIf="this.valChange['day'] == 0">Sun</span>
+				<span class="value" *ngIf="this.valChange['day'] == 1">Mon</span>
+				<span class="value" *ngIf="this.valChange['day'] == 2">Tue</span>
+				<span class="value" *ngIf="this.valChange['day'] == 3">Wed</span>
+				<span class="value" *ngIf="this.valChange['day'] == 4">Thur</span>
+				<span class="value" *ngIf="this.valChange['day'] == 5">Fri</span>
+				<span class="value" *ngIf="this.valChange['day'] == 6">Sat</span>
+			</span> -->
+		<!-- </div> -->
+		<div class="col-6">
+			<span class="date-val-btn sm">
+				<span class="title">Start</span>
+				<span class="value">{{ this.valChange['hour1'] }}:{{ this.valChange['minute1'] }}:00</span>
+			</span>
+		</div>
+		<div class="col-6">
+			<span class="date-val-btn sm">
+				<span class="title">End</span>
+				<span class="value">{{ this.valChange['hour2'] }}:{{ this.valChange['minute2'] }}:00</span>
+			</span>
+		</div>
+	</div>
+	<div class="row">
+		<!-- <div class="col-4">
+			<div class="scroller-wrap">
+				<span class="scroller-list" (scroll)="scrollThis('day', $event)">
+					<span *ngFor="let day of days; let i = index" class="item" [attr.data-selval]="i">{{ day }}</span>
+				</span>
+			</div>
+		</div> -->
+		<div class="col-6">
+			<div class="scroller-wrap">
+				<span class="scroller-list" (scroll)="scrollThis('hour1',$event)">
+					<span *ngFor="let hour of hours" class="item" [attr.data-selval]="hour">{{ hour }}</span>
+				</span>
+				<span class="scroller-list" (scroll)="scrollThis('minute1',$event)">
+					<span *ngFor="let minute of minutes" class="item" [attr.data-selval]="minute">{{ minute }}</span>
+				</span>
+				<!-- <span class="scroller-list" (scroll)="scrollThis('apm1', $event)">
+					<span class="item active">AM</span>
+					<span class="item">PM</span>
+					<span *ngFor="let ap of apm; let i = index" class="item" [attr.data-selval]="i">{{ ap }}</span>
+				</span> -->
+			</div>
+		</div>
+		<div class="col-6">
+			<div class="scroller-wrap">
+				<span class="scroller-list" (scroll)="scrollThis('hour2',$event)">
+					<span *ngFor="let hour of hours" class="item" [attr.data-selval]="hour">{{ hour }}</span>
+				</span>
+				<span class="scroller-list" (scroll)="scrollThis('minute2',$event)">
+					<span *ngFor="let minute of minutes" class="item" [attr.data-selval]="minute">{{ minute }}</span>
+				</span>
+				<!-- <span class="scroller-list" (scroll)="scrollThis('apm2', $event)">
+					<span class="item active">AM</span>
+					<span class="item">PM</span>
+					<span *ngFor="let ap of apm; let i = index" class="item" [attr.data-selval]="i">{{ ap }}</span>
+				</span> -->
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<button class="btn btn-outline" (click)="closeDatePicker()">Cancel</button>
+		</div>
+		<div class="col-6">
+			<button class="btn btn-primary" (click)="setDate()">Add</button>
+		</div>
+	</div>
+</div>
+<div *ngIf="type == 2" class="datepick-wrap">
+	<div class="row">
+		<div class="col-5">
+			<span class="date-val-btn" (click)="selectDate()">
+				<span class="value">{{ date | date: 'EEE, dd LLL' }}</span>
+			</span>
+		</div>
+		<div class="col-4">
+			<span class="date-val-btn sm">
+				<span class="title">Start</span>
+				<span class="value">{{ this.valChange['hour1'] }}:{{ this.valChange['minute1'] }}:00</span>
+			</span>
+		</div>
+		<div class="col-3">
+			<span class="date-val-btn sm">
+				<span class="title">For</span>
+				<span class="value" *ngFor="let plan of plans">
+					<span *ngIf="this.valChange['for'] == plan.id">{{ plan.time_to }} min</span>
+				</span>
+				<!-- <span class="value" *ngIf="this.valChange['for'] == 2">30 min</span>
+				<span class="value" *ngIf="this.valChange['for'] == 3">45 min</span>
+				<span class="value" *ngIf="this.valChange['for'] == 4">60 min</span> -->
+			</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-5">
+			<div class="scroller-wrap">
+				<span class="scroller-list">
+					<span class="item active" (click)="selectDate()">{{ date | date: 'EEE, dd LLL' }}</span>
+				</span>
+			</div>
+		</div>
+		<div class="col-4">
+			<div class="scroller-wrap">
+				<span class="scroller-list" (scroll)="scrollThis('hour1',$event)">
+					<span *ngFor="let hour of hours" class="item" [attr.data-selval]="hour">{{ hour }}</span>
+				</span>
+				<span class="scroller-list" (scroll)="scrollThis('minute1',$event)">
+					<span *ngFor="let minute of minutes" class="item" [attr.data-selval]="minute">{{ minute }}</span>
+				</span>
+				<!-- <span class="scroller-list" (scroll)="scrollThis('apm1', $event)">
+					<span class="item active">AM</span>
+					<span class="item">PM</span>
+					<span *ngFor="let ap of apm; let i = index" class="item" [attr.data-selval]="i">{{ ap }}</span>
+				</span> -->
+			</div>
+		</div>
+		<div class="col-3">
+			<div class="scroller-wrap">
+				<span class="scroller-list" (scroll)="scrollThis('for', $event)">
+					<!-- <span class="item active">AM</span>
+					<span class="item">PM</span> -->
+					<span class="item" *ngFor="let plan of plans" [attr.data-selval]="plan.id">{{ plan.time_to }} min</span>
+					<!-- <span class="item" [attr.data-selval]="2">30 min</span>
+					<span class="item" [attr.data-selval]="3">45 min</span>
+					<span class="item" [attr.data-selval]="4">60 min</span> -->
+				</span>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<button class="btn btn-outline" (click)="closeDatePicker()">Cancel</button>
+		</div>
+		<div class="col-6">
+			<button class="btn btn-primary" (click)="setDate()">Add</button>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="type == 3" class="datepick-wrap">
+	<div class="row">
+		<div class="col-4">
+			<span class="date-val-btn" (click)="selectDate()">
+				<span class="value">{{ date | date: 'EEE, dd LLL' }}</span>
+			</span>
+		</div>
+		<div class="col-4">
+			<span class="date-val-btn sm">
+				<span class="title">Start</span>
+				<span class="value">{{ this.valChange['hour1'] }}:{{ this.valChange['minute1'] }}:00</span>
+			</span>
+		</div>
+		<div class="col-4">
+			<span class="date-val-btn sm">
+				<span class="title">End</span>
+				<span class="value">{{ this.valChange['hour2'] }}:{{ this.valChange['minute2'] }}:00</span>
+			</span>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-4">
+			<div class="scroller-wrap">
+				<span class="scroller-list">
+					<span class="item" (click)="selectDate()">{{ date | date: 'EEE, dd LLL' }}</span>
+				</span>
+			</div>
+		</div>
+		<div class="col-4">
+			<div class="scroller-wrap">
+				<span class="scroller-list" (scroll)="scrollThis('hour1',$event)">
+					<span *ngFor="let hour of hours" class="item" [attr.data-selval]="hour">{{ hour }}</span>
+				</span>
+				<span class="scroller-list" (scroll)="scrollThis('minute1',$event)">
+					<span *ngFor="let minute of minutes" class="item" [attr.data-selval]="minute">{{ minute }}</span>
+				</span>
+				<!-- <span class="scroller-list" (scroll)="scrollThis('apm1', $event)">
+					<span class="item active">AM</span>
+					<span class="item">PM</span>
+					<span *ngFor="let ap of apm; let i = index" class="item" [attr.data-selval]="i">{{ ap }}</span>
+				</span> -->
+			</div>
+		</div>
+		<div class="col-4">
+			<div class="scroller-wrap">
+				<span class="scroller-list" (scroll)="scrollThis('hour2',$event)">
+					<span *ngFor="let hour of hours" class="item" [attr.data-selval]="hour">{{ hour }}</span>
+				</span>
+				<span class="scroller-list" (scroll)="scrollThis('minute2',$event)">
+					<span *ngFor="let minute of minutes" class="item" [attr.data-selval]="minute">{{ minute }}</span>
+				</span>
+				<!-- <span class="scroller-list" (scroll)="scrollThis('apm2', $event)">
+					<span class="item active">AM</span>
+					<span class="item">PM</span>
+					<span *ngFor="let ap of apm; let i = index" class="item" [attr.data-selval]="i">{{ ap }}</span>
+				</span> -->
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6">
+			<button class="btn btn-outline" (click)="closeDatePicker()">Cancel</button>
+		</div>
+		<div class="col-6">
+			<button class="btn btn-primary" (click)="setDate()">Add</button>
+		</div>
+	</div>
+</div>

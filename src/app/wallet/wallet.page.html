@@ -1,0 +1,257 @@
+<ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+	<div class="page-title">
+		<span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+	<span class="text">Wallet</span>
+	</div>
+	<div class="page-content with-header">
+		<div *ngIf="show == 0">
+			<!-- <div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div> -->
+			<div class="wallet gray-load">&nbsp;</div>
+			<button class="btn btn-primary gray-load">&nbsp;</button>
+			<div class="summary-wrap gray-load"></div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">Transaction history</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+					<div class="note-thumb gray-load">&nbsp;</div>
+				</div>
+			</div>
+		</div>
+		<div *ngIf="show == 1">
+			<div class="wallet">
+				<div class="row">
+					<div class="col-8">
+						<p *ngIf="!(userDets.user_type == 3)">Remaining balance</p>
+						<p *ngIf="(userDets.user_type == 3)">Your balance</p>
+					</div>
+					<div class="col-4 text-right">
+						<span class="amount">
+							<sup>&#8364;</sup>
+							<span>{{ userDets.credit_balance }}</span>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="showCardFields == 1 && !(userDets.user_type == 3)">
+				<div class="col-12">
+					<div class="form-row">
+						<label>Amount to add</label>
+						<input type="number" class="form-control" [(ngModel)]="amount" name="amount" value="" placeholder=" " />
+					</div>
+				</div>
+				<div class="col-12">
+					<div class="form-row">
+						<label>Card Number<span class="card-info-btn" ngxTippy data-tippy-content="Card number printed on your card." [tippyProps]="{ trigger:'click', arrow: true, placement: 'top' }"><i class="fas fa-info-circle"></i></span></label>
+						<input type="number" class="form-control" [(ngModel)]="cardModel.number" name="number" value="" placeholder=" " data-maxlength="16" oninput="this.value=this.value.slice(0,this.dataset.maxlength)" />
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="row">
+						<div class="col-6">
+							<div class="form-row mb-20">
+								<label>MM<span class="card-info-btn" ngxTippy data-tippy-content="Month printed on your card in MM format." [tippyProps]="{ trigger:'click', arrow: true, placement: 'top' }"><i class="fas fa-info-circle"></i></span></label>
+								<input type="number" class="form-control" [(ngModel)]="cardModel.expMonth" name="expMonth" value="" placeholder=" " data-maxlength="2" oninput="this.value=this.value.slice(0,this.dataset.maxlength)" />
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-row mb-20">
+								<label>YYYY<span class="card-info-btn" ngxTippy data-tippy-content="Year printed on your card in YYYY format." [tippyProps]="{ trigger:'click', arrow: true, placement: 'top' }"><i class="fas fa-info-circle"></i></span></label>
+								<input type="number" class="form-control" [(ngModel)]="cardModel.expYear" name="expYear" value="" placeholder=" " data-maxlength="4" oninput="this.value=this.value.slice(0,this.dataset.maxlength)" />
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="form-row mb-20">
+						<label>CVC/CVV<span class="card-info-btn" ngxTippy data-tippy-content="3 digit CVC/CVV number printed on the back of your card." [tippyProps]="{ trigger:'click', arrow: true, placement: 'top' }"><i class="fas fa-info-circle"></i></span></label>
+						<input type="number" class="form-control" [(ngModel)]="cardModel.cvc" name="cvc" value="" placeholder=" " data-maxlength="3" oninput="this.value=this.value.slice(0,this.dataset.maxlength)" />
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="showCardFields == 1 && (userDets.user_type == 3) && !(userDets.stripe_account == null)">
+				<div class="col-12">
+					<div class="form-row">
+						<label>Amount to Withdraw</label>
+						<input type="number" class="form-control" [(ngModel)]="cardModel.amount" name="amount" value="" placeholder=" " />
+					</div>
+				</div>
+				<!-- <div class="col-12">
+					<div class="form-row">
+						<label>Account holder name<span class="card-info-btn"><i class="fas fa-info-circle"></i></span></label>
+						<input type="text" autocomplete="false" class="form-control" [(ngModel)]="cardModel.name" name="name" value="" placeholder=" " />
+					</div>
+					<div class="form-row">
+						<label>IBAN<span class="card-info-btn"><i class="fas fa-info-circle"></i></span></label>
+						<input type="text" autocomplete="false" class="form-control" [(ngModel)]="cardModel.iban" name="iban" value="" placeholder=" " />
+					</div>
+					<div class="form-row">
+						<label>Routing number<span class="card-info-btn"><i class="fas fa-info-circle"></i></span></label>
+						<input type="text" autocomplete="false" class="form-control" [(ngModel)]="cardModel.routing_number" name="routing_number" value="" placeholder=" " />
+					</div>
+				</div> -->
+			</div>
+			<div class="row" *ngIf="showCardFields == 1 && !(userDets.user_type == 3)">
+				<div class="col-6">
+					<button (click)="initPayment()" class="btn btn-primary btn-full">Add Balance</button>
+				</div>
+				<div class="col-6">
+					<button class="btn btn-outline" (click)="showCardFields = 0">Cancel</button>
+				</div>
+			</div>
+
+			<div class="row" *ngIf="showCardFields == 2">
+				<div class="col-12">
+					<div class="form-row">
+						<label>Amount to Request</label>
+						<input type="number" class="form-control" [(ngModel)]="reqModel.amount" name="amount" value="" placeholder=" " />
+					</div>
+				</div>
+				<div class="col-6">
+					<button (click)="requestBalance()" class="btn btn-primary btn-full">Request Balance</button>
+				</div>
+				<div class="col-6">
+					<button class="btn btn-outline" (click)="showCardFields = 0">Cancel</button>
+				</div>
+			</div>
+
+			<div class="row" *ngIf="showCardFields == 1 && (userDets.user_type == 3)">
+				<div class="col-6 m20">
+					<button (click)="withdrawPayment()" class="btn btn-primary btn-full">Withdraw</button>
+				</div>
+				<div class="col-6 m20">
+					<button class="btn btn-outline" (click)="showCardFields = 0">Cancel</button>
+				</div>
+				<div class="col-12">
+					<a class="btn btn-primary" (click)="openStripeDash()">View Payout details.</a>
+				</div>
+			</div>
+			<div class="row" *ngIf="showCardFields == 0">
+				<div class="col-12">
+					<button *ngIf="userDets.user_type == 2 || userDets.user_type == 4" class="btn btn-primary" (click)="showCardFields = 1">Add Balance</button>
+					<button *ngIf="userDets.user_type == 3 && !(userDets.stripe_account == null) && account.payouts_enabled == true" class="btn btn-primary" (click)="showCardFields = 1">Withdraw money</button>
+
+					<div class="row" *ngIf="userDets.user_type == 3 && !(userDets.stripe_account == null) && account.payouts_enabled == false && account.details_submitted == true">
+						<div class="col-md-12">
+							<p>Payouts for your accounts have been disabled by stripe. Fo more details, click on the button below.</p> 
+							<a class="btn btn-primary" (click)="openStripeDash()">View Details.</a>
+						</div>
+					</div>
+
+					<button *ngIf="userDets.user_type == 5" class="btn btn-primary" (click)="showCardFields = 2">Request Balance</button>
+
+					<div class="row" *ngIf="((userDets.user_type == 3) && (userDets.stripe_account == null)) || (!(account.details_submitted == true) && userDets.user_type == 3)">
+						<div class="col-12">
+							<p class="text-center">To withdraw your earnings,
+								<span class="card-info-btn" ngxTippy data-tippy-content="<div>1. Create a stripe account on behalf of Samanta.</div><br><div>2. Add KYC to the account for enabling withdrawals.</div><br><div>3. Create transfer Request.</div><br><div>4. Get money credited to your account within 21 days.</div><br>" [tippyProps]="{ trigger:'click', arrow: true, placement: 'bottom', allowHTML: true }">
+									<i class="fas fa-info-circle"></i>
+								</span>
+							</p>
+							<button (click)="connectWithStripe()" class="btn btn-primary stripe-btn"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div *ngIf="!(userDets.user_type == 3)" class="summary-wrap">
+						<div class="summary-item">
+							<div class="title">Total Added</div>
+							<div class="value">&#8364; {{ walletData.total_added }}</div>
+						</div>
+						<div class="summary-item">
+							<div class="title">Total Spend</div>
+							<div class="value">&#8364; {{ walletData.total_spend }}</div>
+						</div>
+					</div>
+
+					<div *ngIf="userDets.user_type == 3" class="summary-wrap">
+						<div class="summary-item">
+							<div class="title">Total jobs</div>
+							<div class="value">{{ walletData.jobs }}</div>
+						</div>
+						<div class="summary-item">
+							<div class="title">Total earned</div>
+							<div class="value">&#8364; {{ walletData.total_earned }}</div>
+						</div>
+						<!-- <div class="summary-item">
+							<div class="title">Ready to withdraw</div>
+							<div class="value">&#8364; 1400</div>
+						</div> -->
+					</div>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">Transaction history</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="note-thumb" *ngFor="let trn of trans">
+						<span class="img">
+							<img *ngIf="trn.user_details == undefined || trn.user_details.image_url == null" src="assets/images/dp.png" />
+							<img *ngIf="!(trn.user_details == undefined || trn.user_details.image_url == null)" src="{{ trn.user_details.image_url }}" />
+						</span>
+						<p>{{ trn.text_to_show }}</p>
+						<div class="row" *ngIf="trn.type == 'other'">
+							<div class="col-6" *ngIf="!(trn.user_details == undefined) && userDets.user_type == 3"><span>User: {{ (!(trn.user_details == undefined))?trn.user_details.name:"Deleted user" }}</span></div>
+							<div class="col-6" *ngIf="!(trn.user_details == undefined) && !(userDets.user_type == 3 || userDets.user_type == 5)"><span>Interpreter: {{ (!(trn.user_details == undefined))?trn.user_details.name:"Deleted user" }}</span></div>
+							<div class="col-6" *ngIf="trn.user_details == undefined"><span>Deleted user</span></div>
+							<div class="col-6"><span>{{ trn.created_at | date:"medium" }}</span></div>
+						</div>
+						<div class="row" *ngIf="trn.type == 'me'">
+							<!-- <div class="col-6"><span class="text-right">Total spent: &#8364; 40</span></div> -->
+							<div class="col-6"><span>{{ trn.created_at | date:"medium" }}</span></div>
+						</div>
+					</div>
+					<div *ngIf="showLoadMore == 1 && showMoreLoad == 0">
+						<button class="btn btn-primary btn-load" (click)="loadMoreTransaction()">Load More Transactions</button>
+					</div>
+					<div *ngIf="showLoadMore == 1 && showMoreLoad == 1">
+						<!-- <span class="more-loader">
+							<img src="assets/images/cloader.gif" />
+						</span> -->
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+					</div>
+					<div *ngIf="showLoadMore == 0 && showMoreLoad == 0">
+						<div class="end-of-list-wrap">
+							<span>End of list</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<app-header></app-header>
+</ion-content>

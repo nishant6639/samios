@@ -1,0 +1,316 @@
+<div class="call-screen-wrap" id="callScreen" [class.shown]="callStage > 0" [class.in-call]="callStage == 3">
+	<!-- <div class="canc-btn-wrap" *ngIf="!(userDets == undefined) && !(userDets.user_type == 3) && showCancel == 1" id="callCancBtn">
+		<button class="canc-btn" (click)="cancelOrder(orderId)">Cancel</button>
+	</div> -->
+	<div class="rem-time" id="remTimeWrap" [class.active]="callStage == 3">
+		<span id="remText">{{ rem_text }}</span>&nbsp;
+		<span id="remMin" class="big"></span>
+		<span class="big">:</span>
+		<span id="remSec" class="big">{{ seconds }}</span>
+	</div>
+	<div class="extend-call-popup text-center" id="extendPop" [class.display]="callExtendRequest == 1 && callStage == 3">
+		<p id="remText1"></p>
+		<div class="ext-rem-time">
+			<span id="remMin1"></span>
+			<span>:</span>
+			<span id="remSec1"></span>
+		</div>
+		<p>Do you want to extend the call?</p>
+		<div class="extend-btns">
+			<span>
+				<button class="yes" (click)="extend(1)">
+					<!-- <i class="fas fa-check"></i> -->
+					Yes
+				</button>
+			</span>
+			<span>
+				<button class="no" (click)="extend(0)">
+					<!-- <i class="fas fa-times"></i> -->
+					No
+				</button>
+			</span>
+		</div>
+	</div>
+
+	<div class="extend-call-popup text-center" [class.display]="callExtendRequested == 1 && callStage == 3">
+		<p id="remText2"></p>
+		<div class="ext-rem-time">
+			<span id="remMin2"></span>
+			<span>:</span>
+			<span id="remSec2">{{ seconds }}</span>
+		</div>
+		<p>User requested to extend the call. Allow?</p>
+		<div class="extend-btns">
+			<span>
+				<button class="yes" (click)="extendAllow(1)">
+					<!-- <i class="fas fa-check"></i> -->
+					Yes
+				</button>
+			</span>
+			<span>
+				<button class="no" (click)="extendAllow(0)">
+					<!-- <i class="fas fa-times"></i> -->
+					No
+				</button>
+			</span>
+		</div>
+	</div>
+
+	<div class="call-status" *ngIf="!(callStage == 3)">
+		<span *ngIf="callStage == 1">Connecting</span>
+		<span *ngIf="callStage == 2">Incoming Call</span>
+		<span *ngIf="callStage == 4">Ringing</span>
+	</div>
+
+	<!-- <div class="ring-anim" *ngIf="!(callStage == 3)">
+		<img src="assets/images/ring.gif" />
+	</div> -->
+
+	<div class="call-screen" [class.active]="activeScreen == 1" [class.shown]="callStage == 3" (click)="setActiveScreen(1)">
+		<div class="no-video-poster" *ngIf="remote_video_muted == 1">
+			<span class="no-video-poster-wave" *ngIf="remote_audio_muted == 0" [class.big]="activeScreen == 1"></span>
+			<span class="poster-img" *ngIf="!(other_user == undefined) && other_user.image_url == null" [class.big]="activeScreen == 1" style="background-image: url(assets/images/dp1.png);"></span>
+			<span class="poster-img" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" [class.big]="activeScreen == 1" style="background-image: url({{ other_user.image_url  }});"></span>
+		</div>
+		<div class="mute-poster" *ngIf="remote_audio_muted == 1">
+			<i class="fas fa-microphone-slash" [class.big]="activeScreen == 1"></i>
+		</div>
+		<video poster="noposter" id="callerVideo" #remoteStream autoplay playsinline [class.shown]="callStage == 3"></video>
+	</div>
+	<div class="call-screen shown" [class.active]="activeScreen == 2" (click)="setActiveScreen(2)">
+		<div class="no-video-poster" *ngIf="video_muted == 1">
+			<span class="no-video-poster-wave" *ngIf="audio_muted == 0" [class.big]="activeScreen == 2"></span>
+			<span class="poster-img" *ngIf="!(my_user == undefined) && my_user.image_url == null" [class.big]="activeScreen == 2" style="background-image: url(assets/images/dp1.png);"></span>
+			<span class="poster-img" *ngIf="!(my_user == undefined) && !(my_user.image_url == null)" [class.big]="activeScreen == 2" style="background-image: url({{ my_user.image_url  }});"></span>
+		</div>
+		<div class="mute-poster" *ngIf="audio_muted == 1">
+			<i class="fas fa-microphone-slash" [class.big]="activeScreen == 2"></i>
+		</div>
+		<video poster="noposter" id="myVideo" #localStream muted="true" autoplay playsinline [class.shown]="callStage == 1 || callStage == 2 || callStage == 3 || callStage == 4"></video>
+	</div>
+	<div class="call-screen-btn-wrap" *ngIf="callStage == 3">
+		
+	</div>
+
+	<div class="call-btns" *ngIf="callStage == 3">
+		<span class="call-btn" (click)="switchAudio()">
+			<i class="fas fa-volume-up" *ngIf="soundMode == 1"></i>
+			<!-- <i class="fa-thin fa-phone-volume"></i> -->
+			<i class="fas fa-phone-volume" *ngIf="soundMode == 0"></i>
+		</span>
+		<span class="call-btn" (click)="muteUnmuteAudio()">
+			<!-- <i class="fas fa-volume-up"></i> -->
+			<i class="fas fa-microphone" *ngIf="audio_muted == 0"></i>
+			<i class="fas fa-microphone-slash" *ngIf="audio_muted == 1"></i>
+			<!-- <i class="fas fa-volume-mute"></i> -->
+		</span>
+		<span class="call-btn" (click)="muteUnmuteVideo()">
+			<i class="fas fa-video" *ngIf="video_muted == 0"></i>
+			<i class="fas fa-video-slash" *ngIf="video_muted == 1"></i>
+		</span>
+		<span class="call-btn call disconnect" (click)="disconnectMyCall()">
+			<i class="fas fa-phone"></i>
+		</span>
+	</div>
+
+	<div class="call-btns" *ngIf="callStage == 2">
+		<span (click)="answerCall()" class="call-btn call">
+			<i class="fas fa-phone"></i>
+		</span>
+		<span (click)="disconnectMyCall()" class="call-btn call disconnect">
+			<i class="fas fa-phone"></i>
+		</span>
+	</div>
+
+
+	<div class="call-btns" *ngIf="callStage == 1 || callStage == 4">
+		<span (click)="disconnectMyCall()" class="call-btn call disconnect">
+			<i class="fas fa-phone"></i>
+		</span>
+	</div>
+
+	<div class="chat-msg-btn" *ngIf="callStage == 3" (click)="chatWin = 1; newChat = 0; resetVideo()">
+		<span class="icon">
+			<i class="fas fa-angle-up"></i>
+		</span>
+		<span class="text">Click to open message <span class="badge new-msg" *ngIf="newChat == 1">New</span></span>
+	</div>
+	<div class="chat-window" *ngIf="callStage == 3 && chatWin == 1">
+		<div class="return-wrap" (click)="chatWin = 0; resetVideo()">
+			<i class="fa fa-angle-left"></i>
+			Return to Call
+		</div>
+		<div class="msg-cont">
+			<div class="msg-wrap">
+				<div class="msgs" *ngFor="let msg of chatMsgs" [class.to_me]="!(msg.from == myUserId)" [class.from_me]="msg.from == myUserId">
+					<span class="bubble">{{ msg.message }}</span>
+				</div>
+			</div>
+		</div>
+		<form (submit)="sendMsg()">
+			<div class="msg-form">
+				<input type="text" autocomplete="false" name="message" [(ngModel)]="message" placeholder="Write" />
+				<button type="submit" class="msg-button">
+					<i class="far fa-paper-plane"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div class="overlay" [class.active]="(!(bookingRequest == '')) || (!(ongoingCall == ''))" (click)="bookingRequest = ''; ongoingCall = ''; "></div>
+<div *ngIf="!(bookingRequest == '')" class="popup request-popup" [class.active]="!(bookingRequest == '')">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Interpreting job Request</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row">
+			<div class="col-12">
+				<p><b>{{ bookingRequest.user_name }}</b></p>
+			</div>
+			<!-- <div class="col-4">
+				<p>
+					<span>Duration: </span>
+					<span *ngIf="bookingRequest.plan_id==1">15</span>
+					<span *ngIf="bookingRequest.plan_id==2">30</span>
+					<span *ngIf="bookingRequest.plan_id==3">45</span>
+					<span *ngIf="bookingRequest.plan_id==4">60</span>
+					<span *ngIf="bookingRequest.plan_id==5">2</span>
+					<span></span>
+				</p>
+			</div> -->
+			<div class="col-12">
+				<div class="ord-lang text-center">
+					<div class="lang-select-list">
+			  			<div class="lang-set-title">
+				  			<span class="sm-btn">{{ bookingRequest.language_from_obj.language_name }}</span>
+				  			<span class="icon bg"></span>
+				  			<span class="sm-btn">{{ bookingRequest.language_to_obj.language_name }}</span>
+			  			</div>
+			  		</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<p>
+					<!-- <span>Requested Slot: </span> -->
+					<!-- <span> </span> -->
+					<span>{{ bookingRequest.date | date: 'LLL' }} {{ bookingRequest.date | date: 'dd' }}, {{ bookingRequest.date | date: 'shortTime' }} for {{ bookingRequest.plan.time_to }} mins.</span>
+					<!-- <span> mins</span> -->
+				</p>
+			</div>
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<button (click)="acceptOrder(bookingRequest.id, 1)" class="btn btn-primary">Accept</button>
+					</div>
+					<div class="col-12" style="margin-top: 20px;">
+						<button (click)="acceptOrder(bookingRequest.id, -1)" class="btn btn-outline">Decline</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="!(ongoingCall == '')" class="popup request-popup" [class.active]="!(ongoingCall == '')">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Ongoing Call</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row">
+			<div class="col-12">
+				<p><b>{{ ongoingCall.user_name }}</b></p>
+			</div>
+			<div class="col-12">
+				<div class="ord-dets-wrap" style="padding: 0;background: transparent;">
+					<div class="ord-people">
+						<div class="ord-person text-right">
+							<div class="ord-person-in">
+								<span class="img-wrap">
+									<img *ngIf="ongoingCall.user.image_url == null" src="assets/images/dp1.png" />
+									<img *ngIf="!(ongoingCall.user.image_url == null)" [src]="ongoingCall.user.image_url" />
+								</span>
+								<span class="name" *ngIf="!(userDets.id == ongoingCall.user.id)">{{ ongoingCall.user.name }}</span>
+								<span class="name" *ngIf="(userDets.id == ongoingCall.user.id)">You</span>
+								<span class="type">Hirer</span>
+							</div>
+						</div>
+						<div class="ord-person text-left">
+							<div class="ord-person-in">
+								<span class="img-wrap">
+									<img *ngIf="ongoingCall.interpreter.image_url == null" src="assets/images/dp1.png" />
+									<img *ngIf="!(ongoingCall.interpreter.image_url == null)" [src]="ongoingCall.interpreter.image_url" />
+								</span>
+								<span class="name" *ngIf="!(userDets.id == ongoingCall.interpreter.id)">{{ ongoingCall.interpreter.name }}</span>
+								<span class="name" *ngIf="(userDets.id == ongoingCall.interpreter.id)">You</span>
+								<span class="type">Interpreter</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="col-4">
+				<p>
+					<span>Duration: </span>
+					<span *ngIf="ongoingCall.plan_id==1">15</span>
+					<span *ngIf="ongoingCall.plan_id==2">30</span>
+					<span *ngIf="ongoingCall.plan_id==3">45</span>
+					<span *ngIf="ongoingCall.plan_id==4">60</span>
+					<span *ngIf="ongoingCall.plan_id==5">2</span>
+					<span></span>
+				</p>
+			</div> -->
+			<div class="col-12">
+				<div class="ord-lang text-center">
+					<div class="lang-select-list">
+			  			<div class="lang-set-title">
+				  			<span class="sm-btn">{{ ongoingCall.language_from_obj.language_name }}</span>
+				  			<span class="icon bg"></span>
+				  			<span class="sm-btn">{{ ongoingCall.language_to_obj.language_name }}</span>
+			  			</div>
+			  		</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<p>
+					<!-- <span>Requested Slot: </span> -->
+					<!-- <span> </span> -->
+					<span>{{ ongoingCall.date | date: 'LLL' }} {{ ongoingCall.date | date: 'dd' }}, {{ ongoingCall.date | date: 'shortTime' }} for {{ ongoingCall.plan.time_to }} mins.</span>
+					<!-- <span> mins</span> -->
+				</p>
+			</div>
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12" style="z-index: 2;" *ngIf="!(userDets.user_type == 3)">
+						<span (click)="callUser(ongoingCall.service_provider_id, ongoingCall.id)" class="hire-call-btn" style="margin: 0px auto;">
+							<img src="assets/images/call.gif" />
+							<!-- <i class="fas fa-phone"></i> -->
+						</span>
+						<!-- <p class="text-center"><b>Call Again</b></p> -->
+					</div>
+					<div class="col-12" style="z-index: 2;" *ngIf="(userDets.user_type == 3)">
+						<span (click)="callUser(ongoingCall.user_id, ongoingCall.id)" class="hire-call-btn" style="margin: 0px auto;">
+							<img src="assets/images/call.gif" />
+							<!-- <i class="fas fa-phone"></i> -->
+						</span>
+						<!-- <p class="text-center"><b>Call Again</b></p> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="new-admin-msg" [class.active]="adminNewMsg == 1">
+	<span class="close-notif" (click)="adminNewMsg = 0"><i class="fas fa-times"></i></span>
+	<a routerLink="/help/1" (click)="adminNewMsg = 0" class="new-admin-msg-in">
+		<span class="icon"><i class="far fa-envelope"></i></span>
+		<span class="text">You have a new message from admin.</span>
+	</a>
+</div>

@@ -1,0 +1,110 @@
+<ion-content>
+	<div class="page-title norm-pad">
+		<!-- <span routerLink="/signup" class="back"><i class="fas fa-angle-left"></i></span> -->
+		<span class="text">Select Languages</span>
+	</div>
+	<div class="page-content">
+		
+  		<div class="lang-select-list">
+  			<div *ngFor="let set of langSets" class="lang-set-title">
+	  			<span class="sm-btn">{{ set.translate_from_text }}</span>
+	  			<span class="icon"><i class="fas fa-exchange-alt"></i></span>
+	  			<span class="sm-btn">{{ set.translate_to_text }}</span>
+  			</div>
+  		</div>
+
+  		<hr>
+  		<form *ngIf="langSets.length" (submit)="addLangDets()">
+	  		<div *ngFor="let set of langSets; let i = index">
+		  		<div class="row align-mid form-title-wrap">
+					<div class="col-12">
+						<div class="form-title">Experience Level</div>
+					</div>
+				</div>
+
+		  		<div class="exp-select-card">
+		  			<span class="del-btn" (click)="delSet(i)">&times;</span>
+		  			<div class="lang-set-title">
+			  			<span class="sm-btn">{{ set.translate_from_text }}</span>
+			  			<span class="icon"><i class="fas fa-exchange-alt"></i></span>
+			  			<span class="sm-btn">{{ set.translate_to_text }}</span>
+		  			</div>
+		  			<hr>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="checkbox" id="filter{{ i }}1" name="exp_level{{ i }}" (change)="setLangSetExp(i, 1)" [value]="1" [checked]="((langSets[i].exp_level)).indexOf('1') > -1" />
+							<label for="filter{{ i }}1">Higher level written and spoken</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="checkbox" id="filter{{ i }}2" name="exp_level{{ i }}" (change)="setLangSetExp(i, 2)" [value]="2" [checked]="((langSets[i].exp_level)).indexOf('2') > -1" />
+							<label for="filter{{ i }}2">Legal Experience</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="checkbox" id="filter{{ i }}3" name="exp_level{{ i }}" (change)="setLangSetExp(i, 3)" [value]="3" [checked]="((langSets[i].exp_level)).indexOf('3') > -1" />
+							<label for="filter{{ i }}3">Business Experience</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="checkbox" id="filter{{ i }}4" name="exp_level{{ i }}" (change)="setLangSetExp(i, 4)" [value]="4" [checked]="((langSets[i].exp_level)).indexOf('4') > -1" />
+							<label for="filter{{ i }}4">Medical Experience</label>
+						</span>
+					</div>
+		  			<div class="form-row">
+			  			<span class="checkbox-wrap">
+							<input type="checkbox" id="filter{{ i }}0" name="exp_level{{ i }}" (change)="setLangSetExp(i, 0)" [value]="0" [checked]="((langSets[i].exp_level)).indexOf('0') > -1" />
+							<label for="filter{{ i }}0">No Experience</label>
+						</span>
+					</div>
+		  		</div>
+	  		</div>
+
+	  		<div *ngIf="langSets.length" class="form-row">
+	  			<button class="btn btn-primary">Start</button>
+	  		</div>
+  		</form>
+		<div class="row align-mid form-title-wrap">
+			<div class="col-7">
+				<div class="form-title">Choose your languages</div>
+			</div>
+			<div class="col-5 text-right">
+				<!-- <span class="sm-btn">Add</span> -->
+			</div>
+		</div>
+		<div class="lang-select-wrap">
+  			<div class="lang-select-box">
+  				<div class="form-row">
+  					<span class="down">
+  						<app-icon name="seldown"></app-icon>
+  					</span>
+	  				<select class="form-control" name="translate_from" [(ngModel)]="translate_from">
+	  					<option *ngFor="let language of languages" [value]="language.id+'*'+language.language_name">{{ language.language_name }}</option>
+	  				</select>
+  				</div>
+  			</div>
+  			<span class="icon">
+  				<i class="fas fa-exchange-alt"></i>
+  			</span>
+  			<div class="lang-select-box">
+  				<div class="form-row">
+  					<span class="down">
+  						<app-icon name="seldown"></app-icon>
+  					</span>
+	  				<select class="form-control" name="translate_to" [(ngModel)]="translate_to">
+	  					<option *ngFor="let language of languages" [value]="language.id+'*'+language.language_name">{{ language.language_name }}</option>
+	  				</select>
+  				</div>
+  			</div>
+  		</div>
+  		<div class="row">
+  			<div class="col-md-12">
+  				<button type="button" class="btn btn-primary" (click)="selectLangSet()">Add</button>
+  			</div>
+  		</div>
+
+	</div>
+</ion-content>

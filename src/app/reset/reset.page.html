@@ -1,0 +1,66 @@
+<ion-content>
+	<div class="page-title">
+		<span routerLink="/login" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Reset Password</span>
+	</div>
+	<div class="page-content align-mid">
+		<div class="page-center-wrap">
+			<div class="page-center-cont">
+				<form (submit)="resetPw()" *ngIf="otpSent == 0">
+					<p class="text-center m20">Enter Registered Email ID</p>
+					<div class="form-row">
+						<input type="text" autocomplete="false" name="email" [(ngModel)]="formModel.email" class="form-control" placeholder="Enter Registered Email Id" />
+					</div>
+					<!-- <p class="text-center m20"><b>Expires in</b> 05:00</p> -->
+					<div class="row">
+						<div class="col-12">
+							<div class="form-row">
+								<button type="submit" class="btn btn-outline">Request Verification</button>
+							</div>
+						</div>
+						<!-- <div class="col-6">
+							<div class="form-row">
+								<button type="submit" class="btn btn-primary">Verify</button>
+							</div>
+						</div> -->
+					</div>
+				</form>
+
+				<form (submit)="resetPw()" *ngIf="otpSent == 1">
+					<p class="text-center m20">Enter Verification code received to verify your Email Id.</p>
+					<div class="form-row">
+						<input type="text" autocomplete="false" name="otp" [(ngModel)]="formModel.otp" class="form-control" placeholder="Insert code" />
+					</div>
+					<!-- <p class="text-center m20"><b>Expires in</b> 05:00</p> -->
+					<hr>
+					<div class="form-row">
+						<label class="form-row-label">Password <sup>*</sup></label>
+						<input type="password" autocomplete="false" name="password" [(ngModel)]="formModel.password" (input)="passwordCheck()" class="form-control" placeholder="Password" />
+						<span class="password-meter">
+							<span class="meter-in" style="width: {{ pass_meter_width }}%"></span>
+						</span>
+					</div>
+					<div class="form-row">
+						<label class="form-row-label">Re-type Password <sup>*</sup></label>
+						<div class="form-with-icon append">
+							<input type="password" autocomplete="false" name="conf_password" (input)="passwordCheck()" [(ngModel)]="formModel.conf_password" class="form-control" placeholder="Re-type Password" />
+							<span class="icon right success" *ngIf="pass_flag == 1"><i class="far fa-check-circle"></i></span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-6">
+							<div class="form-row">
+								<button type="button" class="btn btn-outline">Resend</button>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="form-row">
+								<button type="submit" class="btn btn-primary">Verify</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</ion-content>

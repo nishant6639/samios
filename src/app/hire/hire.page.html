@@ -1,0 +1,267 @@
+<ion-content>
+	<div class="page-title">
+		<span routerLink="/providerdets/{{ provider_id }}" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Select time slot</span>
+	</div>
+	<div class="page-content">
+		<div *ngIf="show == 0">
+			<div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div>
+		</div>
+		<div *ngIf="show == 1">
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">Select Language</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6" *ngFor="let language of provider.languages">
+					<div class="form-row">
+						<span class="checkbox-wrap">
+							<input type="radio" id="langSelect22{{language.id}}" name="ordLangSet{{language.id}}" [(ngModel)]="ordLangSet" [value]="language.translate_from+','+language.translate_to" (change)="setLangNameFun(language.language_from_name, language.language_to_name)" />
+							<label for="langSelect22{{language.id}}">
+								<div class="lang-set-title with-exp full" [class.active]="exp_lang == language.id">
+						  			<span class="sm-btn">{{ language.language_from_name }}</span>
+						  			<span class="icon">
+						  				<!-- <i class="fas fa-exchange-alt"></i> -->
+										<app-icon name="repeat"></app-icon>
+						  			</span>
+						  			<span class="sm-btn">{{ language.language_to_name }}</span>
+						  			<div class="lang-exp-list" [class.active]="exp_lang == language.id">
+						  				<div class="lang-exp-list-in" [class.active]="exp_lang == language.id">
+						  					<ul>
+						  						<li *ngIf="(language.exps).includes('1')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Higher level written and spoken
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('2')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Legal Experience
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('3')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Business Experience
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('4')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							Medical Experience
+						  						</li>
+						  						<li *ngIf="(language.exps).includes('0')">
+						  							<span class="icon">
+						  								<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#play"/>
+														</svg>
+						  							</span>
+						  							No Experience
+						  						</li>
+						  					</ul>
+						  				</div>
+							  			<span class="open-exp-icon" *ngIf="!(exp_lang == language.id)" (click)="exp_lang = language.id">
+							  				<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#chevron-down"/>
+											</svg>
+							  			</span>
+							  			<span class="open-exp-icon" *ngIf="(exp_lang == language.id)" (click)="exp_lang = 0">
+							  				<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#chevron-up"/>
+											</svg>
+							  			</span>
+						  			</div>
+					  			</div>
+								<!-- <div class="lang-set-title">
+						  			<span class="sm-btn">{{ language.language_from_name }}</span>
+						  			<span class="icon"><i class="fas fa-exchange-alt"></i></span>
+						  			<span class="sm-btn">{{ language.language_to_name }}</span>
+					  			</div> -->
+							</label>
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title" on-drag-up="onDragUp()">Suggested time slots</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-6" *ngFor="let plan of plans">
+					<div class="summary-wrap" (click)="planId=plan.id" [class.active]="planId == plan.id">
+						<div class="summary-item">
+							<div class="title">{{ plan.time_from }} - {{ plan.time_to }} min</div>
+							<div class="value">&#8364; {{ plan.price }}</div>
+						</div>
+					</div>
+				</div>
+				<!-- <div class="col-6">
+					<div class="summary-wrap" (click)="planId=2" [class.active]="planId == 2">
+						<div class="summary-item">
+							<div class="title">15 - 30min</div>
+							<div class="value">&#8364; 30</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="summary-wrap" (click)="planId=3" [class.active]="planId == 3">
+						<div class="summary-item">
+							<div class="title">30 - 45min</div>
+							<div class="value">&#8364; 45</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-6">
+					<div class="summary-wrap" (click)="planId=4" [class.active]="planId == 4">
+						<div class="summary-item">
+							<div class="title">45 - 60min</div>
+							<div class="value">&#8364; 60</div>
+						</div>
+					</div>
+				</div> -->
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="form-row">
+						<button (click)="hireNow()" class="btn btn-primary">Request Call</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="wait-screen" *ngIf="showWait == 1">
+		<div class="ord-dets-wrap">
+			<div class="ord-people">
+				<div class="ord-person">
+					<span class="img-wrap">
+						<img *ngIf="userDets.image_url == null" src="assets/images/dp1.png" />
+						<img *ngIf="!(userDets.image_url == null)" [src]="userDets.image_url" />
+					</span>
+					<span class="name">{{ userDets.name }}</span>
+					<span class="type">You</span>
+				</div>
+				<div class="ord-person">
+					<span class="img-wrap">
+						<img *ngIf="provider.user.image_url == null" src="assets/images/dp1.png" />
+						<img *ngIf="!(provider.user.image_url == null)" [src]="provider.user.image_url" />
+					</span>
+					<span class="name">{{ provider.user.name }}</span>
+					<span class="type">Interpreter</span>
+				</div>
+			</div>
+			<div class="ord-lang text-center">
+				<div class="lang-select-list">
+		  			<div class="lang-set-title">
+			  			<span class="sm-btn">{{ lang_from }}</span>
+			  			<span class="icon bg"></span>
+			  			<span class="sm-btn">{{ lang_to }}</span>
+		  			</div>
+		  		</div>
+			</div>
+			<p class="date text-center">{{ ordSelDate | date:"mediumDate" }} {{ ordSelDate | date:"shortTime" }} - for 
+				<span *ngFor="let plan of plans">
+					<span *ngIf="ordSelPlan == plan.id">{{ plan.time_to }} min</span>
+				</span>
+			</p>
+			<div class="text-center summary-call-msg">
+				<div class="call-msg">
+					<span class="icon yellow">
+						<svg class="feather">
+						  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+						</svg>
+					</span>
+					<span class="text">Requested</span>
+				</div>
+			</div>
+		</div>
+		<div>
+			<div>
+				<div class="row" *ngIf="bookAccepted == ''">
+					<div class="col-6 offset-3 text-center">
+						<!-- <div class="dot-loader">
+						  	<div class='dot'></div>
+						  	<div class='dot'></div>
+						  	<div class='dot'></div>
+						  	<div class='dot'></div>
+						</div> -->
+						<div class="wait-countdown">
+							<circle-progress [showSubtitle]="false" [titleFontSize]="'0'" [unitsFontSize]="'0'" [unitsFontWeight]="'bold'" [titleFontWeight]="'bold'" [percent]="(((cnt.left)/120000)*100)?(((cnt.left)/120000)*100):100" [outerStrokeWidth]="15" [space]="-15" [innerStrokeWidth]="15" [outerStrokeColor]="'#ffa8b2'" [responsive]="true" [innerStrokeColor]="'#EEE'" [backgroundStroke]="'#EEE'" [animation]="false" [animationDuration]="00"></circle-progress>
+							<h3><b>
+								<countdown #cnt (action)="takeAction($event)" [config]="{leftTime: 120, format: 'mm:ss'}" (event)="countEvent($event)"></countdown>
+							</b></h3>
+						</div>
+					</div>
+					<div class="col-12 text-center">
+						<!-- {{ timeLeft }} -->
+						<!-- <p class="m20"></p> -->
+						<p class="text-center m20 msg-box" style="color: #FD1231; font-style: italic;">Waiting for the service provider to accept the call</p>
+						<button routerLink="/home" class="btn btn-primary">Return to home</button>
+					</div>
+				</div>
+				<div class="row" *ngIf="bookAccepted == 1">
+					<div class="col-12 text-center">
+						<div class="text-center m20">
+							<span (click)="callUser(bookData.service_provider_id, bookData.id)" class="hire-call-btn">
+								<img src="assets/images/call.gif" />
+								<!-- <i class="fas fa-phone"></i> -->
+							</span>
+						</div>
+						<p class="text-center m20 msg-box" style="color: #FD1231; font-style: italic;">Call Accepted by service provider. If you do not like the offerings provided by the service provider, Please hit the disconnect button within first 60 sec of the call and raise dispute.</p>
+						<button routerLink="/home" class="btn btn-primary">Return to home</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div #popupTemp *ngIf="show == 1" style="display: none;">
+		<div class="ord-dets-wrap">
+			<div class="ord-people">
+				<div class="ord-person">
+					<span class="img-wrap">
+						<img *ngIf="userDets.image_url == null" src="assets/images/dp1.png" />
+						<img *ngIf="!(userDets.image_url == null)" [src]="userDets.image_url" />
+					</span>
+					<span class="name">{{ userDets.name }}</span>
+					<span class="type">You</span>
+				</div>
+				<div class="ord-person">
+					<span class="img-wrap">
+						<img *ngIf="provider.user.image_url == null" src="assets/images/dp1.png" />
+						<img *ngIf="!(provider.user.image_url == null)" [src]="provider.user.image_url" />
+					</span>
+					<span class="name">{{ provider.user.name }}</span>
+					<span class="type">Interpreter</span>
+				</div>
+			</div>
+			<div class="ord-lang text-center">
+				<div class="lang-select-list">
+		  			<div class="lang-set-title">
+			  			<span class="sm-btn">{{ lang_from }}</span>
+			  			<span class="icon bg"></span>
+			  			<span class="sm-btn">{{ lang_to }}</span>
+		  			</div>
+		  		</div>
+			</div>
+			<p class="date text-center">{{ ordSelDate | date:"mediumDate" }} {{ ordSelDate | date:"shortTime" }} - for 
+				<span *ngFor="let plan of plans">
+					<span *ngIf="ordSelPlan == plan.id">{{ plan.time_to }} min</span>
+				</span>
+			</p>
+			<p class="text-center m20 msg-box" style="color: #FD1231; font-style: italic;">If the interpreter does not accept the request before the call start time, the money will be automatically reverted within 5 minutes.</p>
+		</div>
+	</div>
+</ion-content>

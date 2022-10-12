@@ -1,0 +1,49 @@
+<ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+	<div class="page-title left-pad">
+  		<span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+		  <span class="text">Members list</span>
+      <span class="btn-sm" *ngIf="sel_for_del.length" (click)="deleteUsers()">Delete</span>
+  	</div>
+  	<div class="page-content with-header">
+  		<div *ngIf="show == 0">
+				<div class="circle-loader">
+					<img src="assets/images/cloader.gif" />
+				</div>
+			</div>
+			<div *ngIf="show == 1">
+	  		<div class="row align-mid form-title-wrap">
+					<div class="col-12">
+						<div class="form-title">All members</div>
+					</div>
+				</div>
+  			<div class="row">
+  			<div class="col-12">
+  				<div ion-long-press [interval]="1000" (longPressed)="(sel_for_del.length == 0)?selectUserForDelete(member.id):''" class="note-thumb with-go" (click)="(sel_for_del.length > 0)?selectUserForDelete(member.id):''" *ngFor="let member of members">
+  					<i class="fas fa-angle-right go-btn" routerLink="/memberdets/{{ member.id }}"></i>
+  					<span class="img">
+              <span class="for-del" *ngIf="member.toDel == 1">
+                <i class="fas fa-check"></i>
+              </span>
+              <img *ngIf="member.image_url == null" src="assets/images/dp.png" />
+              <img *ngIf="!(member.image_url == null)" [src]="member.image_url" />
+  					</span>
+  					<p>{{ member.name }}</p>
+  					<div class="row">
+  						<div class="col-6"><span>Total hiring: {{ member.total_hiring }}</span></div>
+  						<div class="col-6 text-right"><span>Total spend: {{ member.total_spend }} euro</span></div>
+  						<!-- <div class="col-6"><span>Total spent: &#8364; 40</span></div> -->
+  					</div>
+  				</div>
+  			</div>
+  			</div>
+			</div>
+  	</div>
+</ion-content>

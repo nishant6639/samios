@@ -1,0 +1,32 @@
+<ion-content>
+	<div class="page-title">
+		<span routerLink="/signup" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Verify Phone number</span>
+	</div>
+	<div class="page-content align-mid">
+		<div class="page-center-wrap">
+			<div class="page-center-cont">
+				<form (submit)="verifyOtp()">
+					<p class="text-center m20">Enter Verification Code received to verify your phone number.</p>
+					<div class="form-row" *ngIf="showCodeField == 1">
+						<input type="text" autocomplete="false" name="otp" [(ngModel)]="formModel.otp" class="form-control" placeholder="Insert code" />
+					</div>
+					<p class="text-center m20" *ngIf="showCodeField == 1"><b>Expires in </b> <countdown (event)="takeAction($event)" [config]="{leftTime: 30, format: 'mm:ss'}"></countdown></p>
+					<p class="text-center m20" *ngIf="showCodeField == 0"><b>Code Expired</b></p>
+					<div class="row">
+						<div [class.col-6]="showCodeField == 1" [class.col-12]="showCodeField == 0">
+							<div class="form-row">
+								<button type="button" (click)="sendOtp()" class="btn btn-outline">Resend</button>
+							</div>
+						</div>
+						<div class="col-6" *ngIf="showCodeField == 1">
+							<div class="form-row">
+								<button type="submit" class="btn btn-primary">Verify</button>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</ion-content>

@@ -1,0 +1,55 @@
+.header{
+	display: flex;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 2;
+	height: 60px;
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+	// box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	.header-item{
+		flex: 1;
+		padding: 5px 0px;
+		color: #777;
+		.icon{
+			display: block;
+		    margin: 0px auto;
+		    height: 32px;
+		    width: 22px;
+		    font-size: 28px;
+		    line-height: 32px;
+		    text-align: center;
+		}
+		.text{
+			display: block;
+			text-align: center;
+			font-size: 12px;
+			line-height: 18px;
+		}
+
+		&.active{
+			.icon{
+				height: 50px;
+			    width: 50px;
+			    margin-top: -28px;
+    			margin-bottom: 10px;
+			    line-height: 50px;
+			    background: linear-gradient(180deg, #DCCCFF 0%, #91A9FF 46.62%, #DCCCFF 100%);
+			    border-radius: 60px;
+			    color: #FFF;
+			}
+			.text{
+				font-weight: 600;
+			}
+		}
+	}
+}
+
+.header{
+	height: 70px;
+	padding-bottom: 10px;
+}
+

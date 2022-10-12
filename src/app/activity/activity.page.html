@@ -1,0 +1,150 @@
+<ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+  	<div class="page-title">
+  		<span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Activity History</span>
+  	</div>
+  	<div class="page-content">
+		<div *ngIf="show == 0">
+			<!-- <div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div> -->
+			<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">Summary</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="summary-wrap gray-load"></div>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-6">
+					<div class="form-title gray-load">All Activities</div>
+				</div>
+			</div>
+			<div class="row">
+	  			<div class="col-12">
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  				<div class="note-thumb gray-load"></div>
+	  			</div>
+	  		</div>
+		</div>
+  		<div *ngIf="show == 1">
+	  		<div class="row align-mid form-title-wrap">
+				<div class="col-12">
+					<div class="form-title">Summary</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="summary-wrap">
+						<div class="summary-item">
+							<div class="title" *ngIf="userDets.user_type == 3">Total Job done</div>
+							<div class="title" *ngIf="!(userDets.user_type == 3)">Total hiring</div>
+							<div class="value">{{ jobs }}</div>
+						</div>
+						<div class="summary-item">
+							<div class="title" *ngIf="userDets.user_type == 3">Total Earning</div>
+							<div class="title" *ngIf="!(userDets.user_type == 3)">Total Spend</div>
+							<div class="value">&#8364; {{ total_amount }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" *ngIf="(allactivities!=undefined) && allactivities.length == 0">
+				<div class="col-md-12">
+					<div class="no-data-thumb">
+						<span class="icon">
+							<i class="fas fa-clock"></i>
+						</span>
+						<span class="text">
+							<span class="title">No activities.</span>
+							<span class="subtitle">Any activity you perform on the app will be displayed here.</span>
+						</span>
+						<button class="btn btn-primary" routerLink="/">Return to home.</button>
+					</div>
+				</div>
+			</div>
+	  		<div class="row align-mid form-title-wrap" *ngIf="(allactivities!=undefined) && allactivities.length > 0">
+				<div class="col-3">
+					<div class="form-title nowrap text-left" (click)="setActType('all')" [class.no-bold]="!(checkText == '')">All Activities</div>
+				</div>
+				<div class="col-3">
+					<div class="form-title nowrap text-center" (click)="setActType('added')" *ngIf="userDets.user_type == 4" [class.no-bold]="!(checkText == 'added')">Add</div>
+				</div>
+				<div class="col-3">
+					<div class="form-title nowrap text-right" (click)="setActType('removed')" *ngIf="userDets.user_type == 4" [class.no-bold]="!(checkText == 'removed')">Removed</div>
+				</div>
+				<div class="col-3">
+					<div class="form-title nowrap text-center" *ngIf="!(userDets.user_type == 3)" (click)="setActType('hired')" [class.no-bold]="!(checkText == 'hired')">Hire</div>
+				</div>
+			</div>
+	  		<div class="row" *ngIf="(allactivities!=undefined) && allactivities.length > 0">
+	  			<div class="col-12">
+	  				<div *ngFor="let activity of activities">
+		  				<div class="note-thumb">
+		  					<span class="img">
+		  						<!-- <img src="assets/images/dp.png" /> -->
+		  						<img *ngIf="activity.image_url == null" src="assets/images/dp.png" />
+								<img *ngIf="!(activity.image_url == null)" [src]="activity.image_url" />
+		  					</span>
+		  					<p>{{ activity.text }}</p>
+		  					<div class="row" *ngIf="activity.time_spent == null && activity.payout == null && activity.cost == null">
+		  						<div class="col-6"><span>{{ activity.created_at | date:'medium' }}</span></div>
+		  						<!-- <div class="col-6"><span>Total spent: &#8364; 40</span></div> -->
+		  					</div>
+		  					<div class="row" *ngIf="!(activity.time_spent == null && activity.payout == null && activity.cost == null)">
+		  						<div class="col-6"><span>Time spent: {{ activity.time_spent }} mins</span></div>
+		  						<div class="col-6">
+		  							<span *ngIf="userDets.user_type == 3">Total earned: &#8364; {{ activity.payout }}</span>
+		  							<span *ngIf="!(userDets.user_type == 3)">Total Spent: &#8364; {{ activity.cost }}</span>
+		  						</div>
+		  					</div>
+		  				</div>
+	  				</div>
+	  				<div *ngIf="showLoadMore == 1 && showMoreLoad == 0">
+						<button class="btn btn-primary btn-load" (click)="loadMoreActivities()">Load More Activities</button>
+					</div>
+					<div *ngIf="showLoadMore == 1 && showMoreLoad == 1">
+						<!-- <span class="more-loader">
+							<img src="assets/images/cloader.gif" />
+						</span> -->
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+						<div class="note-thumb gray-load">&nbsp;</div>
+					</div>
+					<div *ngIf="showLoadMore == 0 && showMoreLoad == 0">
+						<div class="end-of-list-wrap">
+							<span>End of list</span>
+						</div>
+					</div>
+	  			</div>
+	  		</div>
+  		</div>
+  	</div>
+    <!-- <app-header></app-header> -->
+</ion-content>

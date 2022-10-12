@@ -1,0 +1,52 @@
+<!-- <ion-header>
+  <ion-toolbar>
+    <ion-title>login</ion-title>
+  </ion-toolbar>
+</ion-header> -->
+<ion-content>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-12">
+				<div class="marg-neg home-top">
+					<img src="assets/images/loginbg2.png" class="img-fluid" />
+				</div>
+			</div>
+			<div class="col-12">
+				<div class="login-form-wrap">
+					<h3>Welcome to</h3>
+					<h2><b>Samanta</b></h2>
+					<h4 class="m20">Please login to continue</h4>
+					<form (submit)="loginUser()">
+						<div class="form-row">
+							<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" />
+						</div>
+						<div class="form-row">
+							<input type="password" autocomplete="false" name="password" [(ngModel)]="FormModel.password" class="form-control" placeholder="Password" />
+						</div>
+						<div class="row">
+							<!-- <div class="col-6">
+								<div class="form-row">
+									<span class="checkbox-wrap">
+										<input type="checkbox" id="check1" name="" />
+										<label for="check1">Remember me</label>
+									</span>
+								</div>
+							</div> -->
+							<div class="col-6">
+								<div class="form-row">
+									<a routerLink="/reset" class="forg-pw">Forgot password?</a>
+								</div>
+							</div>
+						</div>
+						<div class="form-row">
+							<button type="submit" class="btn btn-primary">Login</button>
+						</div>
+						<div class="form-row">
+							<button type="button" routerLink="/signup" class="btn btn-outline">Sign Up</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</ion-content>

@@ -1,0 +1,530 @@
+<ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+	<div class="page-title">
+		<div class="home-head">
+			<div class="row align-mid">
+				<div class="col-7">
+					<div class="welc-wrap" routerLink="/profile">
+						<span class="img">
+							<img *ngIf="userDets.image_url == null" src="assets/images/dp.png" />
+							<img *ngIf="!(userDets.image_url == null)" [src]="userDets.image_url" />
+						</span>
+						<span class="text">
+							Welcome, <b>{{ userDets.name }}</b>
+						</span>
+					</div>
+				</div>
+				<div class="col-5 text-right">
+					<span class="wallet-head-wrap" routerLink="/wallet">
+						<span class="title">Your balance</span>
+						<span class="value">&#8364; {{ userDets.credit_balance }} <i class="fas fa-wallet"></i></span>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="page-content both-rad with-header">
+		<div *ngIf="show == 0">
+			<div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div>
+		</div>
+		<div *ngIf="show == 1">
+			<div class="row align-mid form-title-wrap">
+				<div class="col-7">
+					<div class="form-title">Your details</div>
+				</div>
+			</div>
+			<div class="circle-wrap">
+				<div class="row text-center">
+					<div class="col-4">
+						<p>Acceptance</p>
+						<circle-progress [showSubtitle]="false" [titleFontSize]="'40'" [unitsFontSize]="'40'" [unitsFontWeight]="'bold'" [titleFontWeight]="'bold'" [outerStrokeWidth]="10" [percent]="userDets.acceptance_rate" [outerStrokeWidth]="16" [innerStrokeWidth]="0" [outerStrokeColor]="'#ffa8b2'" [responsive]="true" [innerStrokeColor]="'#ffa8b2'" [animation]="true" [animationDuration]="300"></circle-progress>
+					</div>
+					<div class="col-4">
+						<p>Job success</p>
+						<circle-progress [showSubtitle]="false" [titleFontSize]="'40'" [unitsFontSize]="'40'" [unitsFontWeight]="'bold'" [titleFontWeight]="'bold'" [outerStrokeWidth]="10" [percent]="userDets.job_success" [outerStrokeWidth]="16" [innerStrokeWidth]="0" [outerStrokeColor]="'#ffa8b2'" [responsive]="true" [innerStrokeColor]="'#ffa8b2'" [animation]="true" [animationDuration]="300"></circle-progress>
+					</div>
+					<div class="col-4">
+						<p>Availability rate</p>
+						<circle-progress [showSubtitle]="false" [titleFontSize]="'40'" [unitsFontSize]="'40'" [unitsFontWeight]="'bold'" [titleFontWeight]="'bold'" [outerStrokeWidth]="10" [percent]="userDets.avail_rate" [outerStrokeWidth]="16" [innerStrokeWidth]="0" [outerStrokeColor]="'#ffa8b2'" [responsive]="true" [innerStrokeColor]="'#ffa8b2'" [animation]="true" [animationDuration]="300"></circle-progress>
+					</div>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-7">
+					<div class="form-title">Your earnings</div>
+				</div>
+				<div class="col-5 text-right">
+					<span class="form-req" routerLink="/wallet">
+						details
+					</span>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<div class="earning-thumb">
+						<div class="earning-thumb-row">
+							<div class="earning-item">
+								<div class="title">Last job</div>
+								<div class="value">{{ userDets.last_job_earn }} euro</div>
+							</div>
+							<div class="earning-item">
+								<div class="title">Earning this month</div>
+								<div class="value">{{ userDets.this_month_earn }} euro</div>
+							</div>
+						</div>
+						<div class="earning-thumb-row">
+							<div class="earning-item">
+								<div class="title">Earning in last month</div>
+								<div class="value">{{ userDets.last_month_earn }} euro</div>
+							</div>
+							<div class="earning-item">
+								<div class="title">Total Earning</div>
+								<div class="value">{{ userDets.total_earn }} euro</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row align-mid form-title-wrap">
+				<div class="col-7">
+					<div class="form-title">Upcoming</div>
+				</div>
+				<div class="col-5 text-right">
+					<span class="form-req" routerLink="/bookings">
+						View all
+					</span>
+				</div>
+			</div>
+			<div class="row" *ngIf="show == 1">
+				<div class="col-12">
+					<div class="no-data-thumb" *ngIf="calls.length == 0">
+						<span class="icon">
+							<i class="fas fa-calendar-check"></i>
+						</span>
+						<span class="text">
+							<span class="title">No upcoming bookings.</span>
+							<span class="subtitle">Your upcoming bookings will be shown here.</span>
+						</span>
+					</div>
+					<!-- <div class="upcoming-wrap" *ngIf="calls.length > 0"> -->
+						<div *ngFor="let call of calls">
+							<div class="upcoming-wrap">
+								<div class="upcoming-cont">
+									<div>
+										<div class="upcoming-item" [class.faded]="call.first.status == 0 && !(userDets.user_type == 3)">
+											<span class="date-wrap" [class.today]="call.today">
+												<span class="month" *ngIf="!call.today">{{ call.first.start | date: 'LLL' }}</span>
+												<span class="date" *ngIf="!call.today">{{ call.first.start | date: 'dd' }}</span>
+												<span class="today" *ngIf="call.today">Today</span>
+											</span>
+											<div class="title" *ngIf="userDets.user_type == 3">{{ call.first.user_name }}</div>
+											<div class="title" *ngIf="!(userDets.user_type == 3)">{{ call.first.service_provider_name }}</div>
+											<div class="sub">
+												<span>{{ call.first.start | date: 'shortTime' }} - for </span>
+												<!-- <span *ngIf="call.first.plan_id==1">15</span>
+												<span *ngIf="call.first.plan_id==2">30</span>
+												<span *ngIf="call.first.plan_id==3">45</span>
+												<span *ngIf="call.first.plan_id==4">60</span>
+												<span *ngIf="call.first.plan_id==5">2</span> -->
+												<span>{{ call.first.plan_time_to }} mins</span>
+											</div>
+
+											<div class="btn-wrap" *ngIf="call.first.disputed == 1">
+												<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+													<!-- <i class="fas fa-info"></i> -->
+													<!-- <svg class="feather">
+													  	<use xlink:href="assets/icon/feather-sprite.svg#info"/>
+													</svg> -->
+													<img src="assets/images/info.png" class="call-anim-icon" />
+													<span class="text">info</span>
+												</span>
+											</div>
+											<div class="btn-wrap" *ngIf="call.first.disputed == 0">
+												<span *ngIf="userDets.user_type == 3">
+													
+													<span *ngIf="call.first.status == 0">
+
+														<span class="order-btn call" *ngIf="call.first.passed == false" (click)="acceptOrder(call.first.id, 1)">
+															<!-- <i class="fas fa-check"></i> -->
+															<!-- <img src="assets/images/check1.png" class="call-anim-icon" /> -->
+															
+															<img src="assets/images/check1.png" class="call-anim-icon" />
+															<span class="text">Accept</span>
+														</span>
+														
+														<span class="order-btn cancel" *ngIf="call.first.passed == false" (click)="acceptOrder(call.first.id, -1)">
+															<!-- <i class="fas fa-times"></i> -->
+															<!-- <svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+															</svg> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Decline</span>
+														</span>
+
+													</span>
+
+													<span *ngIf="call.first.status == 1">
+
+														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span>
+
+
+														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<img src="assets/images/call.gif" class="call-anim-icon" />
+															<span class="text">Call</span>
+														</span>
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<!-- <svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+															</svg> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+													</span>
+													<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+														<!-- <i class="fas fa-info"></i> -->
+														<!-- <svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#info"/>
+														</svg> -->
+
+														<img src="assets/images/info.png" class="call-anim-icon" />
+														<span class="text">info</span>
+													</span>
+
+												</span>
+
+												<span *ngIf="!(userDets.user_type == 3)">
+
+													<span *ngIf="call.first.status == 0">
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<!-- <svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+															</svg> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+
+													</span>
+
+													<span *ngIf="call.first.status == 1">
+
+														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span>
+
+
+														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<!-- <i class="fas fa-phone"></i> -->
+															<!-- <svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
+															</svg> -->
+															<img src="assets/images/call.gif" class="call-anim-icon" />
+															<span class="text">Call</span>
+														</span>
+
+														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
+															<!-- <i class="fas fa-times"></i> -->
+															<!-- <svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+															</svg> -->
+															<img src="assets/images/cancel.png" class="call-anim-icon" />
+															<span class="text">Cancel</span>
+														</span>
+													</span>
+
+
+
+													<span class="order-btn info" routerLink="/summary/{{ call.first.id }}">
+														<!-- <i class="fas fa-info"></i> -->
+														<!-- <svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#info"/>
+														</svg> -->
+
+														<img src="assets/images/info.png" class="call-anim-icon" />
+														<span class="text">info</span>
+													</span>
+
+												</span>
+											</div>
+										</div>
+										<div class="subupcoming" *ngIf="(call.calls).length > 1">
+											<div *ngFor="let this_call of call.calls">
+												<div *ngIf="!(this_call.id == call.first.id)" class="upcoming-item" [class.faded]="this_call.status == 0 && !(userDets.user_type == 3)">
+													<span class="arrow-diag"></span>
+													<div class="title" *ngIf="userDets.user_type == 3">{{ this_call.user_name }}</div>
+													<div class="title" *ngIf="!(userDets.user_type == 3)">{{ this_call.service_provider_name }}</div>
+													<div class="sub">
+														<span>{{ this_call.start | date: 'shortTime' }} - for </span>
+														<!-- <span *ngIf="this_call.plan_id==1">15</span>
+														<span *ngIf="this_call.plan_id==2">30</span>
+														<span *ngIf="this_call.plan_id==3">45</span>
+														<span *ngIf="this_call.plan_id==4">60</span>
+														<span *ngIf="this_call.plan_id==5">2</span> -->
+														<span>{{ this_call.plan_time_to }} mins</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.disputed == 1">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#alert-triangle"/>
+															</svg>
+														</span>
+														<span class="text">Disputed</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.status == 0 && this_call.sec > 0 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Requested</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.status == 1 && this_call.sec > 0 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Waiting for Call</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 1 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Call Time Over</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+															</svg>
+															<!-- <img src="assets/images/cancel.png" class="call-anim-icon" /> -->
+														</span>
+														<span class="text">Users did not connect.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.call_status == 0 && this_call.status == 1 && this_call.sec <= 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+															  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+															</svg>
+														</span>
+														<span class="text">Waiting for users to connect.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == false && this_call.call_status == 1 && this_call.status == 1 && this_call.sec <= 0 && this_call.disputed == 0">
+														<span class="icon red">
+															<svg class="feather">
+														  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+														</svg>
+														</span>
+														<span class="text">Ongoing Call.</span>
+													</div>
+													<div class="call-msg" *ngIf="this_call.passed == true && this_call.call_status == 2 && this_call.disputed == 0">
+														<span class="icon yellow">
+															<svg class="feather">
+														  		<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+															</svg>
+														</span>
+														<span class="text">Completed</span>
+													</div>
+													<div class="btn-wrap" *ngIf="this_call.disputed == 1">
+														<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+															<!-- <i class="fas fa-info"></i> -->
+															<img src="assets/images/info.png" class="call-anim-icon" />
+															<span class="text">info</span>
+														</span>
+													</div>
+													<div class="btn-wrap" *ngIf="this_call.disputed == 0">
+														<span *ngIf="userDets.user_type == 3">
+															
+															<span *ngIf="this_call.status == 0">
+
+																<span class="order-btn call" *ngIf="this_call.passed == false" (click)="acceptOrder(this_call.id, 1)">
+																	<!-- <i class="fas fa-check"></i> -->
+																	<!-- <svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+																	</svg> -->
+
+																	<img src="assets/images/check1.png" class="call-anim-icon" />
+																	<span class="text">Accept</span>
+																</span>
+																
+																<span class="order-btn cancel" *ngIf="this_call.passed == false" (click)="acceptOrder(this_call.id, -1)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<!-- <svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+																	</svg> -->
+
+																	<img src="assets/images/cancel.png" class="call-anim-icon" />
+																	<span class="text">Decline</span>
+																</span>
+
+															</span>
+
+															<span *ngIf="this_call.status == 1">
+
+																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+																</span>
+
+
+																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																	<!-- <i class="fas fa-phone"></i> -->
+																	<!-- <svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
+																	</svg> -->
+																	<img src="assets/images/call.gif" class="call-anim-icon" />
+																	<span class="text">Call</span>
+																</span>
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+																	</svg>
+																	<span class="text">Cancel</span>
+																</span>
+															</span>
+															<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+																<!-- <i class="fas fa-info"></i> -->
+																<img src="assets/images/info.png" class="call-anim-icon" />
+																<span class="text">info</span>
+															</span>
+
+														</span>
+
+														<span *ngIf="!(userDets.user_type == 3)">
+
+															<span *ngIf="this_call.status == 0">
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+																	</svg>
+																	<span class="text">Cancel</span>
+																</span>
+
+															</span>
+
+															<span *ngIf="this_call.status == 1">
+
+																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+																</span>
+
+
+																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																	<!-- <i class="fas fa-phone"></i> -->
+																	<!-- <svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
+																	</svg> -->
+																	<img src="assets/images/call.gif" class="call-anim-icon" />
+																	<span class="text">Call</span>
+																</span>
+
+																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
+																	<!-- <i class="fas fa-times"></i> -->
+																	<svg class="feather">
+																	  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+																	</svg>
+																	<span class="text">Cancel</span>
+																</span>
+															</span>
+
+
+
+															<span class="order-btn info" routerLink="/summary/{{ this_call.id }}">
+																<!-- <i class="fas fa-info"></i> -->
+																<img src="assets/images/info.png" class="call-anim-icon" />
+																<span class="text">info</span>
+															</span>
+
+														</span>
+
+														<!-- <span *ngIf="this_call.status == 1"> -->
+
+															<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+															</span> -->
+
+
+															<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+																<i class="fas fa-phone"></i>
+															</span> -->
+														<!-- </span> -->
+														<!-- <span class="order-btn info" routerLink="/summary/{{ this_call.id }}"> -->
+															<!-- <i class="fas fa-info"></i> -->
+															<!-- <svg class="feather"> -->
+															  	<!-- <use xlink:href="assets/icon/feather-sprite.svg#info"/> -->
+															<!-- </svg> -->
+															<!-- <span class="text">info</span> -->
+														<!-- </span> -->
+
+
+														<!-- <span class="order-btn call" *ngIf="this_call.status == 0 && userDets.user_type == 3 && this_call.passed == false" (click)="acceptOrder(this_call.id, 1)">
+															<i class="fas fa-check"></i>
+														</span>
+														<span class="order-btn cancel" *ngIf="this_call.status == 0 && userDets.user_type == 3 && this_call.passed == false" (click)="acceptOrder(this_call.id, -1)">
+															<i class="fas fa-times"></i>
+														</span> -->
+														<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0 && this_call.status == 1">
+															<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
+														</span> -->
+												
+														<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.status == 1 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
+															<i class="fas fa-phone"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.status == 1 && this_call.enable == 1 && !(userDets.user_type == 3) && this_call.passed == false" (click)="callUser(this_call.service_provider_id, this_call.id)">
+															<i class="fas fa-phone"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}" *ngIf="!(userDets.user_type == 3) && this_call.call_status == 1">
+															<i class="fas fa-thumbs-up"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}" *ngIf="!(userDets.user_type == 3) && (this_call.rating == null) && this_call.call_status == 2 && this_call.passed == true">
+															<i class="far fa-star"></i>
+														</span> -->
+														
+														<!-- <span class="order-btn cancel" *ngIf="userDets.user_type == 3 && this_call.status == 1 && this_call.call_status < 2 && this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+															<i class="fas fa-times"></i>
+														</span> -->
+
+														<!-- <span class="order-btn cancel" *ngIf="!(userDets.user_type == 3) && this_call.call_status < 2 && this_call.passed == false" (click)="presentAlertConfirm(this_call.id)">
+															<i class="fas fa-times"></i>
+														</span> -->
+														<!-- <span class="order-btn call" routerLink="/summary/{{ this_call.id }}">
+															<i class="fas fa-info"></i>
+														</span> -->
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					<!-- </div> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<app-header></app-header>
+	
+</ion-content>

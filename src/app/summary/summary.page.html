@@ -1,0 +1,446 @@
+<ion-content>
+	<ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+	    <ion-refresher-content
+	      pullingIcon="chevron-down-circle-outline"
+	      pullingText="Pull to refresh"
+	      refreshingSpinner="crescent"
+	      refreshingText="Refreshing...">
+	    </ion-refresher-content>
+  	</ion-refresher>
+	<div class="page-title">
+		<span routerLink="/bookings" class="back"><i class="fas fa-angle-left"></i></span>
+		<span class="text">Call Summary</span>
+	</div>
+	<div class="page-content">
+		<div *ngIf="show == 0">
+			<div class="ord-dets-wrap gray-load">
+				
+			</div>
+			<div class="circle-loader">
+				<img src="assets/images/cloader.gif" />
+			</div>
+		</div>
+		<div *ngIf="show == 1">
+			<div class="ord-dets-wrap" style="padding-bottom: 50px;">
+				<div class="summary-id">Booking ID: {{ summary.id }}</div>
+				<div class="ord-people">
+					<div class="ord-person text-right">
+						<div class="ord-person-in">
+							<span class="img-wrap">
+								<img *ngIf="summary.user.image_url == null" src="assets/images/dp1.png" />
+								<img *ngIf="!(summary.user.image_url == null)" [src]="summary.user.image_url" />
+							</span>
+							<span class="name" *ngIf="!(userDets.id == summary.user.id)">{{ summary.user.name }}</span>
+							<span class="name" *ngIf="(userDets.id == summary.user.id)">You</span>
+							<span class="type">Hirer</span>
+						</div>
+					</div>
+					<div class="ord-person">
+						<div class="text-center summary-call-msg">
+							<div class="call-msg" *ngIf="summary.disputed == 1">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#alert-triangle"/>
+									</svg>
+								</span>
+								<span class="text">Disputed</span>
+							</div>
+							<div class="call-msg" *ngIf="summary.passed == false && summary.status == 0 && summary.sec > 0 && summary.disputed == 0">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+									</svg>
+								</span>
+								<span class="text">Requested</span>
+							</div>
+							<div class="call-msg" *ngIf="summary.passed == false && summary.status == 1 && summary.sec > 0 && summary.disputed == 0">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+									</svg>
+								</span>
+								<span class="text">Waiting.</span>
+							</div>
+							<div class="call-msg" *ngIf="summary.passed == true && summary.call_status == 1 && summary.disputed == 0">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+									</svg>
+								</span>
+								<span class="text">Call Time Over</span>
+							</div>
+							<div class="call-msg" *ngIf="summary.passed == true && summary.call_status == 0 && summary.disputed == 0">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#x"/>
+									</svg>
+								</span>
+								<span class="text">Did not connect.</span>
+							</div>
+							<div class="call-msg" *ngIf="summary.passed == false && summary.call_status == 0 && summary.status == 1 && summary.sec <= 0 && summary.disputed == 0">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#clock"/>
+									</svg>
+								</span>
+								<span class="text">Ongoing Call</span>
+							</div>
+							<div class="call-msg" *ngIf="summary.passed == false && summary.call_status == 1 && summary.status == 1 && summary.sec <= 0 && summary.disputed == 0">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+									</svg>
+								</span>
+								<span class="text">Ongoing Call.</span>
+							</div>
+							<div class="call-msg" *ngIf="summary.passed == true && summary.call_status == 2 && summary.disputed == 0">
+								<span class="icon">
+									<svg class="feather">
+									  	<use xlink:href="assets/icon/feather-sprite.svg#check"/>
+									</svg>
+								</span>
+								<span class="text">Completed</span>
+							</div>
+						</div>
+					</div>
+					<div class="ord-person">
+						<div class="ord-person-in">
+							<span class="img-wrap">
+								<img *ngIf="summary.provider.image_url == null" src="assets/images/dp1.png" />
+								<img *ngIf="!(summary.provider.image_url == null)" [src]="summary.provider.image_url" />
+							</span>
+							<span class="name" *ngIf="!(userDets.id == summary.provider.id)">{{ summary.provider.name }}</span>
+							<span class="name" *ngIf="(userDets.id == summary.provider.id)">You</span>
+							<span class="type">Interpreter</span>
+						</div>
+					</div>
+				</div>
+				<div class="ord-lang text-center">
+					<div class="lang-select-list">
+			  			<div class="lang-set-title">
+				  			<span class="sm-btn">{{ summary.language_from_dets.language_name }}</span>
+				  			<span class="icon bg"></span>
+				  			<span class="sm-btn">{{ summary.language_to_dets.language_name }}</span>
+			  			</div>
+			  		</div>
+				</div>
+				<p class="date text-center">{{ summary.date | date:"mediumDate" }} {{ summary.date | date:"shortTime" }} - for 
+					<span *ngFor="let plan of plans">
+						<span *ngIf="summary.plan_id == plan.id">{{ plan.time_to }} min</span>
+					</span>
+				</p>
+				
+			</div>
+			<div *ngIf="!(summary.status == -2) && !(summary.status == 2)">
+				<!-- <div class="row align-mid form-title-wrap" *ngIf="summary.call_status >= 1">
+					<div class="col-12">
+						<p style="margin: 0px;">Your call has ended. <span *ngIf="summary.extension_min > 0">You have taken {{ summary.extension_min }} mins additional time.</span></p>
+					</div>
+				</div> -->
+				<div class="row m20">
+					<div class="col-12">
+						<div *ngIf="summary.call_status >= 1" class="summary-wrap" style="margin: 0px; margin-top: -20px; display: block;">
+							<div class="summary-wrap-in m20">
+								<div class="summary-item">
+									<div class="title text-left">Call Duration</div>
+									<div class="value text-left">
+										{{ summary.total_time }} mins
+										<!-- <span *ngIf="summary.plan_id == 1">
+											{{ 15 + summary.extension_min }}
+										</span>
+										<span *ngIf="summary.plan_id == 2">
+											{{ 30 + summary.extension_min }}
+										</span>
+										<span *ngIf="summary.plan_id == 3">
+											{{ 45 + summary.extension_min }}
+										</span>
+										<span *ngIf="summary.plan_id == 4">
+											{{ 60 + summary.extension_min }}
+										</span> -->
+									</div>
+								</div>
+								<div class="summary-item" *ngIf="!(userDets.user_type == 3)">
+									<div class="title text-right">Cost</div>
+									<div class="value text-right">&#8364; {{ summary.price }}</div>
+								</div>
+								<div class="summary-item" *ngIf="userDets.user_type == 3">
+									<div class="title text-right">Earning</div>
+									<div class="value text-right">&#8364; {{ summary.provider_price }}</div>
+								</div>
+							</div>
+							<hr *ngIf="negative_credit > 0">
+							<div class="summary-wrap-in m20">
+								<div class="summary-item">
+									<div class="title text-left">Extra Time Taken</div>
+									<div class="value text-left">{{ summary.extension_min }}</div>
+								</div>
+								<div class="summary-item" *ngIf="negative_credit > 0">
+									<div class="title text-right">Your Due is</div>
+									<div class="value text-right" style="color: #FD1231;">&#8364; {{ negative_credit }}</div>
+								</div>
+							</div>
+							<!-- <div class="row m20" *ngIf="negative_credit > 0">
+								<div class="col-6 offset-3">
+									<button class="btn btn-outline">Pay</button>
+								</div>
+							</div> -->
+						</div>
+						<div class="row call-btn-summ-wrap" *ngIf="summary.passed == false && (summary.call_status == 0 || summary.call_status == 1) && summary.status == 1 && summary.sec <= 0 && summary.disputed == 0">
+							<div class="call-btn-summ-wrap-in"></div>
+							<div class="col-12" style="z-index: 2;" *ngIf="!(userDets.user_type == 3)">
+								<span (click)="callUser(summary.service_provider_id, summary.id)" class="hire-call-btn" style="margin: 0px auto;">
+									<img src="assets/images/call.gif" />
+									<!-- <i class="fas fa-phone"></i> -->
+								</span>
+								<p class="text-center"><b>Call Again</b></p>
+							</div>
+							<div class="col-12" style="z-index: 2;" *ngIf="(userDets.user_type == 3)">
+								<span (click)="callUser(summary.user_id, summary.id)" class="hire-call-btn" style="margin: 0px auto;">
+									<img src="assets/images/call.gif" />
+									<!-- <i class="fas fa-phone"></i> -->
+								</span>
+								<p class="text-center"><b>Call Again</b></p>
+							</div>
+						</div>
+						<div class="prov-dets" *ngIf="summary.passed == false && (summary.call_status == 0 || summary.call_status == 1) && summary.status == 1 && summary.sec <= 0 && summary.disputed == 0">
+							<hr>
+						</div>
+						<div class="row" *ngIf="!(userDets.user_type == 3) && summary.call_status == 1">
+							<div class="col-12">
+								<h3 style="font-weight: 700; text-align: center; margin-bottom: 20px;">Do you want to complete the order?</h3>
+								<div class="row">
+									<div class="col-12 m20" *ngIf="showDispute == 0">
+										<button class="btn btn-primary" (click)="markComplete(1)">Yes, Mark Complete.</button>
+									</div>
+									<div class="col-12">
+										<div class="row" *ngIf="(userDets.user_type == 3) && summary.call_status == 1 && summary.disputed == 0 && summary.passed == 0">
+											<div class="col-12">
+												<p class="text-center msg-box-sum">Call has not been marked complete. The user might call you again. Please be available. Payment will not be credited until user marks the order as completed.</p>
+											</div>
+										</div>
+										<div class="row" *ngIf="(userDets.user_type == 3) && summary.call_status == 1 && summary.disputed == 0 && summary.passed == 1">
+											<div class="col-12">
+												<p class="text-center msg-box-sum">Call has not been marked complete. Payment will be credited once user marks the order as completed.</p>
+											</div>
+										</div>
+
+										<div class="row" *ngIf="summary.call_status == 1 && summary.disputed == 0 && summary.passed == 0">
+											<div class="col-12">
+												<p class="text-center msg-box-sum">Call has not been marked complete/disputed. If the call is not marked within 2 hours of call finish time, the call will be automatically marked completed.</p>
+											</div>
+										</div>
+										<div class="row" *ngIf="summary.call_status == 1 && summary.disputed == 0 && summary.passed == 1">
+											<div class="col-12">
+												<p class="text-center msg-box-sum">Call has not been marked complete/disputed. If the call is not marked within 2 hours of call finish time, the call will be automatically marked completed.</p>
+											</div>
+										</div>
+
+										<div class="row" *ngIf="summary.disputed == 1">
+											<div class="col-12">
+												<p class="text-center msg-box-sum">Dispute has been raised. Waiting for the admin to take action.</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-12">
+										<div class="row" style="justify-content: center;">
+											<div class="col-6" *ngIf="showDispute == 0">
+												<button class="btn btn-dispute" (click)="showDispute = 1">Raise a dispute</button>
+											</div>
+											<div class="col-6 m20" *ngIf="showDispute == 0 && summary.passed == 0">
+												<button class="btn btn-primary" routerLink="/bookings">I may connect later.</button>
+											</div>
+										</div>
+									</div>
+									<div class="col-12" *ngIf="showDispute == 1">
+										<div class="form-row">
+											<label class="form-row-label">Dispute Reason</label>
+											<textarea type="text" name="dispute_reason" [(ngModel)]="dispute_reason" class="form-control" placeholder="Dispute reason"></textarea>
+										</div>
+										<div class="row">
+											<div class="col-6">
+												<button class="btn btn-primary" (click)="markComplete(0)">Submit</button>
+											</div>
+											<div class="col-6">
+												<button class="btn btn-primary" (click)="showDispute = 0">Cancel</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<hr>
+				
+				<div class="prov-dets" *ngIf="callLog.length > 0">
+					<hr />
+					<div class="row align-mid form-title-wrap">
+						<div class="col-12">
+							<div class="form-title">Call Logs</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-12">
+							<div *ngFor="let log of callLog; let i = index">
+								<div class="call-log-item" *ngIf="log.action == 'init_call' && (!(callLog[i+1] == undefined))">
+									<div class="icon">
+										<span *ngIf="(userDets.id == log.user_id) && (!(callLog[i+1] == undefined)) && (callLog[i+1].action == 'declined_before_connect' || callLog[i+1].action == 'declined_after_connect' || callLog[i+1].action == 'declined' || callLog[i+1].action == 'received')">
+											<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#phone-outgoing"/>
+											</svg>
+										</span>
+										<span *ngIf="!(userDets.id == log.user_id) && (!(callLog[i+1] == undefined))  && callLog[i+1].action == 'received'">
+											<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#phone-incoming"/>
+											</svg>
+										</span>
+										<span *ngIf="!(userDets.id == log.user_id) && (!(callLog[i+1] == undefined))  && (callLog[i+1].action == 'declined' || callLog[i+1].action == 'declined_after_connect')">
+											<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#phone-missed"/>
+											</svg>
+										</span>
+										<span *ngIf="!(userDets.id == log.user_id) && (!(callLog[i+1] == undefined))  && (callLog[i+1].action == 'declined_before_connect' || callLog[i+1].action == 'init_call')">
+											<svg class="feather">
+											  	<use xlink:href="assets/icon/feather-sprite.svg#phone-missed"/>
+											</svg>
+										</span>
+									</div>
+									<div class="dets">
+										<span class="call-log-title" *ngIf="log.action == 'init_call'">
+											<span class="time">
+												{{ log.time | date: "shortTime" }} - 
+											</span>
+											<span *ngIf="(userDets.id == log.user_id) && (!(callLog[i+1] == undefined))  && (callLog[i+1].action == 'declined_before_connect' || callLog[i+1].action == 'declined_after_connect' || callLog[i+1].action == 'declined' || callLog[i+1].action == 'received')">
+												Outgoing Call
+											</span>
+											<span *ngIf="!(userDets.id == log.user_id) && (!(callLog[i+1] == undefined)) && callLog[i+1].action == 'received'">
+												Incoming Call
+											</span>
+											<span *ngIf="!(userDets.id == log.user_id) && (!(callLog[i+1] == undefined)) && (callLog[i+1].action == 'declined' || callLog[i+1].action == 'declined_after_connect')">
+												Missed Call
+											</span>
+											<span *ngIf="!(userDets.id == log.user_id) && (!(callLog[i+1] == undefined)) && (callLog[i+1].action == 'declined_before_connect' || callLog[i+1].action == 'init_call')">
+												<span *ngIf="log.user_id == summary.user.id">
+													{{ summary.user.name }} 
+												</span>
+												<span *ngIf="log.user_id == summary.provider.id">
+													{{ summary.provider.name }} 
+												</span>
+												was unable to connect
+											</span>
+										</span>
+										<!-- <span class="title" *ngIf="log.action == 'init_call'">
+											
+										</span>
+										<span class="title" *ngIf="log.action == 'init_call'">
+											
+										</span> -->
+										<span class="call-log-subtitle" *ngIf="log.action == 'init_call'">
+											<div class="sub-item" *ngIf="!(callLog[i+1] == undefined) && !(callLog[i+1] == 'init_call')">
+												<span class="sub-time">
+													{{ callLog[i+1].time | date:'shortTime' }} - 
+												</span>
+												<span *ngIf="callLog[i+1].user_id == userDets.id">
+													You 
+												</span>
+												<span *ngIf="!(callLog[i+1].user_id == userDets.id)">
+													<span *ngIf="callLog[i+1].user_id == summary.user.id">
+														{{ summary.user.name }} 
+													</span>
+													<span *ngIf="callLog[i+1].user_id == summary.provider.id">
+														{{ summary.provider.name }} 
+													</span>
+												</span>
+												<span *ngIf="callLog[i+1].action == 'declined_before_connect'">disconnected.</span>
+												<span *ngIf="callLog[i+1].action == 'declined_after_connect'">disconnected.</span>
+												<span *ngIf="callLog[i+1].action == 'declined'">Declined</span>
+												<span *ngIf="callLog[i+1].action == 'received'">Received</span>
+											</div>
+											<div class="sub-item" *ngIf="!(callLog[i+2] == undefined) && callLog[i+1].action == 'received' && callLog[i+2].action == 'disconnected'">
+												<span class="sub-time">
+													{{ callLog[i+2].time | date:'shortTime' }} - 
+												</span>
+												<span *ngIf="callLog[i+2].user_id == userDets.id">
+													You 
+												</span>
+												<span *ngIf="!(callLog[i+2].user_id == userDets.id)">
+													<span *ngIf="callLog[i+2].user_id == summary.user.id">
+														{{ summary.user.name }} 
+													</span>
+													<span *ngIf="callLog[i+2].user_id == summary.provider.id">
+														{{ summary.provider.name }} 
+													</span>
+												</span>
+												<span *ngIf="callLog[i+2].action == 'disconnected'">ended the call</span>
+											</div>
+										</span>
+									</div>
+									<!-- {{ log.user_id }} - {{ log.action }} - {{ log.time | date:"long" }} -->
+								</div>
+							</div>
+						</div>
+					</div>
+					<hr />
+				</div>
+				<div class="row align-mid form-title-wrap" *ngIf="!(userDets.user_type == 3) && summary.call_status == 2 && summary.disputed == 0 && summary.rating == 0">
+					<div class="col-12">
+						<div class="form-title text-center">Write a review</div>
+						<div class="givereview-img" *ngIf="userDets.user_type == 3">
+							<span class="img">
+								<img *ngIf="summary.user.image_url == null" src="assets/images/dp.png" />
+								<img *ngIf="!(summary.user.image_url == null)" [src]="summary.user.image_url" />
+							</span>
+						</div>
+						<div class="givereview-img" *ngIf="!(userDets.user_type == 3)">
+							<span class="img">
+								<img *ngIf="summary.provider.image_url == null" src="assets/images/dp.png" />
+								<img *ngIf="!(summary.provider.image_url == null)" [src]="summary.provider.image_url" />
+							</span>
+						</div>
+						<p class="text-center" *ngIf="userDets.user_type == 3">{{ summary.user.name }}</p>
+						<p class="text-center" *ngIf="!(userDets.user_type == 3)">{{ summary.provider.name }}</p>
+						<div class="review-star-wrap">
+							<span class="star" (click)="setRate(1)" [class.active]="starRate >= 1">
+								<i class="far fa-star" *ngIf="starRate < 1"></i>
+								<i class="fas fa-star" *ngIf="starRate >= 1"></i>
+							</span>
+							<span class="star" (click)="setRate(2)" [class.active]="starRate >= 2">
+								<i class="far fa-star" *ngIf="starRate < 2"></i>
+								<i class="fas fa-star" *ngIf="starRate >= 2"></i>
+							</span>
+							<span class="star" (click)="setRate(3)" [class.active]="starRate >= 3">
+								<i class="far fa-star" *ngIf="starRate < 3"></i>
+								<i class="fas fa-star" *ngIf="starRate >= 3"></i>
+							</span>
+							<span class="star" (click)="setRate(4)" [class.active]="starRate >= 4">
+								<i class="far fa-star" *ngIf="starRate < 4"></i>
+								<i class="fas fa-star" *ngIf="starRate >= 4"></i>
+							</span>
+							<span class="star" (click)="setRate(5)" [class.active]="starRate >= 5">
+								<i class="far fa-star" *ngIf="starRate < 5"></i>
+								<i class="fas fa-star" *ngIf="starRate >= 5"></i>
+							</span>
+						</div>
+						<div class="form-row">
+							<label class="form-row-label">Your review</label>
+		   					<textarea type="text" name="review" [(ngModel)]="review_text" class="form-control" placeholder="Enter your review" required="required"></textarea>
+						</div>
+						<div class="form-row">
+							<button class="btn btn-primary" (click)="submitReview()">Submit</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div *ngIf="(summary.status == -2) || (summary.status == 2)">
+				<div class="row">
+					<div class="col-10 offset-1">
+						<h1 class="text-center" style="font-size: 40px;">
+							Order cancelled by user. 
+						</h1>
+						<button class="btn btn-primary" routerLink="/">Go to Home Page</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</ion-content>
