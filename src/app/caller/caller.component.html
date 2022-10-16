@@ -66,8 +66,8 @@
 		<img src="assets/images/ring.gif" />
 	</div> -->
 
-	<div class="call-screen" [class.active]="activeScreen == 1" [class.shown]="callStage == 3" (click)="setActiveScreen(1)">
-		<div class="no-video-poster" *ngIf="remote_video_muted == 1">
+	<div class="call-screen" id="callerVideoDiv" [class.active]="activeScreen == 1" [class.shown]="callStage == 3" (click)="setActiveScreen(1)">
+		<!-- <div class="no-video-poster" *ngIf="remote_video_muted == 1">
 			<span class="no-video-poster-wave" *ngIf="remote_audio_muted == 0" [class.big]="activeScreen == 1"></span>
 			<span class="poster-img" *ngIf="!(other_user == undefined) && other_user.image_url == null" [class.big]="activeScreen == 1" style="background-image: url(assets/images/dp1.png);"></span>
 			<span class="poster-img" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" [class.big]="activeScreen == 1" style="background-image: url({{ other_user.image_url  }});"></span>
@@ -75,18 +75,20 @@
 		<div class="mute-poster" *ngIf="remote_audio_muted == 1">
 			<i class="fas fa-microphone-slash" [class.big]="activeScreen == 1"></i>
 		</div>
-		<video poster="noposter" id="callerVideo" #remoteStream autoplay playsinline [class.shown]="callStage == 3"></video>
+		<video poster="noposter" id="callerVideo" #remoteStream autoplay playsinline [class.shown]="callStage == 3"></video> -->
+		<div class="call-screen-in" id="callerVideoDivIn"></div>
 	</div>
-	<div class="call-screen shown" [class.active]="activeScreen == 2" (click)="setActiveScreen(2)">
-		<div class="no-video-poster" *ngIf="video_muted == 1">
+	<div class="call-screen shown" id="myVideoDiv" [class.active]="activeScreen == 2" (click)="setActiveScreen(2)">
+		<!-- <div class="no-video-poster" *ngIf="video_muted == 1">
 			<span class="no-video-poster-wave" *ngIf="audio_muted == 0" [class.big]="activeScreen == 2"></span>
 			<span class="poster-img" *ngIf="!(my_user == undefined) && my_user.image_url == null" [class.big]="activeScreen == 2" style="background-image: url(assets/images/dp1.png);"></span>
 			<span class="poster-img" *ngIf="!(my_user == undefined) && !(my_user.image_url == null)" [class.big]="activeScreen == 2" style="background-image: url({{ my_user.image_url  }});"></span>
 		</div>
 		<div class="mute-poster" *ngIf="audio_muted == 1">
 			<i class="fas fa-microphone-slash" [class.big]="activeScreen == 2"></i>
-		</div>
-		<video poster="noposter" id="myVideo" #localStream muted="true" autoplay playsinline [class.shown]="callStage == 1 || callStage == 2 || callStage == 3 || callStage == 4"></video>
+		</div> -->
+		<div class="call-screen-in" id="myVideoDivIn"></div>
+		<!-- <video poster="noposter" id="myVideo" #localStream muted="true" autoplay playsinline [class.shown]="callStage == 1 || callStage == 2 || callStage == 3 || callStage == 4"></video> -->
 	</div>
 	<div class="call-screen-btn-wrap" *ngIf="callStage == 3">
 		

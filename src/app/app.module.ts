@@ -12,12 +12,13 @@ import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 import { IconsModule } from './icons/icons.module';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
-
+// import OneSignal from 'onesignal-cordova-plugin';
+import { OneSignal } from '@awesome-cordova-plugins/onesignal/ngx';
 import { AppComponent } from './app.component';
 import { CallerComponent } from './caller/caller.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgCircleProgressModule } from 'ng-circle-progress';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+// import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 // import { Push, PushObject, PushOptions } from '@ionic-native/push/ngx';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule, AngularFireDatabase } from '@angular/fire/database';
@@ -76,7 +77,8 @@ import { pageTransition } from './page-transition';
 		AndroidPermissions,
 		DatePicker,
  	   	AngularFireDatabase,
- 	   	FirebaseX,
+ 	   	// FirebaseX,
+ 	   	OneSignal,
  	   	StatusBar,
  	   	SplashScreen,
  	   	SocialSharing,

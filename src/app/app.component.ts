@@ -9,7 +9,7 @@ import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 import { ProviderdetsPage } from './providerdets/providerdets.page';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+// import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 declare let window: any;
 declare let cordova: any;
 @Component({
@@ -23,7 +23,8 @@ export class AppComponent implements OnInit {
 	platform_name:any = "web";
 	app_ver:any = 106;
 	keepSplash:any = 1;
-		constructor(private firebase: FirebaseX,
+		constructor(
+			// private firebase: FirebaseX,
 			private api:ApiService,
     		private backgroundMode: BackgroundMode,
     		public platform: Platform,
@@ -137,44 +138,45 @@ export class AppComponent implements OnInit {
 
 
 		listenToMessage(){
-	  		this.firebase.onMessageReceived()
-	  		.subscribe(data => {
-	  			var messagebody = JSON.parse(data.message);
-				if(messagebody.type == 'order_requested'){
+	  	// 	this.firebase.onMessageReceived()
+	  	// 	.subscribe(data => {
+	  	// 		var messagebody = JSON.parse(data.message);
+				// if(messagebody.type == 'order_requested'){
 			  		
-				}
-				if(messagebody.type == 'incoming_call'){
-					// this.splashScreen.hide();
-					this.keepSplash = 0;
-					// this._ngZone.run(() => {
-					// 	var incomingData = {
-					// 		'order' : messagebody.order_dets,
-					// 		'user' : messagebody.user_dets,
-					// 		'my_user_id' : messagebody.my_user_id
-					// 	};
-					// 	this.incomingCall(incomingData);
-					// });
-					this.backgroundMode.moveToForeground();
-					// Turn screen on
-					this.backgroundMode.wakeUp();
-					// Turn screen on and show app even locked
-					this.backgroundMode.unlock();
-				}
-				if(messagebody.type == 'receiver_enabled'){
+				// }
+				// if(messagebody.type == 'incoming_call'){
+				// 	// this.splashScreen.hide();
+				// 	this.keepSplash = 0;
+				// 	// this._ngZone.run(() => {
+				// 	// 	var incomingData = {
+				// 	// 		'order' : messagebody.order_dets,
+				// 	// 		'user' : messagebody.user_dets,
+				// 	// 		'my_user_id' : messagebody.my_user_id
+				// 	// 	};
+				// 	// 	this.incomingCall(incomingData);
+				// 	// });
+				// 	this.backgroundMode.moveToForeground();
+				// 	// Turn screen on
+				// 	this.backgroundMode.wakeUp();
+				// 	// Turn screen on and show app even locked
+				// 	this.backgroundMode.unlock();
+				// }
+				// if(messagebody.type == 'receiver_enabled'){
 
-				}
-				if(messagebody.type == 'order_updated'){
+				// }
+				// if(messagebody.type == 'order_updated'){
 
-				}
+				// }
 
-				if(messagebody.type == 'order_accepted'){
+				// if(messagebody.type == 'order_accepted'){
 			  		
-				}
+				// }
 
-				if(messagebody.type == 'in_call_messages'){
+				// if(messagebody.type == 'in_call_messages'){
 			  		
-				}
-	  		});
+				// }
+
+	  	// 	});
 	  	}
 
 		openStore(){

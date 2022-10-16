@@ -46,6 +46,16 @@ export class ApiService {
 	    });
   	}
 
+    startCallInit(data){
+      return axios.post(apiUrl + 'other/start-call-init', data)
+      .then(function(response){
+        return response.data;
+      })
+      .catch(function(err){
+        return Promise.reject(err)
+      });
+    }
+
     startCall(data){
       return axios.post(apiUrl + 'other/start-call', data)
       .then(function(response){
