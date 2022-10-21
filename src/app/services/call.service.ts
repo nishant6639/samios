@@ -2,9 +2,9 @@ declare var Peer:any;
 import { Injectable } from '@angular/core';
 // import Peer from 'peerjs';
 import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
-import { Autostart } from '@ionic-native/autostart/ngx';
+// import { Autostart } from '@ionic-native/autostart/ngx';
 import { Subject, Observable } from 'rxjs';
-import { ForegroundService } from '@ionic-native/foreground-service/ngx';
+// import { ForegroundService } from '@ionic-native/foreground-service/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { ApiService } from './api.service';
 import { MiscService } from './misc.service';
@@ -63,8 +63,8 @@ export class CallService {
 		private db: AngularFireDatabase,
 		private api: ApiService,
 		private misc: MiscService,
-		public foregroundService: ForegroundService,
-		private autostart: Autostart,
+		// public foregroundService: ForegroundService,
+		// private autostart: Autostart,
     	private backgroundMode: BackgroundMode,
     	private router:Router,
     	private route: ActivatedRoute

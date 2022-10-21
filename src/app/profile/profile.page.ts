@@ -6,7 +6,9 @@ import { FirebaseService } from '../services/firebase.service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Router } from '@angular/router';
 import { AlertController } from '@ionic/angular';
+import OneSignal from 'onesignal-cordova-plugin';
 
+import { Platform } from '@ionic/angular';
 @Component({
   	selector: 'app-profile',
   	templateUrl: './profile.page.html',
@@ -19,6 +21,7 @@ export class ProfilePage implements OnInit {
     public alertController: AlertController,
     private misc:MiscService,
     private call:CallService,
+    private platform:Platform,
     private api:ApiService,
     private firebase:FirebaseService,
     private router:Router) {}
@@ -85,6 +88,9 @@ export class ProfilePage implements OnInit {
 		this.firebase.unregisterFb();
 		this.api.logoutUser()
 		.then(response =>{
+			if(this.platform.is('cordova')){
+				OneSignal.removeExternalUserId();
+			}
 			window.localStorage.removeItem('token');
 			window.localStorage.removeItem('user');
       		this.router.navigate(['/login']);

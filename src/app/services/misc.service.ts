@@ -4,8 +4,8 @@ import { LoadingController } from '@ionic/angular';
 import { Platform } from '@ionic/angular';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
-import { ForegroundService } from '@ionic-native/foreground-service/ngx';
-import { Autostart } from '@ionic-native/autostart/ngx';
+// import { ForegroundService } from '@ionic-native/foreground-service/ngx';
+// import { Autostart } from '@ionic-native/autostart/ngx';
 // import { PowerManagement } from '@ionic-native/power-management/ngx';
 declare var require: any;
 const axios = require('axios').default;
@@ -25,8 +25,8 @@ export class MiscService {
   		public loadingCtrl:LoadingController,
   		public platform: Platform,
 		private androidPermissions: AndroidPermissions,
-		public foregroundService: ForegroundService,
-    	private autostart: Autostart,
+		// public foregroundService: ForegroundService,
+    	// private autostart: Autostart,
     	private backgroundMode: BackgroundMode,
     	// private powerManagement: PowerManagement
 	) {}
@@ -43,9 +43,9 @@ export class MiscService {
 	}
 
 	getAllPermissions(){
-  		this.platform.ready().then(() => {
+  		this.platform.ready().then(async () => {
 	      	if (this.platform.is('cordova')) {
-	          	this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED]);
+	          	await this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED]);
 	          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
 	              	result => {
 	              		// console.log('Has permission?', result.hasPermission)
@@ -107,12 +107,12 @@ export class MiscService {
 	          	// this.foregroundService.start('Running in Background', 'Background Service', 'icon', 3, 10);
     			// this.autostart.enable();
     			
-        		this.backgroundMode.setDefaults({ silent: true });
+      		this.backgroundMode.setDefaults({ silent: true });
     			this.backgroundMode.enable();
     			// this.backgroundMode.on('activate')
     			// .then(() => {
     				// this.backgroundMode.disableWebViewOptimizations();
-				this.backgroundMode.disableBatteryOptimizations();
+					this.backgroundMode.disableBatteryOptimizations();
     				// this.backgroundMode.excludeFromTaskList();
 				// })
 				// .catch(er/r => {
@@ -141,7 +141,8 @@ export class MiscService {
 
 
 	handleError(err, type=""){
-		// console.log(err);
+		console.log(err);
+		console.log(err.response);
 		if(err.response.status == 422){
 			if(err.response.data.data){
 				var obj = err.response.data.data;
@@ -275,6 +276,7 @@ export class MiscService {
 
 	getUserDets(){
 		this.userDets = window.localStorage.getItem('user');
+		// console.log('userDettssssss', this.userDets);
 		return JSON.parse(this.userDets);
 	}
 

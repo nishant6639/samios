@@ -1,3 +1,19 @@
+.caller-screen-wrap{
+	display: block;
+	position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    // background: url(../assets/splash/splash.gif);
+    right: 0;
+    background-size: 100%;
+    background-position: center center;
+    z-index: 1234212;
+    pointer-events: none;
+    *{
+    	pointer-events: auto;
+    }
+}
 .splash-screen{
 	position: fixed;
     top: 0;

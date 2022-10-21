@@ -1,14 +1,16 @@
 <ngx-loading-bar color="#FFF" height="5px" [includeSpinner]="false" diameter="0px"></ngx-loading-bar>
+<div class="caller-screen-wrap">
+	<app-caller></app-caller>
+</div>
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
 </ion-app>
-<app-caller></app-caller>
-<div class="splash-screen" *ngIf="keepSplash == 1" [class.hide-splash]="splash == 1">
+<div class="splash-screen" id="splashScreen" *ngIf="keepSplash == 1" style="display: none;">
 	<img [src]="'assets/splash/splash.gif'" />
-<!-- 	<video poster="noposter" muted="true" preload="metadata" autoplay="autoplay" webkit-playsinline="webkit-playsinline">
-		<source src="assets/splash/splash.mp4" type="video/mp4" />
-	</video> -->
 </div>
+<!-- <div class="splash-screen" id="splashScreen" *ngIf="keepSplash == 1" [class.hide-splash]="splash == 1">
+	<img [src]="'assets/splash/splash.gif'" />
+</div> -->
 <div class="loader" id="taskLoader">
 	<div class="loader-in">
 		<img src="assets/images/loader.gif" />

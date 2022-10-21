@@ -211,7 +211,7 @@ export class HirePage implements OnInit {
             'type': 'order_requested',
             'order': response.data.order
           };
-          this.firebase.sendCallMsgsFn(response.data.order.target_user, JSON.stringify(message));
+          this.firebase.sendCallMsgsFn(response.data.order.service_provider_id, JSON.stringify(message));
           
           // var order_date = this.order.date+" UTC";
           // var trigger_time = new Date((new Date(new Date(order_date).getTime() - 300000)).toISOString());

@@ -11,7 +11,8 @@ import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 // import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 declare let window: any;
-declare let cordova: any;
+declare let cordova:any;
+// import 'webrtc-adapter';
 @Component({
 	selector: 'app-root',
 	templateUrl: 'app.component.html',
@@ -19,6 +20,7 @@ declare let cordova: any;
 })
 export class AppComponent implements OnInit {
 	splash:any = 0;
+	loadCallS:any = 1;
 	loading:any = false;
 	platform_name:any = "web";
 	app_ver:any = 106;
@@ -67,14 +69,14 @@ export class AppComponent implements OnInit {
 			});
 
 			this.platform.ready().then(() => {
-
+				// if (this.platform.is('cordova') && this.platform.is('ios')) {
+				// 	cordova.plugins.iosrtc.registerGlobals();
+				// 	this.loadCallS = 1;
+				// }
 				this.listenToMessage();
-				setTimeout( () =>{
+				// setTimeout( () =>{
 					this.splashScreen.hide();
-				}, 300);
-				if (this.platform.is('cordova') && this.platform.is('ios')) {
-					cordova.plugins.iosrtc.registerGlobals();
-				}
+				// }, 300);
 				this.nativeAudio.preloadComplex('ringtone', 'assets/sounds/ring.mp3', 1, 1, 1).then(resp => {
 				} , err => {console.log(err);});
 
@@ -87,9 +89,9 @@ export class AppComponent implements OnInit {
 						// code for stuff you want to do
 					}
 				);
-				setTimeout(()=>{
-					this.splash = 1;
-				}, 4000);
+				// setTimeout(()=>{
+				// 	this.splash = 1;
+				// }, 4000);
 
 				this.deeplinks.routeWithNavController(this.navController, {
 					'/:id':'/providerdets'

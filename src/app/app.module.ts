@@ -23,8 +23,8 @@ import { NgCircleProgressModule } from 'ng-circle-progress';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule, AngularFireDatabase } from '@angular/fire/database';
 import { environment } from '../environments/environment';
-import { Autostart } from '@ionic-native/autostart/ngx';
-import { ForegroundService } from '@ionic-native/foreground-service/ngx';
+// import { Autostart } from '@ionic-native/autostart/ngx';
+// import { ForegroundService } from '@ionic-native/foreground-service/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 // import { PowerManagement } from '@ionic-native/power-management/ngx';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
@@ -87,8 +87,8 @@ import { pageTransition } from './page-transition';
  	   	Insomnia,
  	   	AudioManagement,
  	   	Camera,
- 	   	ForegroundService,
- 	   	Autostart,
+ 	   	// ForegroundService,
+ 	   	// Autostart,
  	   	BackgroundMode,
  	   	InAppBrowser,
  	   	NativeAudio,

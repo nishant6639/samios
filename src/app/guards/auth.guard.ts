@@ -5,6 +5,8 @@ import { Router } from '@angular/router';
 import { MiscService } from '../services/misc.service';
 import { CallService } from '../services/call.service';
 import { FirebaseService } from '../services/firebase.service';
+import OneSignal from 'onesignal-cordova-plugin';
+import { Platform } from '@ionic/angular';
 
 declare var require: any;
 const axios = require('axios').default;
@@ -15,7 +17,7 @@ const apiUrl = "https://api.samantapp.com/api/";
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-	constructor(private router:Router, private misc: MiscService, private call: CallService, private firebase: FirebaseService) { }
+	constructor(private router:Router, private platform:Platform, private misc: MiscService, private call: CallService, private firebase: FirebaseService) { }
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
@@ -45,6 +47,7 @@ export class AuthGuard implements CanActivate {
 
   		axios.post(apiUrl + 'auth/user-profile', data)
 	    .then(response => {
+        console.log('userDetsssssss', response);
         this.misc.setUserDets(JSON.stringify(response.data));
         this.call.init(response.data.id);
         this.firebase.init(response.data);
@@ -69,6 +72,9 @@ export class AuthGuard implements CanActivate {
 	    .catch(err => {
 	    	// console.log(err.response.status);
 	    	if(err.response.status == 401){
+          if(this.platform.is('cordova')){
+            OneSignal.removeExternalUserId();
+          }
 	    		// console.log('not logged in');
 	    		this.router.navigate(['/login']);
 	      		return false;
