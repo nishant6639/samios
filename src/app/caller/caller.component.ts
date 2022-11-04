@@ -5,6 +5,7 @@ import { MiscService } from '../services/misc.service';
 import { CallService } from '../services/call.service';
 import { ApiService } from '../services/api.service';
 import { Platform } from '@ionic/angular';
+import { ConnectivityProvider } from '../../utils/connectivity.provider';
 import { FirebaseService } from '../services/firebase.service';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 // import { BackgroundMode } from '@ionic-native/background-mode/ngx';
@@ -31,12 +32,14 @@ export class CallerComponent implements AfterViewInit {
 	audio_muted:any = 0;
 	video_muted:any = 0;
 	soundMode:any = 0;
+	backbutton:any;
 	orderId:any = 0;
 	userId:any = 0;
 	splashShown:any = 0;
 	myUserId:any;
 	callCl:any; // For cloning incoming and outgoing calls.
 	myStream:any;
+	answering:any = 0;
 	connId:any = 0;
 	conn:any = null;
 	callToEnd:any = null;
@@ -48,7 +51,9 @@ export class CallerComponent implements AfterViewInit {
 	chatMsgs:any = [];
 	callLog:any = [];
 	newChat:any = 0;
-	me_reconnecting:any = 0;
+	reconInt:any;
+	itemRefSub:any;
+	reconnecting:any = 0;
 	itemRef: AngularFireObject<any>;
 	noteRef: AngularFireObject<any>;
 	callRef: AngularFireObject<any>;
@@ -57,7 +62,8 @@ export class CallerComponent implements AfterViewInit {
 	message:any = "";
 	userDets:any = null;
 	lastUser:any = null;
-	adminNewMsg:any = 0
+	adminNewMsg:any = 0;
+	rtcConn:any;
 	my_user:any;
 	order:any = {};
 	my_role:any = "";
@@ -76,6 +82,7 @@ export class CallerComponent implements AfterViewInit {
 	callExtendShown:any = 0;
 	callExtendRequest:any = 0;
 	callExtendRequested:any = 0;
+	connectionstate:any = "";
 	callStage:any = 0;
 	showCancel:any = 0;
 	timeInt:any;
@@ -87,6 +94,7 @@ export class CallerComponent implements AfterViewInit {
 	ongoingCall:any = "";
 	connected:any = 0;
 	retry_attempts = 0;
+	noteRefSub:any;
 	// options:any = {  // not used, by default it'll use peerjs server
 	// 	// host: 'peer.samantapp.com',
 	// 	// port:'9000',
@@ -146,7 +154,7 @@ export class CallerComponent implements AfterViewInit {
 		// port:'9000',
 		pingInterval:100,
 		secure: true,
-		debug: 3,
+		debug: 1,
 		config: { 
 			'iceServers': [],
 			'sdpSemantics': 'unified-plan'
@@ -159,6 +167,7 @@ export class CallerComponent implements AfterViewInit {
 		private misc:MiscService,
 		private router: Router,
 		// private peer: Peer,
+		private connectivityProvider:ConnectivityProvider,
 		public audioman: AudioManagement,
     	private backgroundMode: BackgroundMode,
 		private firebase:FirebaseService,
@@ -177,6 +186,8 @@ export class CallerComponent implements AfterViewInit {
 				cordova.plugins.iosrtc.registerGlobals();
 				// this.loadCallS = 1;
 			}
+
+			this.lookForConnectivityChanges();
 			this.comm = this.call.comm;
 			
 			this.firebase.initProviderBooking(this.showAcceptToast.bind(this));
@@ -284,13 +295,40 @@ export class CallerComponent implements AfterViewInit {
 			}
 		}
 		else{
+			// if(this.splashShown == 0){
+			// 	let splash:any = document.getElementById('splashScreen');
+			// 	splash.style.display = "block";
+			// 	setTimeout(()=>{
+			// 		// this.splash = 1;
+			// 		splash.style.display = "none";
+			// 		this.splashShown = 1;
+			// 	}, 4000);
+			// }
 			console.log('user undefined');
 		}
 
 	}
 
+	getDeviceLists(){
+		navigator.mediaDevices.enumerateDevices()
+	    .then((devices) => {
+	      devices.forEach((device) => {
+	      	console.log(device);
+	        console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
+	      });
+	    })
+	    .catch((err) => {
+	      console.error(`${err.name}: ${err.message}`);
+	    });
+	}
+
 	peerInit(){
-		// this.peer = new Peer('SamantaPJS'+this.userDets.id, this.options);
+		this.getDeviceLists();
+		navigator.mediaDevices.ondevicechange = (event) => {
+			console.log(event);
+		  	this.getDeviceLists();
+		};
+		// this.peer = new Peer('SamantaPJSS'+this.userDets.id, this.options);
 		this.lastUser = this.userDets;
 		// this.peer.on('open', (id) => {
 		// 	this.waitForCall();
@@ -306,25 +344,60 @@ export class CallerComponent implements AfterViewInit {
 
 	OneSignalInit(){
 
-
-		OneSignal.promptForPushNotificationsWithUserResponse(function(accepted) {
-	      	console.log("User accepted notifications: " + accepted);
-	  	});
-
-		OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
 		
-		let externalUserId = 'samnote'+this.userDets.id;
 
-	  	OneSignal.setExternalUserId(externalUserId);
+		// if(this.platform.is('cordova')){
+			// OneSignal.removeExternalUserId();
+		// }
+		// let externalUserId = 'samnote'+this.userDets.id;
 
-		OneSignal.setNotificationOpenedHandler(function(jsonData) {
-	      	console.log('notificationOpenedCallback: ' + JSON.stringify(jsonData));
+	  	// OneSignal.setExternalUserId(externalUserId);
+
+		OneSignal.setNotificationOpenedHandler((jsonData) => {
+	      	console.log('notificationOpenedCallback: ', jsonData);
+	      	let noteData = jsonData;
+	      	let clickAction = noteData.action.actionId;
+	      	console.log('Clicked button: ' + clickAction);
+	      	if(clickAction == 'accept'){
+	      		if(this.callStage == 2){
+	      			this.answerCall();
+	      		}
+	      	}
+
+	      	if(clickAction == 'decline'){
+	      		setTimeout(() => {
+	      			if(this.callStage == 2){
+		      			this.disconnectMyCall();
+		      		}
+	      		});
+	      	}
+
+	      	if(clickAction == 'end_call'){
+	      		setTimeout(() => {
+	      			if(this.callStage == 3){
+		      			this.disconnectMyCall();
+		      		}
+	      		});
+	      	}
+
 	  	});
 
 
 		OneSignal.setNotificationWillShowInForegroundHandler((notificationReceivedEvent:any) => {
-			notificationReceivedEvent.complete(null);
-			// console.log(notificationReceivedEvent.notification);
+			var data = notificationReceivedEvent.notification.additionalData;
+			console.log(notificationReceivedEvent.notification);
+			if(!(data == undefined)){
+				if(data.type == 'incoming_call'){
+					notificationReceivedEvent.complete(notificationReceivedEvent.notification);
+				}
+				else{
+					notificationReceivedEvent.complete(notificationReceivedEvent.notification);
+				}
+			}
+			else{
+				notificationReceivedEvent.complete(notificationReceivedEvent.notification);
+			}
+			
 			// this.receiveMessages(notificationReceivedEvent.notification.additionalData);
 		});
 	}
@@ -344,7 +417,7 @@ export class CallerComponent implements AfterViewInit {
 	}
 
 	receiveMessage(){
-		console.log(this.userDets.id);
+		// console.log(this.userDets.id);
 		// this.db.object(".info/connected").snapshotChanges().subscribe(action => {
 		// 	if(action.payload.val() == false){
 		// 		console.log(action.payload.val());
@@ -354,102 +427,122 @@ export class CallerComponent implements AfterViewInit {
 		// 		}, 2000);
 		// 	}
 		// });
-		this.noteRef = this.db.object('user'+this.userDets.id);
-		this.noteRef.snapshotChanges().subscribe(action => {
-			console.log(action.payload.val());
-			if(!(action.payload.val() == null) && (!(action.payload.val() == ""))){
-				var message = JSON.parse(action.payload.val());
-				this.sendCallMsgs(this.userDets.id, "");
-				if(message.type == 'incoming_call'){
-					this.bringAppToForeground();
-					this.order = message.order;
-					this.other_user = message.other_user;
-					// this.nat = message.nat;
-					this.options['config']['iceServers'] = message.ice_servers;
-					this.showIncomingCallScreen();
-				}
-
-				if(message.type == 'receiver_ready'){
-					console.log('receiver_ready');
-					if(this.callStage == 1){
-						// this.showIncomingCallScreen();
-						this.proceedWithOutgoingCall();
-					}
-					else{
-						// Graciously ignored receiver enabled.
-					}
-				}
-
-			    if(message.type == "order_accepted"){
-			    	if(!(this.firebase.UserAcceptFn == undefined)){
-			    		this.firebase.UserAcceptFn();
-			    	}
-			    	if(!(this.firebase.UserWaitFn == undefined)){
-			    		this.firebase.UserWaitFn(message.order)
-		    		}
-			    }
-			    if(message.type == "order_requested"){
-			    	if(!(this.firebase.UserAcceptFn == undefined)){
-			    		this.firebase.UserAcceptFn();
-		    		}
-			    	this.showAcceptToast(message.order)
-			    }
-
-    			if(message.type == "extension_requested"){
-					this.callExtendRequested = 1;
-				}
-
-				// get extention offer accepted from service provider. 
-				if(message.type == "extension_allowed"){
-					this.callExtended = 1;
-					this.misc.showToast('Service provider allowed extension of call.');
-				}
-				// get extension offer declined from service provider.
-				if(message.type == "extension_denied"){
-					this.callExtended = 0;
-					this.misc.showToast('Service provider denied extension of call.');
-				}
-				// get disconnect signal from other user.
-			    if(message.type == 'disconnect'){
-			    	if(this.callStage > 0){
-						this.disconnectCall();
-					}
-					else{
-						// Graciously ignored receiver enabled.
-					}
-					// conn.close();
-				}
-
-				// if(message.type == 'ringing'){
-				// 	if(this.callStage == 1){
-				// 		this.callStage = 4;
-				// 	}
-				// }
-
-			    if(message.type == "audio_muted"){
-			    	this.remote_audio_muted = message.value;
-			    }
-
-			    if(message.type == "video_muted"){
-			    	this.remote_video_muted = message.value;
-			    }
-			} else {
-				if(this.splashShown == 0){
-					let splash:any = document.getElementById('splashScreen');
-					splash.style.display = "block";
-					setTimeout(()=>{
-						// this.splash = 1;
-						splash.style.display = "none";
-						this.splashShown = 1;
-					}, 4000);
-				}
+		if((!(this.userDets == null)) && (!(this.userDets == undefined)) && (!(this.userDets.id == undefined)) ){
+			if(this.noteRefSub){
+				this.noteRefSub.unsubscribe();
 			}
-		});
+			this.noteRef = this.db.object('user'+this.userDets.id);
+			this.noteRefSub = this.noteRef.snapshotChanges().subscribe(action => {
+				console.log(action.payload.val());
+				if(!(action.payload.val() == null) && (!(action.payload.val() == ""))){
+					var message = JSON.parse(action.payload.val());
+					this.sendCallMsgs(this.userDets.id, "");
+					if(message.type == 'incoming_call'){
+						this.bringAppToForeground();
+						this.playRingtone();
+						this.order = message.order;
+						this.other_user = message.other_user;
+						let msg = {
+							'type': 'ringing'
+						};
+
+						this.sendCallMsgs(this.other_user.id, JSON.stringify(msg));
+
+						// this.nat = message.nat;
+						this.options['config']['iceServers'] = message.ice_servers;
+						this.showIncomingCallScreen();
+					}
+
+					if(message.type == 'ringing'){
+						console.log('ringing');
+						this.callStage = 4;
+					}
+
+					if(message.type == 'receiver_ready'){
+						console.log('receiver_ready');
+						if(this.callStage == 1 || this.callStage == 4){
+							// this.callStage = 4;
+							// this.showIncomingCallScreen();
+							this.proceedWithOutgoingCall();
+						}
+						else{
+							// Graciously ignored receiver enabled.
+						}
+					}
+
+				    if(message.type == "order_accepted"){
+				    	if(!(this.firebase.UserAcceptFn == undefined)){
+				    		this.firebase.UserAcceptFn();
+				    	}
+				    	if(!(this.firebase.UserWaitFn == undefined)){
+				    		this.firebase.UserWaitFn(message.order)
+			    		}
+				    }
+				    if(message.type == "order_requested"){
+				    	if(!(this.firebase.UserAcceptFn == undefined)){
+				    		this.firebase.UserAcceptFn();
+			    		}
+				    	this.showAcceptToast(message.order)
+				    }
+
+	    			if(message.type == "extension_requested"){
+						this.callExtendRequested = 1;
+					}
+
+					// get extention offer accepted from service provider. 
+					if(message.type == "extension_allowed"){
+						this.callExtended = 1;
+						this.misc.showToast('Service provider allowed extension of call.');
+					}
+					// get extension offer declined from service provider.
+					if(message.type == "extension_denied"){
+						this.callExtended = 0;
+						this.misc.showToast('Service provider denied extension of call.');
+					}
+					// get disconnect signal from other user.
+				    if(message.type == 'disconnect'){
+				    	if(this.callStage > 0){
+							this.disconnectCall();
+						}
+						else{
+							// Graciously ignored receiver enabled.
+						}
+						// conn.close();
+					}
+
+					// if(message.type == 'ringing'){
+					// 	if(this.callStage == 1){
+					// 		this.callStage = 4;
+					// 	}
+					// }
+
+				    if(message.type == "audio_muted"){
+				    	this.remote_audio_muted = message.value;
+				    }
+
+				    if(message.type == "video_muted"){
+				    	this.remote_video_muted = message.value;
+				    }
+				} else {
+					// if(this.splashShown == 0){
+					// 	let splash:any = document.getElementById('splashScreen');
+					// 	splash.style.display = "block";
+					// 	setTimeout(()=>{
+					// 		// this.splash = 1;
+					// 		splash.style.display = "none";
+					// 		this.splashShown = 1;
+					// 	}, 4000);
+					// }
+				}
+			});
+		}
 	}
 
 	bringAppToForeground(){
 		this.platform.ready().then( () => {
 			if (this.platform.is('cordova')) {
+				cordova.plugins.backgroundMode.wakeUp();
+				cordova.plugins.backgroundMode.unlock();
 				cordova.plugins.backgroundMode.moveToForeground();
 			}
 		});
@@ -501,29 +594,60 @@ export class CallerComponent implements AfterViewInit {
 
 	async connectToPeerServer(){
 		if(this.peer == undefined){
-			this.peer = await new Peer('SamantaPJS'+this.userDets.id, this.options);
+			this.peer = await new Peer('SamantaPJSS'+this.userDets.id, this.options);
 			this.peer.on('open', () => {
 				this.waitForAutoAnswer();
+				// this.reconnecting = 0;
+				// if(!(this.reconInt == undefined)) {
+				// 	clearInterval(this.reconInt);
+				// }
+			});
+
+			this.peer.on('error', (err) => {
+				console.log('peeeeer errrror', err.type);
+				if(err.type == 'network'){
+					this.peer.reconnect();
+				}
+				// if(this.connected == 1){
+				// 	this.reconnecting = 1;
+				// 	this.reconInt = setInterval(() => {
+				// 		if(this.reconnecting == 1){
+				// 			this.peer.reconnect();
+				// 		}
+				// 	}, 5000);
+				// }
 			});
 		}
 		else{
 			this.peer.destroy();
-			this.peer = await new Peer('SamantaPJS'+this.userDets.id, this.options);
+			this.peer = await new Peer('SamantaPJSS'+this.userDets.id, this.options);
 			this.peer.on('open', () => {
 				this.waitForAutoAnswer();
-				// let message = {
-				// 	'type': 'receiver_ready'
-				// };
-
-				// this.sendCallMsgs(this.other_user.id, JSON.stringify(message));
-			
+				this.reconnecting = 0;
+				if(!(this.reconInt == undefined)) {
+					clearInterval(this.reconInt);
+				}
+			});
+			this.peer.on('error', (err) => {
+				console.log('peeeeer errrror', err.type);
+				if(err.type == 'network'){
+					this.peer.reconnect();
+				}
+				// if(this.connected == 1){
+				// 	this.reconnecting = 1;
+				// 	this.reconInt = setInterval(() => {
+				// 		if(this.reconnecting == 1){
+				// 			this.peer.reconnect();
+				// 		}
+				// 	}, 5000);
+				// }
 			});
 		}
 	}
 
 	async callerConnectToPeerServer(){
 		if(this.peer == undefined){
-			this.peer = await new Peer('SamantaPJS'+this.userDets.id, this.options);
+			this.peer = await new Peer('SamantaPJSS'+this.userDets.id, this.options);
 			this.peer.on('open', () => {
 				this.doOutgoingCall();
 				// this.waitForAutoAnswer();
@@ -531,7 +655,7 @@ export class CallerComponent implements AfterViewInit {
 		}
 		else{
 			this.peer.destroy();
-			this.peer = await new Peer('SamantaPJS'+this.userDets.id, this.options);
+			this.peer = await new Peer('SamantaPJSS'+this.userDets.id, this.options);
 			this.peer.on('open', () => {
 				this.doOutgoingCall();
 				// let message = {
@@ -547,6 +671,7 @@ export class CallerComponent implements AfterViewInit {
 	async callInit(order_id){
 		await this.getLocalVideoTracks();
 		this.callStage = 1;
+		this.playDialer();
 		var data = {
 	      	'order_id': order_id
 	    };
@@ -578,7 +703,7 @@ export class CallerComponent implements AfterViewInit {
 	}
 
 	doOutgoingCall(){
-		this.callCl = this.peer.call('SamantaPJS'+this.other_user.id, this.myStream);
+		this.callCl = this.peer.call('SamantaPJSS'+this.other_user.id, this.myStream);
 		this.my_role = 'dialer';
 		this.remoteParticipantAdded();
 		// this.waitForAutoAnswer();
@@ -590,7 +715,10 @@ export class CallerComponent implements AfterViewInit {
 	}
 
 	async answerCall(){
-		await this.connectToPeerServer();
+		if(this.answering == 0){
+			this.answering = 1;
+			await this.connectToPeerServer();
+		}
 		// this.waitForAutoAnswer();
 
 	}
@@ -613,14 +741,59 @@ export class CallerComponent implements AfterViewInit {
 		// }, 1000);
 	}
 
+	tryReconnection(){
+		// await this.connectToPeerServer();
+	}
+
+	waitForReconnection(){
+		// await this.connectToPeerServer();
+	}
+
+	checkForReconnections(){
+		this.rtcConn.onconnectionstatechange = (event) => {
+			console.log(event.target);
+			this.connectionstate = event.target.connectionState;
+			
+			if(this.connectionstate == 'disconnected'){
+				this.reconnecting = 1;
+			}
+			
+			if(this.connectionstate == 'connected'){
+				this.reconnecting = 0;
+			}
+
+			if(this.connectionstate == 'failed'){
+				if(this.my_role == 'dialer'){
+					this.disconnectMyCall();
+				}
+				if(this.my_role == 'receiver'){
+					this.disconnectCall();
+				}
+			}
+		};
+		// this.peer.on('disconnected', () => {
+		// 	if(this.connected == 1){
+		// 		console.log('reconnecting');
+		// 		setTimeout(() => {
+		// 			this.peer.reconnect();
+		// 		}, 5000);
+		// 	}
+		// });
+	}
+
 	remoteParticipantAdded(){
 		let id = 0;
+		this.backbutton = this.platform.backButton.observers.pop();
 		this.callerScreen = document.getElementById('callerVideo');
 		this.callCl.on('stream', (stream) => {
 			if (id != stream.id) {
 				console.log(stream.getTracks());
 			}
+			this.stopDialer();
+			this.stopRingtone();
+			this.getChatData();
 			this.callStage = 3;
+			this.answering = 0;
 			this.activeScreen = 1;
 			this.callStartTime = new Date();
 			this.timeInt = setInterval(()=>{
@@ -630,6 +803,8 @@ export class CallerComponent implements AfterViewInit {
 			this.callerScreen.srcObject = this.remoteStream;
 			// this.callerScreen.muted = "true";
 			this.connected = 1;
+			this.rtcConn = this.callCl.peerConnection;
+			this.checkForReconnections();
 			if (this.platform.is('cordova') && this.platform.is('ios')) {
 				var element1:any = document.getElementsByClassName('call-screen-wrap')[0];
 				var elements:any = document.getElementsByClassName('ion-page');
@@ -642,6 +817,74 @@ export class CallerComponent implements AfterViewInit {
 				this.refreshVideos();
 	      	}
 		});
+		this.callCl.on('error', (err) => {
+			console.log(err);
+			console.log(err.type);
+		});
+		this.callCl.on('close', () => {
+			console.log('call closed');
+			// console.log(err.type);
+		});
+	}
+
+	lookForConnectivityChanges(){
+		this.connectivityProvider.appIsOnline$.subscribe(online => {
+
+		    // console.log(online)
+
+		    if (online) {
+
+		    	console.log('online');
+		    	this.receiveMessage();
+		        // call functions or methods that need to execute when app goes online (such as sync() etc)
+
+		    } else {
+		    	console.log('offline');
+		        // call functions on network offline, such as firebase.goOffline()
+
+		    }
+
+		})
+	}
+
+
+	playRingtone(){
+		setTimeout(() => {
+			if(this.platform.is('cordova')){
+				this.nativeAudio.loop('ringtone')
+				.then(onSuccess => {}, onError => {});
+			}
+		}, 1000);
+	}
+
+	stopRingtone(){
+		setTimeout(() => {
+			if(this.platform.is('cordova')){
+				this.nativeAudio.stop('ringtone')
+				.then(onSuccess => {}, onError => {});
+			}
+		}, 1000);
+			
+	}
+
+	playDialer(){
+		setTimeout(() => {
+			if(this.platform.is('cordova')){
+				this.nativeAudio.loop('ringing')
+				.then(onSuccess => {}, onError => {});
+			}
+		}, 1000);
+			
+	}
+
+
+	stopDialer(){
+		setTimeout(() => {
+			if(this.platform.is('cordova')){
+				this.nativeAudio.stop('ringing')
+				.then(onSuccess => {}, onError => {});
+			}
+		}, 1000);
 	}
 
 	// sendCallMsgs(id, message){
@@ -652,7 +895,7 @@ export class CallerComponent implements AfterViewInit {
 	// 		reliable: true
 	// 	};
 
-	// 	var conn = this.peer.connect('SamantaPJS'+id, option);
+	// 	var conn = this.peer.connect('SamantaPJSS'+id, option);
 
 	// 	// on open will be called when you successfully connect to PeerServer
 	// 	conn.on('open', () => {
@@ -813,7 +1056,7 @@ export class CallerComponent implements AfterViewInit {
 		});
 		this.soundMode = 1;
 		
-		this.outgoingCallData = this.peer.call('SamantaPJS'+this.other_user.id, this.myStream, options);
+		this.outgoingCallData = this.peer.call('SamantaPJSS'+this.other_user.id, this.myStream, options);
 
 		// this.outgoingCallData.on('close', ()=>{
 		// 	this.disconnectCall();
@@ -862,7 +1105,13 @@ export class CallerComponent implements AfterViewInit {
   	}
 
 	callDestroy(){
-		this.peer.destroy();
+		if(this.noteRefSub){
+			console.log('unsubscribing firebase');
+			this.noteRefSub.unsubscribe();
+		}
+		this.userDets = null;
+		this.lastUser = null;
+		// this.peer.destroy();
 	}
 
 	incomingCall(data){
@@ -1111,7 +1360,14 @@ export class CallerComponent implements AfterViewInit {
 
 
 	disconnectMyCall(){
-		clearInterval(this.timeInt);
+		this.stopRingtone();
+		this.stopDialer();
+		this.connected = 0;
+		this.platform.backButton.observers.push(this.backbutton);
+		let dis_call_stage = this.callStage;
+		if(this.timeInt){
+			clearInterval(this.timeInt);
+		}
 		if (this.platform.is('cordova')) {
 			this.insomnia.allowSleepAgain()
 		  	.then(
@@ -1132,8 +1388,7 @@ export class CallerComponent implements AfterViewInit {
 			this.setCallLog(this.userDets.id, 'disconnected', new Date());
 		}
 
-		this.connected = 0;
-		if(this.myStream){
+		if(this.myStream && this.myStream.getTracks()){
 			this.myStream.getTracks().forEach(track => {
 				track.stop();
 				this.myScreen.srcObject.removeTrack(track);
@@ -1156,6 +1411,8 @@ export class CallerComponent implements AfterViewInit {
 		};
 		this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
 
+		console.log('disconnecting');
+
 		if(this.callStage == 3){
 			this.callStage = 0;
 			this._ngZone.run(() => {
@@ -1169,6 +1426,12 @@ export class CallerComponent implements AfterViewInit {
 	}
 
 	disconnectCall(){
+		this.stopRingtone();
+		this.stopDialer();
+		// let dis_call_stage = this.callStage;
+		// this.callStage = 0;
+		this.connected = 0;
+
 		if(!(this.timeInt == undefined)){
 			clearInterval(this.timeInt);
 		}
@@ -1179,8 +1442,6 @@ export class CallerComponent implements AfterViewInit {
 			    () => console.log('error')
 		  	);
 	  	}
-
-		this.connected = 0;
 
 		if(this.myStream){
 			this.myStream.getTracks().forEach(track => track.stop())
@@ -1213,24 +1474,29 @@ export class CallerComponent implements AfterViewInit {
 			// this.connId = null;
 			// this.conn = null;
 		// }, 1000);
+		this.answering = 0;
+		this.callStage = 0;
+		if(this.itemRef){
+			this.itemRefSub.unsubscribe();
+		}
 		if(this.platform.is('cordova') && this.platform.is('ios')){
-			this.audioman.setVolume(AudioManagement.VolumeType.MUSIC, this.defVolume)
-		   	.then(() => {
+			// this.audioman.setVolume(AudioManagement.VolumeType.MUSIC, this.defVolume)
+		 //   	.then(() => {
 		    	
-		   	})
-		   	.catch((reason) => {
+		 //   	})
+		 //   	.catch((reason) => {
 	     		
-		   	});
+		 //   	});
 	   	}
 
-		this.nativeAudio.stop('ringtone')
-		.then(onSuccess => {}, onError => {});
-		this.nativeAudio.stop('ringing')
-		.then(onSuccess => {}, onError => {});
+		// this.nativeAudio.stop('ringtone')
+		// .then(onSuccess => {}, onError => {});
+		// this.nativeAudio.stop('ringing')
+		// .then(onSuccess => {}, onError => {});
 		this.platform.ready().then(() => {
-			if(this.platform.is('cordova') && this.platform.is('ios')){
-				AudioToggle.setAudioMode(AudioToggle.SPEAKER);
-			}
+			// if(this.platform.is('cordova') && this.platform.is('ios')){
+			// 	AudioToggle.setAudioMode(AudioToggle.SPEAKER);
+			// }
 		});
 		// AudioToggle.setAudioMode(AudioToggle.SPEAKER);
 		this.soundMode = 0;
@@ -1242,6 +1508,7 @@ export class CallerComponent implements AfterViewInit {
 		this.showCancel = 0;
 		this.chatWin = 0;
 		this.callCl = undefined;
+		this.reconInt = undefined;
 		this.activeScreen = 2;
 		this.newChat = 0;
 		this.audio_muted = 0;
@@ -1307,10 +1574,10 @@ export class CallerComponent implements AfterViewInit {
 	}
 
 	getChatData(){
-		this.userDets = this.misc.getUserDets();
+		// this.userDets = this.misc.getUserDets();
 		this.chatMsgs = [];
 		this.itemRef = this.db.object('chat'+this.order.id);
-		this.itemRef.snapshotChanges().subscribe(action => {
+		this.itemRefSub = this.itemRef.snapshotChanges().subscribe(action => {
 			if(!(action.payload.val() == null)){
 				this.chatMsgs = action.payload.val();
 				if(!(this.chatMsgs == "")){
@@ -1354,7 +1621,7 @@ export class CallerComponent implements AfterViewInit {
 
 		var data = {
 			"message": this.message,
-			"from": this.myUserId
+			"from": this.userDets.id
 		};
 
 		this.chatMsgs.push(data);
@@ -1436,13 +1703,13 @@ export class CallerComponent implements AfterViewInit {
           	if(status == 1){
 				var trigger_time = new Date(new Date(order_date).getTime() - 300000);  
 				// console.log(trigger_time);
-				this.localNotifications.schedule({
-				   	title: "Upcoming order.",
-				   	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
-				   	trigger: {at: trigger_time},
-				   	led: 'FF0000',
-				   	sound: null
-				});
+				// this.localNotifications.schedule({
+				//    	title: "Upcoming order.",
+				//    	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
+				//    	trigger: {at: trigger_time},
+				//    	led: 'FF0000',
+				//    	sound: null
+				// });
 			}
 
 			this.bookingRequest = "";

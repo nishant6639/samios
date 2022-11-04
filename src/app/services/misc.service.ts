@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Toast } from '@ionic-native/toast/ngx';
 import { LoadingController } from '@ionic/angular';
+import OneSignal from 'onesignal-cordova-plugin';
 import { Platform } from '@ionic/angular';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 // import { ForegroundService } from '@ionic-native/foreground-service/ngx';
 // import { Autostart } from '@ionic-native/autostart/ngx';
 // import { PowerManagement } from '@ionic-native/power-management/ngx';
+declare let cordova:any;
 declare var require: any;
 const axios = require('axios').default;
 // import axios from 'axios';
@@ -42,9 +44,17 @@ export class MiscService {
 	    });
 	}
 
-	getAllPermissions(){
+	async getAllPermissions(){
   		this.platform.ready().then(async () => {
+  				if (this.platform.is('ios')) {
+      			cordova.plugins.iosrtc.registerGlobals();
+    			}
 	      	if (this.platform.is('cordova')) {
+	      			await OneSignal.promptForPushNotificationsWithUserResponse( async (accepted) => {
+		            console.log("User accepted notifications: " + accepted);
+		            await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+		          });
+		          await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
 	          	await this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED]);
 	          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
 	              	result => {
@@ -105,37 +115,30 @@ export class MiscService {
 	          	);
 
 	          	// this.foregroundService.start('Running in Background', 'Background Service', 'icon', 3, 10);
-    			// this.autostart.enable();
-    			
-      		this.backgroundMode.setDefaults({ silent: true });
-    			this.backgroundMode.enable();
-    			// this.backgroundMode.on('activate')
-    			// .then(() => {
-    				// this.backgroundMode.disableWebViewOptimizations();
-					this.backgroundMode.disableBatteryOptimizations();
-    				// this.backgroundMode.excludeFromTaskList();
-				// })
-				// .catch(er/r => {
-					// c/onsole.log(err);
-				// });
-    			// // console.log("===============================================================================");
-    			// this.powerManagement.dim();
-    			// this.powerManagement.setReleaseOnPause(false);
-    // 			() => {
-				// 	// console.log('Wakelock acquired');
-				// }, ()=> {
-				// 	// console.log('Failed to acquire wakelock');
-				// }
-					          	// this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO).then(
-	           //    	result => // console.log('Has permission?', result.hasPermission),
-	           //    	err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
-	          	// );
-
-	          	// this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS).then(
-	           //    	result => // console.log('Has permission?', result.hasPermission),
-	           //    	err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS)
-	          	// );
+	      		cordova.plugins.backgroundMode.setDefaults({ silent: true });
+	      		cordova.plugins.backgroundMode.requestForegroundPermission();
+	    			cordova.plugins.backgroundMode.enable();
+	    			cordova.plugins.backgroundMode.disableBatteryOptimizations();
+	    			console.log('bac mode enable');
+	    			cordova.plugins.backgroundMode.on('activate', () => {
+	    				console.log('enabled and activated');
+	    				cordova.plugins.backgroundMode.disableWebViewOptimizations();
+	    				// cordova.plugins.backgroundMode.excludeFromTaskList();
+						});
 	      	}
+	      	navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+	      	.then(stream => {
+	      		// stream
+	      		if(stream && stream.getTracks()){
+							stream.getTracks().forEach(track => {
+								track.stop();
+								// this.myScreen.srcObject.removeTrack(track);
+							})
+						}
+	      	})
+	      	.catch(err => {
+
+	      	});
   		});
 	}
 

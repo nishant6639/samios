@@ -85,7 +85,7 @@ export class ProfilePage implements OnInit {
 
 	logoutUser(){
 		this.call.destroyPeerFn();
-		this.firebase.unregisterFb();
+		// this.firebase.unregisterFb();
 		this.api.logoutUser()
 		.then(response =>{
 			if(this.platform.is('cordova')){

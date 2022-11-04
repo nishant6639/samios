@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MiscService } from '../../services/misc.service';
+import { Platform } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
+import OneSignal from 'onesignal-cordova-plugin';
 
 declare var require: any;
 const axios = require('axios').default;
@@ -32,7 +34,7 @@ export class TypePage implements OnInit {
     availabilities:any = {};
     availCheckList:any = [];
     companyTypes:any = [];
-    constructor(private router:Router, private route: ActivatedRoute, private misc:MiscService, private api:ApiService) { }
+    constructor(private router:Router, private platform:Platform, private route: ActivatedRoute, private misc:MiscService, private api:ApiService) { }
 
     ngOnInit() {
     }
@@ -85,7 +87,6 @@ export class TypePage implements OnInit {
             }
             // data['phone_no'] = data['country_code'] + data['phone_no'];
             // delete data.country_code;
-            delete data.confirm_password;
             // // console.log(data);
             if(this.user_type == 'interpreter'){
                 // // console.log(this.availCheckList);
@@ -106,27 +107,64 @@ export class TypePage implements OnInit {
             }
             // // console.log(data);
             this.misc.showLoader();
-            this.api.registerUser(data)
-            .then( response => {
-                this.misc.hideLoader();
-                // console.log(response);
-                var token = response.data.token;
-                axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                var user = JSON.stringify(response.data.user);
-                window.localStorage.setItem('token', token);
-                window.localStorage.setItem('user', user);
-                this.misc.setUserDets(user);
-                if(data['user_type'] == 3){
-                    this.router.navigate(['/otp']);
+            this.platform.ready().then(async () => {
+                if(this.platform.is('cordova') || this.platform.is('android') || this.platform.is('ios')) {
+                    await OneSignal.getDeviceState((state) => {
+                      // console.log(state.userId);
+                        if(state.userId == undefined){
+                          this.saveUser();
+                          return;
+                        }
+                        delete data.confirm_password;
+                        data['fcm'] = state.userId;
+                        this.api.registerUser(data)
+                        .then( response => {
+                            this.misc.hideLoader();
+                            // console.log(response);
+                            var token = response.data.token;
+                            axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                            var user = JSON.stringify(response.data.user);
+                            window.localStorage.setItem('token', token);
+                            window.localStorage.setItem('user', user);
+                            this.misc.setUserDets(user);
+                            if(data['user_type'] == 3){
+                                this.router.navigate(['/otp']);
+                            }
+                            else{
+                                this.router.navigate(['/otp']);
+                            }
+                        })
+                        .catch(err => {
+                            this.misc.hideLoader();
+                            this.misc.handleError(err);
+                        });
+                    });
                 }
                 else{
-                    this.router.navigate(['/otp']);
+                    delete data.confirm_password;
+                    this.api.registerUser(data)
+                    .then( response => {
+                        this.misc.hideLoader();
+                        // console.log(response);
+                        var token = response.data.token;
+                        axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                        var user = JSON.stringify(response.data.user);
+                        window.localStorage.setItem('token', token);
+                        window.localStorage.setItem('user', user);
+                        this.misc.setUserDets(user);
+                        if(data['user_type'] == 3){
+                            this.router.navigate(['/otp']);
+                        }
+                        else{
+                            this.router.navigate(['/otp']);
+                        }
+                    })
+                    .catch(err => {
+                        this.misc.hideLoader();
+                        this.misc.handleError(err);
+                    });
                 }
-            })
-            .catch(err => {
-                this.misc.hideLoader();
-                this.misc.handleError(err);
-            })
+            });
         }
         else{
             if(!(this.tnc == 1)){
@@ -217,7 +255,7 @@ export class TypePage implements OnInit {
 
 
 
-    saveCompany(){
+    async saveCompany(){
         if(this.tnc == 1 && this.pass_flag == 1){
             var data = this.FormModel;
             data['user_type'] = 4;
@@ -232,24 +270,55 @@ export class TypePage implements OnInit {
             // }
             // data['phone_no'] = data['country_code'] + data['phone_no'];
             // delete data.country_code;
-            delete data.confirm_password;
             // console.log(data);
             this.misc.showLoader();
-            this.api.registerCompany(data)
-            .then( response => {
-                this.misc.hideLoader();
-                // console.log(response);
-                var token = response.data.token;
-                axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                var user = JSON.stringify(response.data.user);
-                window.localStorage.setItem('token', token);
-                window.localStorage.setItem('user', user);
-                this.router.navigate(['/otp']);
-            })
-            .catch(err => {
-                this.misc.hideLoader();
-                this.misc.handleError(err);
-            })
+            this.platform.ready().then(async () => {
+                if(this.platform.is('cordova')){
+
+                    await OneSignal.getDeviceState((state) => {
+                        // console.log(state.userId);
+                        if(state.userId == undefined){
+                          this.saveCompany();
+                          return;
+                        }
+                        delete data.confirm_password;
+                        data['fcm'] = state.userId;
+                        this.api.registerCompany(data)
+                        .then( response => {
+                            this.misc.hideLoader();
+                            // console.log(response);
+                            var token = response.data.token;
+                            axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                            var user = JSON.stringify(response.data.user);
+                            window.localStorage.setItem('token', token);
+                            window.localStorage.setItem('user', user);
+                            this.router.navigate(['/otp']);
+                        })
+                        .catch(err => {
+                            this.misc.hideLoader();
+                            this.misc.handleError(err);
+                        })
+                    });
+                }
+                else{
+                    delete data.confirm_password;
+                    this.api.registerCompany(data)
+                    .then( response => {
+                        this.misc.hideLoader();
+                        // console.log(response);
+                        var token = response.data.token;
+                        axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                        var user = JSON.stringify(response.data.user);
+                        window.localStorage.setItem('token', token);
+                        window.localStorage.setItem('user', user);
+                        this.router.navigate(['/otp']);
+                    })
+                    .catch(err => {
+                        this.misc.hideLoader();
+                        this.misc.handleError(err);
+                    });
+                }
+            });
         }
         else{
             if(!(this.tnc == 1)){

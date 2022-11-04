@@ -5,12 +5,45 @@
 <ion-app>
   <ion-router-outlet></ion-router-outlet>
 </ion-app>
-<div class="splash-screen" id="splashScreen" *ngIf="keepSplash == 1" style="display: none;">
-	<img [src]="'assets/splash/splash.gif'" />
-</div>
-<!-- <div class="splash-screen" id="splashScreen" *ngIf="keepSplash == 1" [class.hide-splash]="splash == 1">
+<!-- <div class="splash-screen" id="splashScreen" *ngIf="keepSplash == 1">
 	<img [src]="'assets/splash/splash.gif'" />
 </div> -->
+<div class="splash-screen" id="splashScreen" *ngIf="keepSplash == 1" [class.hide-splash]="splash == 1">
+	<img [src]="'assets/splash/splash.gif'" />
+</div>
+<div class="overlay" [class.active]="showPerm == 1"></div>
+<div *ngIf="showPerm == 1" class="popup request-popup" [class.active]="showPerm == 1">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Few Permission Required.</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row perm-pop-cont">
+			<div class="col-12">
+				<h4>Camera</h4>
+				<p>Need this permission to capture user's video for the video calls.</p>
+				<h4>Audio and Microphone</h4>
+				<p>Need this permission to capture user's audio for the video calls.</p>
+				<h4>Notifications.</h4>
+				<p>Needed to receive push notificationand to get call when the application is closed.</p>
+				<h4>Draw over another apps.</h4>
+				<p>Needed to allow the app to interrupt other applications and open call screen while the app is in background.</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<button class="btn btn-primary" (click)="getPermissions()">Allow</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="loader" id="taskLoader">
 	<div class="loader-in">
 		<img src="assets/images/loader.gif" />

@@ -52,7 +52,7 @@
 	}
 	.call-screen{
 		position: absolute;
-		z-index: 2;
+		z-index: 3;
 		bottom: 150px;
 		right: 20px;
 		height: 150px;
@@ -76,6 +76,9 @@
 			right: 0;
 			bottom: 0;
 			z-index: 1;
+			&.reconnect{
+				filter: blur(5px);
+			}
 			video{
 				z-index: -2 !important;
 			}
@@ -98,6 +101,31 @@
 		}
 	}
 
+	.reconnecting-wrap{
+		position: absolute;
+		bottom: 0px;
+		left: 0px;
+		top: 0;
+		right: 0px;
+		background-color: rgba(25,25,25,0.7);
+		// filter: blur(5px);
+		display: block;
+		// transform: translateZ(1px);
+		z-index: 2;
+		text-align: center;
+		p{
+			position: absolute;
+		    top: 40%;
+		    left: 0;
+		    right: 0;
+		    transform: translateY(-50%);
+		    color: #FFF;
+		    font-weight: 700;
+		    text-align: center;
+		    font-size: 15px;
+		}
+	}
+
 	.call-btns{
 		position: absolute;
 		bottom: 70px;
@@ -105,7 +133,7 @@
 		right: 10px;
 		display: block;
 		transform: translateZ(1px);
-		z-index: 3;
+		z-index: 5;
 		text-align: center;
 	}
 

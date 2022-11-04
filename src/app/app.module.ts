@@ -11,6 +11,7 @@ import { SocialSharing } from '@ionic-native/social-sharing/ngx';
 import { Deeplinks } from '@ionic-native/deeplinks/ngx';
 import { IconsModule } from './icons/icons.module';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
+import { ConnectivityProvider } from '../utils/connectivity.provider';
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 // import OneSignal from 'onesignal-cordova-plugin';
 import { OneSignal } from '@awesome-cordova-plugins/onesignal/ngx';
@@ -94,6 +95,7 @@ import { pageTransition } from './page-transition';
  	   	NativeAudio,
  	   	LocalNotifications,
  	   	NativeRingtones,
+ 	   	ConnectivityProvider,
  	   	// PowerManagement,
  	   	Stripe
  	   	// Push

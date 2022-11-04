@@ -73,7 +73,24 @@ export class AuthGuard implements CanActivate {
 	    	// console.log(err.response.status);
 	    	if(err.response.status == 401){
           if(this.platform.is('cordova')){
-            OneSignal.removeExternalUserId();
+            OneSignal.removeExternalUserId((results:any) => {
+              // The results will contain push and email success statuses
+              console.log('Results of removing external user id');
+              console.log(results);
+              // Push can be expected in almost every situation with a success status, but
+              // as a pre-caution its good to verify it exists
+              if (results.push && results.push.success) {
+                console.log('Results of removing external user id push status:');
+                console.log(results.push.success);
+              }
+              
+              // Verify the email is set or check that the results have an email success status
+              if (results.email && results.email.success) {
+                console.log('Results of removoing external user id email status:');
+                console.log(results.email.success);
+              }
+            });
+            this.call.destroyPeerFn();
           }
 	    		// console.log('not logged in');
 	    		this.router.navigate(['/login']);

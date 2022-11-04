@@ -25,22 +25,30 @@ export class AppComponent implements OnInit {
 	platform_name:any = "web";
 	app_ver:any = 106;
 	keepSplash:any = 1;
-		constructor(
-			// private firebase: FirebaseX,
-			private api:ApiService,
-    		private backgroundMode: BackgroundMode,
-    		public platform: Platform,
-    		private misc: MiscService,
-    		private navController: NavController,
-			private deeplinks: Deeplinks,
-			private router:Router,
-			private splashScreen: SplashScreen,
-			private nativeAudio: NativeAudio) {
-				this.misc.getAllPermissions();
-		}
+	showPerm:any = 0;
+	constructor(
+		// private firebase: FirebaseX,
+		private api:ApiService,
+		private backgroundMode: BackgroundMode,
+		public platform: Platform,
+		private misc: MiscService,
+		private navController: NavController,
+		private deeplinks: Deeplinks,
+		private router:Router,
+		private splashScreen: SplashScreen,
+		private nativeAudio: NativeAudio) {
+			// this.misc.getAllPermissions();
+	}
 
 		ngOnInit(){
 
+			var permReq = window.localStorage.getItem('permReq');
+			if(permReq == undefined || permReq == null){
+				this.showPerm = 1;
+			}
+			else{
+				this.showPerm = 0;
+			}
 
 			this.api.getAppVer()
 			.then(resp => {
@@ -89,9 +97,9 @@ export class AppComponent implements OnInit {
 						// code for stuff you want to do
 					}
 				);
-				// setTimeout(()=>{
-				// 	this.splash = 1;
-				// }, 4000);
+				setTimeout(()=>{
+					this.splash = 1;
+				}, 4000);
 
 				this.deeplinks.routeWithNavController(this.navController, {
 					'/:id':'/providerdets'
@@ -136,6 +144,13 @@ export class AppComponent implements OnInit {
 
 
 			});
+		}
+
+		getPermissions(){
+			this.misc.getAllPermissions();
+			window.localStorage.setItem('permReq', 1);
+			
+			this.showPerm = 0;
 		}
 
 
