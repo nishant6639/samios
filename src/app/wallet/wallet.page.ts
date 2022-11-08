@@ -237,11 +237,11 @@ export class WalletPage implements OnInit {
 				browser.on('loadstart').subscribe(event => {
 					// console.log(event);
 				   	browser.insertCSS({ code: "body{ background-color: red;" });
-				   	if((event.url).includes("https://api.samantapp.com/app/stripe/success/")){
+				   	if((event.url).includes("https://staging.samantapp.com/app/stripe/success/")){
 				   		this.ionViewWillEnter();
 				   		browser.close();
 				   	}
-				   	if((event.url).includes("https://api.samantapp.com/app/stripe/failure/")){
+				   	if((event.url).includes("https://staging.samantapp.com/app/stripe/failure/")){
 				   		this.ionViewWillEnter();
 				   		browser.close();
 				   	}
@@ -257,7 +257,7 @@ export class WalletPage implements OnInit {
 		}
 
 		openStripeDash(){
-			// const browser = this.iab.create("https://api.samantapp.com/dashboard", '_blank');
+			// const browser = this.iab.create("https://staging.samantapp.com/dashboard", '_blank');
 			const browser = this.iab.create(this.userDets.stripe_dashboard_link, '_blank');
 		}
 

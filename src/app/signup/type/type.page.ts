@@ -109,6 +109,11 @@ export class TypePage implements OnInit {
             this.misc.showLoader();
             this.platform.ready().then(async () => {
                 if(this.platform.is('cordova') || this.platform.is('android') || this.platform.is('ios')) {
+
+                    await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
+                        console.log("User accepted notifications: " + accepted);
+                    });
+                    await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
                     await OneSignal.getDeviceState((state) => {
                       // console.log(state.userId);
                         if(state.userId == undefined){
@@ -274,7 +279,10 @@ export class TypePage implements OnInit {
             this.misc.showLoader();
             this.platform.ready().then(async () => {
                 if(this.platform.is('cordova')){
-
+                    await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
+                        console.log("User accepted notifications: " + accepted);
+                    });
+                    await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
                     await OneSignal.getDeviceState((state) => {
                         // console.log(state.userId);
                         if(state.userId == undefined){

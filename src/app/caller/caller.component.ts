@@ -95,6 +95,7 @@ export class CallerComponent implements AfterViewInit {
 	connected:any = 0;
 	retry_attempts = 0;
 	noteRefSub:any;
+	auto_answer:any = 0;
 	// options:any = {  // not used, by default it'll use peerjs server
 	// 	// host: 'peer.samantapp.com',
 	// 	// port:'9000',
@@ -334,11 +335,11 @@ export class CallerComponent implements AfterViewInit {
 		// 	this.waitForCall();
 		// });
 		// this.waitForCall();
-		this.receiveMessage();
 		this.platform.ready().then(() => {
 			if (this.platform.is('cordova')) {
 				this.OneSignalInit();
 			}
+			this.receiveMessage();
 		});
 	}
 
@@ -353,14 +354,23 @@ export class CallerComponent implements AfterViewInit {
 
 	  	// OneSignal.setExternalUserId(externalUserId);
 
-		OneSignal.setNotificationOpenedHandler((jsonData) => {
+		OneSignal.setNotificationOpenedHandler((jsonData:any) => {
 	      	console.log('notificationOpenedCallback: ', jsonData);
 	      	let noteData = jsonData;
-	      	let clickAction = noteData.action.actionId;
+	      	let clickAction = "";
+	      	if(this.platform.is('ios')){
+	      		clickAction = noteData.action.actionID;
+      		}
+      		else{
+      			clickAction = noteData.action.actionId;
+      		}
 	      	console.log('Clicked button: ' + clickAction);
 	      	if(clickAction == 'accept'){
 	      		if(this.callStage == 2){
 	      			this.answerCall();
+	      		}
+	      		else{
+	      			this.auto_answer = 1;
 	      		}
 	      	}
 
@@ -712,9 +722,13 @@ export class CallerComponent implements AfterViewInit {
 	async showIncomingCallScreen(){
 		await this.getLocalVideoTracks();
 		this.callStage = 2;
+		if(this.auto_answer == 1){
+			this.answerCall();
+		}
 	}
 
 	async answerCall(){
+		this.auto_answer = 0;
 		if(this.answering == 0){
 			this.answering = 1;
 			await this.connectToPeerServer();
@@ -1747,6 +1761,7 @@ export class CallerComponent implements AfterViewInit {
 			clearInterval(this.timeInt);
 			if(!(this.userDets.user_type == 3)){
 				this.disconnectMyCall();
+				return;
 			}
 		}
 		else{

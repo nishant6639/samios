@@ -102,13 +102,13 @@ export class ProfilePage implements OnInit {
 
 	shareProfile(){
 		// if(this.userDets.image_url == null){
-			var image = 'https://api.samantapp.com/images/logo.png';
+			var image = 'https://staging.samantapp.com/images/logo.png';
 		// }
 		// else{
 			// var image = this.userDets.image_url;
 		// }
 		//body, subject, image, url
-		this.socialSharing.share("Hire "+this.userDets.name+" at Samanta by clicking on the given link.", "View "+this.userDets.name+"'s profile", image, 'https://api.samantapp.com/app/provider/'+this.userDets.id).then(() => {
+		this.socialSharing.share("Hire "+this.userDets.name+" at Samanta by clicking on the given link.", "View "+this.userDets.name+"'s profile", image, 'https://staging.samantapp.com/app/provider/'+this.userDets.id).then(() => {
 		  // Success!
 		}).catch(() => {
 		  // Error!

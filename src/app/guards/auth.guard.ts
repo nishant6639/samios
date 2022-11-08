@@ -11,7 +11,7 @@ import { Platform } from '@ionic/angular';
 declare var require: any;
 const axios = require('axios').default;
 axios.defaults.headers.common['Content-Type'] = 'application/json'; // for POST requests
-const apiUrl = "https://api.samantapp.com/api/";
+const apiUrl = "https://staging.samantapp.com/api/";
 
 @Injectable({
   providedIn: 'root'

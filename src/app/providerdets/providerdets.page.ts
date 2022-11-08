@@ -188,7 +188,7 @@ export class ProviderdetsPage implements OnInit {
                 'type': 'order_requested',
                 'order': response.data.order
               };
-              this.firebase.sendCallMsgsFn(response.data.order.target_user, JSON.stringify(message));
+              this.firebase.sendCallMsgsFn(response.data.order.service_provider_id, JSON.stringify(message));
               this.misc.hideLoader();
               this.router.navigate(['/home']);
           }
@@ -203,13 +203,13 @@ export class ProviderdetsPage implements OnInit {
 
   shareProfile(){
     // if(this.userDets.image_url == null){
-      var image = 'https://api.samantapp.com/images/logo.png';
+      var image = 'https://staging.samantapp.com/images/logo.png';
     // }
     // else{
       // var image = this.userDets.image_url;
     // }
     //body, subject, image, url
-    this.socialSharing.share("Hire "+this.provider.user.name+" at Samanta by clicking on the given link.", "View "+this.provider.user.name+"'s profile", image, 'https://api.samantapp.com/app/provider/'+this.provider_id).then(() => {
+    this.socialSharing.share("Hire "+this.provider.user.name+" at Samanta by clicking on the given link.", "View "+this.provider.user.name+"'s profile", image, 'https://staging.samantapp.com/app/provider/'+this.provider_id).then(() => {
       // Success!
     }).catch(() => {
       // Error!

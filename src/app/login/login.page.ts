@@ -37,9 +37,10 @@ export class LoginPage implements OnInit, OnDestroy {
         console.log(this.platform);
         if(this.platform.is('android') || this.platform.is('ios')) {
           console.log('dfsfs');
-          // await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
-          //   console.log("User accepted notifications: " + accepted);
-          // });
+          await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
+            console.log("User accepted notifications: " + accepted);
+          });
+          await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
           await OneSignal.getDeviceState((state) => {
             console.log(state.userId);
             if(state.userId == undefined){
