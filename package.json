@@ -25,7 +25,7 @@
     "@awesome-cordova-plugins/onesignal": "^5.46.0",
     "@awesome-cordova-plugins/splash-screen": "^5.41.0",
     "@hyperblob/ngx-wheel-selector": "^1.1.6",
-    "@ionic-native/android-permissions": "^5.32.1",
+    "@ionic-native/android-permissions": "^5.36.0",
     "@ionic-native/audio-management": "^5.34.0",
     "@ionic-native/autostart": "^5.32.1",
     "@ionic-native/background-mode": "^5.35.0",
@@ -33,6 +33,8 @@
     "@ionic-native/core": "^5.32.1",
     "@ionic-native/date-picker": "^5.32.1",
     "@ionic-native/deeplinks": "^5.33.0",
+    "@ionic-native/diagnostic": "^5.36.0",
+    "@ionic-native/firebase-x": "^5.36.0",
     "@ionic-native/in-app-browser": "^5.33.1",
     "@ionic-native/insomnia": "^5.33.1",
     "@ionic-native/local-notifications": "^5.36.0",
@@ -48,6 +50,7 @@
     "@types/hammerjs": "^2.0.40",
     "angular-calendar": "^0.28.22",
     "axios": "^0.21.1",
+    "connectycube": "^3.22.1",
     "cordova-plugin-audioroute": "0.1.2",
     "cordova-plugin-audiotoggle": "1.0.3",
     "cordova-res": "^0.15.4",
@@ -80,28 +83,34 @@
     "cordova-android": "^10.1.2",
     "cordova-androidx-build": "^1.0.4",
     "cordova-ios": "^6.2.0",
-    "cordova-plugin-android-permissions": "^1.1.2",
+    "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-androidx": "^3.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
     "cordova-plugin-badge": "^0.8.8",
+    "cordova-plugin-callkit": "^1.0.0",
     "cordova-plugin-camera": "^5.0.2",
     "cordova-plugin-datepicker": "^0.9.3",
     "cordova-plugin-device": "^2.0.3",
     "cordova-plugin-doze-optimize": "^0.5.4",
+    "cordova-plugin-file": "^7.0.0",
+    "cordova-plugin-firebasex": "^16.0.0",
     "cordova-plugin-inappbrowser": "^5.0.0",
     "cordova-plugin-insomnia": "^4.3.0",
     "cordova-plugin-ionic-keyboard": "^2.2.0",
     "cordova-plugin-ionic-webview": "^4.2.1",
     "cordova-plugin-iosrtc": "^8.0.3",
-    "cordova-plugin-local-notification": "^0.9.0-beta.2",
+    "cordova-plugin-local-notification": "git+https://github.com/nishant6639/cordova-plugin-local-notifications.git",
+    "cordova-plugin-native-ringtones": "^0.2.5",
     "cordova-plugin-nativeaudio": "^3.0.9",
+    "cordova-plugin-ringtone": "git+https://github.com/nishant6639/cordova-plugin-ringtone.git",
     "cordova-plugin-splashscreen": "^6.0.1",
     "cordova-plugin-statusbar": "^2.4.3",
     "cordova-plugin-stripe": "^1.5.3",
     "cordova-plugin-x-socialsharing": "^6.0.3",
     "cordova-plugin-x-toast": "^2.7.3",
     "cordova-support-google-services": "^1.3.2",
+    "cordova.plugins.diagnostic": "^7.1.1",
     "es6-promise-plugin": "^4.2.2",
     "ionic-plugin-deeplinks": "^1.0.22",
     "jasmine-core": "~3.6.0",
@@ -127,7 +136,6 @@
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-x-toast": {},
       "cordova-plugin-datepicker": {},
-      "cordova-plugin-android-permissions": {},
       "cordova-plugin-androidx-adapter": {},
       "cordova-plugin-androidx": {},
       "cordova-plugin-doze-optimize": {},
@@ -166,17 +174,27 @@
       "cordova-plugin-audiotoggle": {},
       "clovelced-plugin-audiomanagement": {},
       "cordova-plugin-nativeaudio": {},
-      "cordova-plugin-local-notification": {},
       "cordova-plugin-splashscreen": {},
       "onesignal-cordova-plugin": {},
       "cordova-plugin-iosrtc": {
         "MANUAL_INIT_AUDIO_DEVICE": "FALSE"
       },
-      "cordova-plugin-background-mode": {}
+      "cordova-plugin-background-mode": {},
+      "cordova-plugin-android-permissions": {},
+      "cordova.plugins.diagnostic": {
+        "ANDROIDX_VERSION": "1.0.0",
+        "ANDROIDX_APPCOMPAT_VERSION": "1.3.1"
+      },
+      "cordova-plugin-callkit": {},
+      "cordova-plugin-native-ringtones": {},
+      "cordova-plugin-ringtone": {},
+      "cordova-plugin-local-notification": {
+        "ANDROID_SUPPORT_V4_VERSION": "26.+"
+      }
     },
     "platforms": [
-      "android",
-      "ios"
+      "ios",
+      "android"
     ]
   }
 }

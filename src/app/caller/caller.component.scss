@@ -14,17 +14,6 @@
 		display: block;
 	}
 
-	.rem-time{
-		opacity: 0;
-		transform: translateY(-50px);
-		transition: all 0.5s linear;
-		transition-delay: 1s;
-		&.active{
-			opacity: 1;
-			transform: translateY(0px);
-		}
-	}
-
 	.ring-anim{
 		height: 200px;
 	    width: 200px;
@@ -227,5 +216,234 @@
 	&.active{
 		opacity: 1;
 		pointer-events: auto;
+	}
+}
+
+
+.new-call-screen{
+	position: fixed;
+	height: 100vh;
+	width: 100vw;
+	top: 0;
+	left: 0;
+	background-color: #000;
+	display: none;
+	&.incoming{
+		display: block;
+	}
+	&.on-call{
+		display: block;
+	}
+	&.outgoing{
+		display: block;
+	}
+}
+
+.my-stream{
+	position: absolute;
+    bottom: 120px;
+    left: 10px;
+    height: 140px;
+    width: 100px;
+    overflow: hidden;
+    border: 2px solid #FFF;
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(76, 76, 76, 0.4);
+	video{
+		height: 100%;
+		width: auto;
+		position: relative;
+		transform: translateX(-50%) scaleX(-1) !important;
+		left: 50%;
+	}
+}
+
+.remote-stream{
+	position: absolute;
+	top: 0px;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	video{
+		height: 100%;
+		width: auto;
+		position: relative;
+		transform: translateX(-50%);
+		left: 50%;
+		// width: 100%;
+	}
+}
+
+.show-devices-screen{
+	z-index: 4;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 80%;
+	max-width: 400px;
+	background-color: #FFF;
+	border-radius: 10px;
+	padding: 20px;
+	transform: translate(-50%, -50%);
+}
+
+.new-callBtns{
+	position: absolute;
+    bottom: 30px;
+    left: 10px;
+    right: 10px;
+    padding: 5px;
+    z-index: 3;
+    text-align: center;
+    background: rgba(149, 143, 233, 0.56);
+    border-radius: 50px;
+	.new-callBtn{
+		display: inline-block;
+		height: 60px;
+		width: 60px;
+		border-radius: 60px;
+		margin: 0px 50px;
+		font-size: 26px;
+		background-color: #FD1231;
+		color: #FFF;
+		padding: 0px;
+		// line-height: 60px;
+		// box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+		&.rotate{
+			transform: rotate(135deg);
+			margin: 15px 13px;
+		}
+		&:active{
+			transform: scale(0.7);
+		}
+
+		.mi{
+			line-height: 60px;
+			font-size: 30px;
+			text-shadow: 0px 1px 1px #000;
+			// text-shadow: 0px 1px 2px #000;
+		}
+	}
+}
+
+.overlay-msg-popup{
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	// background-color: rgba(0,0,0,0.99);
+	background-color: #234;
+	.overlay-msg-wrap{
+		position: absolute;
+		left: 40px;
+		right: 40px;
+		top: 50%;
+		transform: translateY(-50%);
+		.overlay-loader{
+			display: block;
+			width: 50px;
+			margin: 20px auto;
+		}
+		.overlay-msg{
+			display: block;
+			color: #FFF;
+			font-size: 14px;
+			text-align: center;
+		}
+	}
+}
+
+.rem-time{
+	opacity: 0;
+	transform: translateY(-50px);
+	transition: all 0.5s linear;
+	transition-delay: 1s;
+	&.active{
+		opacity: 1;
+		transform: translateY(0px);
+	}
+}
+
+.call-btn-wrapper-full{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #777;
+	&.on-the-call{
+		background-color: transparent;
+		.new-callBtn{
+			margin: 0px 15px;
+		}
+	}
+	.call-btn-wrapper-full-in{
+		z-index: 1;
+		position: absolute;
+		top: -20px;
+		left: -20px;
+		right: -20px;
+		bottom: -20px;
+		background-size: cover;
+		background-position: center left;
+		filter: blur(5px) brightness(90%);
+		&:before{
+			content: "";
+			z-index: 2;
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			// background-color: rgba(255,255,255,0.1);
+		}
+	}
+	.caller-dets-wrap{
+		position: absolute;
+		top: 150px;
+		z-index: 3;
+		left: 0;
+		right: 0;
+		.caller-pic{
+			display: block;
+			position: relative;
+			height: 160px;
+			width: 160px;
+			margin: 0px auto;
+			border-radius: 160px;
+			overflow: hidden;
+			// border: 1px solid #777;
+			// position: absolute;
+			.caller-pic-in{
+				position: absolute;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-size: cover;
+				background-position: center center;
+			}
+		}
+		.caller-name{
+			font-size: 30px;
+			text-shadow: 0px 1px 2px #000;
+			color: #FFF;
+			font-weight: 600;
+			margin-top: 20px;
+			padding: 0px 30px;
+			text-align: center;
+		}
+		.caller-activity{
+			font-size: 15px;
+			text-shadow: 0px 1px 2px #000;
+			color: #FFF;
+			font-weight: 300;
+			margin-top: 5px;
+			padding: 0px 30px;
+			text-align: center;
+		}
+
 	}
 }

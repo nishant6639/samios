@@ -84,14 +84,14 @@ export class SummaryPage implements OnInit {
 
 	callUser(id, order_id){
 	    this.calling.call(id, order_id);
-	    setTimeout( () => {
-	    	if(this.userDets.user_type == 3){
-		    	this.router.navigate(['/provider/home']);
-	    	}
-	    	else{
-		    	this.router.navigate(['/home']);
-	    	}
-	    }, 1000);
+	    // setTimeout( () => {
+	    // 	if(this.userDets.user_type == 3){
+		//     	this.router.navigate(['/provider/home']);
+	    // 	}
+	    // 	else{
+		//     	this.router.navigate(['/home']);
+	    // 	}
+	    // }, 3000);
 	    // this.bookData = [];
   	}
 

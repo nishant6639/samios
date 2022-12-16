@@ -4,9 +4,11 @@ import { MiscService } from '../../services/misc.service';
 import { Platform } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
 import OneSignal from 'onesignal-cordova-plugin';
+import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 
 declare var require: any;
 const axios = require('axios').default;
+declare let ConnectyCube:any;
 
 
 @Component({
@@ -34,7 +36,13 @@ export class TypePage implements OnInit {
     availabilities:any = {};
     availCheckList:any = [];
     companyTypes:any = [];
-    constructor(private router:Router, private platform:Platform, private route: ActivatedRoute, private misc:MiscService, private api:ApiService) { }
+    constructor(private router:Router,
+        private platform:Platform,
+        private route: ActivatedRoute,
+        private misc:MiscService,
+        private api:ApiService,
+        private firebasex:FirebaseX
+    ) { }
 
     ngOnInit() {
     }
@@ -88,65 +96,72 @@ export class TypePage implements OnInit {
             // data['phone_no'] = data['country_code'] + data['phone_no'];
             // delete data.country_code;
             // // console.log(data);
-            if(this.user_type == 'interpreter'){
-                // // console.log(this.availCheckList);
-                Object.keys(this.availabilities).forEach( (key) => {
-                    // // console.log(key);
-                    if(!(this.availCheckList.includes(key))) {
-                        delete this.availabilities[key];
-                        // this.availabilities.splice(key, 1);
-                    }
-                });
-                data['availabilities'] = this.availabilities;
-                // console.log(Object.keys(this.availabilities).length);
-                if(Object.keys(this.availabilities).length == 0){
-                    // // console.log('empty');
-                    this.misc.showToast('Enter availabilities');
-                    return;
-                }
+            const userProfile = {
+                password: "supersecurepwd",
+                email: data['email']
+            };
+            ConnectyCube.users
+            .signup(userProfile)
+            .then((user) => {
+                data['calling_id'] = user.user.id;
+                this.saveUserDo(data);
+            })
+            .catch((error) => {
+                this.saveUserDo(data);
+            });
+        }
+        else{
+            if(!(this.tnc == 1)){
+                this.misc.showToast('Please select terms and conditions');
             }
-            // // console.log(data);
-            this.misc.showLoader();
-            this.platform.ready().then(async () => {
-                if(this.platform.is('cordova') || this.platform.is('android') || this.platform.is('ios')) {
+            if(this.pass_flag == 0){
+                this.misc.showToast('Password and confirm password does not match.');
+            }
+        }
+    }
 
-                    await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
-                        console.log("User accepted notifications: " + accepted);
-                    });
-                    await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-                    await OneSignal.getDeviceState((state) => {
-                      // console.log(state.userId);
-                        if(state.userId == undefined){
-                          this.saveUser();
-                          return;
-                        }
-                        delete data.confirm_password;
-                        data['fcm'] = state.userId;
-                        this.api.registerUser(data)
-                        .then( response => {
-                            this.misc.hideLoader();
-                            // console.log(response);
-                            var token = response.data.token;
-                            axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                            var user = JSON.stringify(response.data.user);
-                            window.localStorage.setItem('token', token);
-                            window.localStorage.setItem('user', user);
-                            this.misc.setUserDets(user);
-                            if(data['user_type'] == 3){
-                                this.router.navigate(['/otp']);
-                            }
-                            else{
-                                this.router.navigate(['/otp']);
-                            }
-                        })
-                        .catch(err => {
-                            this.misc.hideLoader();
-                            this.misc.handleError(err);
-                        });
-                    });
+    saveUserDo(data){
+        if(this.user_type == 'interpreter'){
+            // // console.log(this.availCheckList);
+            Object.keys(this.availabilities).forEach( (key) => {
+                // // console.log(key);
+                if(!(this.availCheckList.includes(key))) {
+                    delete this.availabilities[key];
+                    // this.availabilities.splice(key, 1);
                 }
-                else{
+            });
+            data['availabilities'] = this.availabilities;
+            // console.log(Object.keys(this.availabilities).length);
+            if(Object.keys(this.availabilities).length == 0){
+                // // console.log('empty');
+                this.misc.showToast('Enter availabilities');
+                return;
+            }
+        }
+        // // console.log(data);
+        this.misc.showLoader();
+        this.platform.ready().then(async () => {
+            if(this.platform.is('cordova') || this.platform.is('android') || this.platform.is('ios')) {
+
+                await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
+                    console.log("User accepted notifications: " + accepted);
+                });
+                let fcm = "";
+                await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+                await this.firebasex.getToken()
+                .then(token => {
+                    console.log(`The token is ${token}`);
+                    fcm = token;
+                }) // save the token server-side and use it to push notifications to this device
+                await OneSignal.getDeviceState((state) => {
+                  // console.log(state.userId);
+                    if(state.userId == undefined){
+                      this.saveUser();
+                      return;
+                    }
                     delete data.confirm_password;
+                    data['fcm'] = state.userId;
+                    data['fcm_call'] = fcm;
                     this.api.registerUser(data)
                     .then( response => {
                         this.misc.hideLoader();
@@ -168,17 +183,33 @@ export class TypePage implements OnInit {
                         this.misc.hideLoader();
                         this.misc.handleError(err);
                     });
-                }
-            });
-        }
-        else{
-            if(!(this.tnc == 1)){
-                this.misc.showToast('Please select terms and conditions');
+                });
             }
-            if(this.pass_flag == 0){
-                this.misc.showToast('Password and confirm password does not match.');
+            else{
+                delete data.confirm_password;
+                this.api.registerUser(data)
+                .then( response => {
+                    this.misc.hideLoader();
+                    // console.log(response);
+                    var token = response.data.token;
+                    axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                    var user = JSON.stringify(response.data.user);
+                    window.localStorage.setItem('token', token);
+                    window.localStorage.setItem('user', user);
+                    this.misc.setUserDets(user);
+                    if(data['user_type'] == 3){
+                        this.router.navigate(['/otp']);
+                    }
+                    else{
+                        this.router.navigate(['/otp']);
+                    }
+                })
+                .catch(err => {
+                    this.misc.hideLoader();
+                    this.misc.handleError(err);
+                });
             }
-        }
+        });
     }
 
 
@@ -269,6 +300,19 @@ export class TypePage implements OnInit {
                 this.misc.showToast('Enter Registration Id');
                 return;
             }
+            const userProfile = {
+                password: "supersecurepwd",
+                email: data['email']
+            };
+            ConnectyCube.users
+            .signup(userProfile)
+            .then((user) => {
+                data['calling_id'] = user.user.id;
+                this.saveCompanyDo(data);
+            })
+            .catch((error) => {
+                this.saveCompanyDo(data);
+            });
             // if(!(data['tin_no'])){
             //     this.misc.showToast('Enter Tin No');
             //     return;
@@ -276,40 +320,40 @@ export class TypePage implements OnInit {
             // data['phone_no'] = data['country_code'] + data['phone_no'];
             // delete data.country_code;
             // console.log(data);
-            this.misc.showLoader();
-            this.platform.ready().then(async () => {
-                if(this.platform.is('cordova')){
-                    await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
-                        console.log("User accepted notifications: " + accepted);
-                    });
-                    await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-                    await OneSignal.getDeviceState((state) => {
-                        // console.log(state.userId);
-                        if(state.userId == undefined){
-                          this.saveCompany();
-                          return;
-                        }
-                        delete data.confirm_password;
-                        data['fcm'] = state.userId;
-                        this.api.registerCompany(data)
-                        .then( response => {
-                            this.misc.hideLoader();
-                            // console.log(response);
-                            var token = response.data.token;
-                            axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                            var user = JSON.stringify(response.data.user);
-                            window.localStorage.setItem('token', token);
-                            window.localStorage.setItem('user', user);
-                            this.router.navigate(['/otp']);
-                        })
-                        .catch(err => {
-                            this.misc.hideLoader();
-                            this.misc.handleError(err);
-                        })
-                    });
-                }
-                else{
+        }
+        else{
+            if(!(this.tnc == 1)){
+                this.misc.showToast('Please select terms and conditions');
+            }
+            if(this.pass_flag == 0){
+                
+            }
+        }
+    }
+
+    saveCompanyDo(data){
+        this.misc.showLoader();
+        this.platform.ready().then(async () => {
+            if(this.platform.is('cordova')){
+                await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
+                    console.log("User accepted notifications: " + accepted);
+                });
+                let fcm = "";
+                await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+                await this.firebasex.getToken()
+                .then(token => {
+                    console.log(`The token is ${token}`);
+                    fcm = token;
+                }) // save the token server-side and use it to push notifications to this device
+                await OneSignal.getDeviceState((state) => {
+                    // console.log(state.userId);
+                    if(state.userId == undefined){
+                      this.saveCompany();
+                      return;
+                    }
                     delete data.confirm_password;
+                    data['fcm'] = state.userId;
+                    data['fcm_call'] = fcm;
                     this.api.registerCompany(data)
                     .then( response => {
                         this.misc.hideLoader();
@@ -324,18 +368,28 @@ export class TypePage implements OnInit {
                     .catch(err => {
                         this.misc.hideLoader();
                         this.misc.handleError(err);
-                    });
-                }
-            });
-        }
-        else{
-            if(!(this.tnc == 1)){
-                this.misc.showToast('Please select terms and conditions');
+                    })
+                });
             }
-            if(this.pass_flag == 0){
-                
+            else{
+                delete data.confirm_password;
+                this.api.registerCompany(data)
+                .then( response => {
+                    this.misc.hideLoader();
+                    // console.log(response);
+                    var token = response.data.token;
+                    axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                    var user = JSON.stringify(response.data.user);
+                    window.localStorage.setItem('token', token);
+                    window.localStorage.setItem('user', user);
+                    this.router.navigate(['/otp']);
+                })
+                .catch(err => {
+                    this.misc.hideLoader();
+                    this.misc.handleError(err);
+                });
             }
-        }
+        });
     }
 
 }

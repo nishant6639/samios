@@ -44,7 +44,8 @@ export class AuthGuard implements CanActivate {
         };
 
         // return true;
-
+        
+        return true;
   		axios.post(apiUrl + 'auth/user-profile', data)
 	    .then(response => {
         console.log('userDetsssssss', response);
@@ -67,7 +68,6 @@ export class AuthGuard implements CanActivate {
           this.router.navigate(['/provider/home']);
           return false;
         }
-        return true;
 	    })
 	    .catch(err => {
 	    	// console.log(err.response.status);

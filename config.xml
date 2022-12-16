@@ -34,12 +34,14 @@
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
             <activity android:exported="true" />
             <receiver android:exported="true" />
+            <service android:exported="true" />
         </edit-config>
         <config-file mode="merge" parent="/manifest/application" target="AndroidManifest.xml">
             <meta-data android:name="com.onesignal.NotificationServiceExtension" android:value="com.samantapp.app.NotificationServiceExtension" />
         </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
+            <service android:exported="true" />
         </edit-config>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <resource-file src="resources/android/raw/ring.mp3" target="app/src/main/res/raw/ring.mp3" />
@@ -99,6 +101,7 @@
             <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
             <uses-permission android:name="android.permission.WAKE_LOCK" />
             <uses-permission android:name="android.permission.BLUETOOTH" />
+            <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
         </config-file>
         <config-file parent="./" target="app/src/main/AndroidManifest.xml" xmlns:android="http://schemas.android.com/apk/res/android">
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -169,6 +172,5 @@
     <plugin name="cordova-plugin-ionic-webview" spec="^4.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
     <allow-navigation href="*" />
-    <allow-navigation href="http://localhost:8100" sessionid="ca8e36a0" />
-    <allow-navigation href="http://localhost:8101" sessionid="8187e0c4" />
+    <allow-navigation href="http://localhost:8100" sessionid="6ce850f2" />
 </widget>

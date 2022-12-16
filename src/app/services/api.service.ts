@@ -716,6 +716,26 @@ export class ApiService {
       });
     }
 
+    getCallToken(order_id){
+      return axios.get(apiUrl + 'other/get-call-token?order_id=1')
+      .then(function(response){
+        return response.data;
+      })
+      .catch(function(err){
+        return Promise.reject(err)
+      });
+    }
+
+    setCallToken(data){
+      return axios.post(apiUrl + 'other/set-call-token', data)
+      .then(function(response){
+        return response.data;
+      })
+      .catch(function(err){
+        return Promise.reject(err)
+      });
+    }
+
     getUnavailable(){
       return axios.post(apiUrl + 'user/get-unavailabelity')
       .then(function(response){

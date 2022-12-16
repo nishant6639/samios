@@ -291,7 +291,7 @@ export class HirePage implements OnInit {
 
   callUser(id, order_id){
     this.calling.call(id, order_id);
-    this.router.navigate(['/home']);
+    // this.router.navigate(['/home']);
     this.bookData = [];
   }
 

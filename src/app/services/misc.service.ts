@@ -4,6 +4,7 @@ import { LoadingController } from '@ionic/angular';
 import OneSignal from 'onesignal-cordova-plugin';
 import { Platform } from '@ionic/angular';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 // import { ForegroundService } from '@ionic-native/foreground-service/ngx';
 // import { Autostart } from '@ionic-native/autostart/ngx';
@@ -26,8 +27,9 @@ export class MiscService {
   		private toast:Toast,
   		public loadingCtrl:LoadingController,
   		public platform: Platform,
-		private androidPermissions: AndroidPermissions,
-		// public foregroundService: ForegroundService,
+			private androidPermissions: AndroidPermissions,
+			private diagnostic: Diagnostic,
+			// public foregroundService: ForegroundService,
     	// private autostart: Autostart,
     	private backgroundMode: BackgroundMode,
     	// private powerManagement: PowerManagement

@@ -25,12 +25,38 @@
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
 @import 'tippy.js/dist/tippy.css';
+@import url('https://fonts.googleapis.com/icon?family=Material+Icons');
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700;900&display=swap');
 // @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css');
 @import url('https://maxst.icons8.com/vue-static/landings/line-awesome/font-awesome-line-awesome/css/all.min.css');
 body{
 	font-family: 'Source Sans Pro', sans-serif;
 	color: #000;
+}
+
+.mi {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
 }
 
 .feather {
@@ -101,7 +127,7 @@ h2{
 }
 
 p{
-	font-size: 13px;
+	font-size: 15px;
 	font-style: normal;
 	font-weight: 400;
 	line-height: 20px;
@@ -741,6 +767,7 @@ hr{
 	&.request-popup{
 		bottom: unset;
 		top: 50%;
+		z-index: 1234523432123312;
 		border-radius: 20px;
 		left: 20px;
 		right: 20px;
@@ -2083,6 +2110,7 @@ p{
 
 	border-radius: 5px;
 	z-index: 6;
+	opacity: 0;
 	color: #FFF;
 	&.hidden{
 		// display: none;
@@ -2442,6 +2470,10 @@ p{
 		width: 100%;
 		vertical-align: top;
 	}
+
+	&:active{
+		transform: scale(0.9);
+	}
 }
 
 
@@ -2709,12 +2741,17 @@ ion-refresher{
 	top: 10px;
 	left: 10px;
 	z-index: 124;
-	i{
+	background-color: rgba(149, 143, 233, 0.56);
+	height: 40px;
+	width: 40px;
+	border-radius: 40px;
+	text-align: center;
+	.mi{
 		color: #FFF;
-		font-size: 16px;
-		&.big{
-			font-size: 24px;
-		}
+		// text-shadow: 0px 1px 2px #000;
+		text-shadow: 0px 1px 1px #000;
+		font-size: 24px;
+		line-height: 45px;
 	}
 }
 

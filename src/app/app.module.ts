@@ -3,6 +3,7 @@ import { BrowserModule, HammerGestureConfig, HammerModule, HAMMER_GESTURE_CONFIG
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { RouteReuseStrategy } from '@angular/router';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { Diagnostic } from '@ionic-native/diagnostic/ngx';
 import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { FormsModule } from '@angular/forms';
 import { Toast } from '@ionic-native/toast/ngx';
@@ -19,7 +20,7 @@ import { AppComponent } from './app.component';
 import { CallerComponent } from './caller/caller.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgCircleProgressModule } from 'ng-circle-progress';
-// import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 // import { Push, PushObject, PushOptions } from '@ionic-native/push/ngx';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule, AngularFireDatabase } from '@angular/fire/database';
@@ -78,12 +79,13 @@ import { pageTransition } from './page-transition';
 		AndroidPermissions,
 		DatePicker,
  	   	AngularFireDatabase,
- 	   	// FirebaseX,
+ 	   	FirebaseX,
  	   	OneSignal,
  	   	StatusBar,
  	   	SplashScreen,
  	   	SocialSharing,
  	   	Deeplinks,
+ 	   	Diagnostic,
  	   	// Push,
  	   	Insomnia,
  	   	AudioManagement,
