@@ -28,6 +28,7 @@ export class AuthGuard implements CanActivate {
 
 
   	checkLogin(route){
+      // alert('called');
   		var token = localStorage.getItem('token');
       	if(token){
         	axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
@@ -44,9 +45,7 @@ export class AuthGuard implements CanActivate {
         };
 
         // return true;
-        
-        return true;
-  		axios.post(apiUrl + 'auth/user-profile', data)
+  		 return axios.post(apiUrl + 'auth/user-profile', data)
 	    .then(response => {
         console.log('userDetsssssss', response);
         this.misc.setUserDets(JSON.stringify(response.data));
@@ -68,9 +67,11 @@ export class AuthGuard implements CanActivate {
           this.router.navigate(['/provider/home']);
           return false;
         }
+        return true;
 	    })
 	    .catch(err => {
-	    	// console.log(err.response.status);
+        // alert('not logged in');
+	    	console.log(err.response.status);
 	    	if(err.response.status == 401){
           if(this.platform.is('cordova')){
             OneSignal.removeExternalUserId((results:any) => {
@@ -93,7 +94,6 @@ export class AuthGuard implements CanActivate {
             this.call.destroyPeerFn();
           }
 	    		// console.log('not logged in');
-	    		this.router.navigate(['/login']);
 	      		return false;
 	    	}
 	    	else{

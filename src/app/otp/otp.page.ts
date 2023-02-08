@@ -11,7 +11,7 @@ import { ApiService } from '../services/api.service';
 export class OtpPage implements OnInit {
 	user:any;
 	phone_no:any;
-    showCodeField:any = 1;
+    showCodeField:any = 0;
 	formModel:any = {};
   	constructor(private router:Router, private route: ActivatedRoute, private misc:MiscService, private api:ApiService) { }
 
@@ -19,9 +19,10 @@ export class OtpPage implements OnInit {
   	}
 
   	ionViewWillEnter(){
-        this.showCodeField = 1;
+        this.showCodeField = 0;
   		this.user = this.misc.getUserDets();
   		this.phone_no = this.user.phone_no;
+        this.sendOtp();
   	}
 
     takeAction(event){

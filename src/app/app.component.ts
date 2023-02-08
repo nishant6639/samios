@@ -14,7 +14,7 @@ import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 declare let window: any;
 declare let cordova:any;
 declare let ConnectyCube:any;
-
+declare let VoIPPushNotification:any;
 // import 'webrtc-adapter';
 @Component({
 	selector: 'app-root',
@@ -42,8 +42,49 @@ export class AppComponent implements OnInit {
 		private splashScreen: SplashScreen,
 		private nativeAudio: NativeAudio) {
 			// this.misc.getAllPermissions();
-			this.platform.ready().then(() => {
+			this.platform.ready().then(async () => {
+				
+				const CREDENTIALS = {
+				  	appId: 6798,
+				  	authKey: "KbVKtzAQvPFAdtw",
+				  	authSecret: "zrXRtdLamjF7fmq"
+				};
 
+				const CONFIG = {
+					videochat: {
+					    answerTimeInterval: 60,
+					    dialingTimeInterval: 2
+				    },
+				  	debug: { mode: 0 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
+				};
+
+				ConnectyCube.init(CREDENTIALS, CONFIG);
+
+				var cordovaCall = cordova.plugins.CordovaCall;
+			  	cordovaCall.setAppName('Samanta');
+			  	cordovaCall.setVideo(true);
+
+			  	if(this.platform.is('ios')){
+	          		var push = await VoIPPushNotification.init();
+					push.on('notification', (data) => {
+		              	console.log("[Ionicssssss] notification callback called");
+		              	console.log(data);
+		              	// var cordovaCall = cordova.plugins.CordovaCall;
+						//   	cordovaCall.setAppName('Samanta');
+						//   	cordovaCall.setVideo(true);
+						//   	cordovaCall.receiveCall('David Marcus via Samanta',(e) => {
+						// 		console.log('sfsadas', e);
+						// 	},
+						// 	(err) => {
+						// 		console.log(err);
+						// 	});
+		              	// do something based on received data
+		          	});
+
+		          	push.on('error', function(e) {
+		              	console.log(e);
+		          	});
+	          	}
 				this.splashScreen.hide();
 
 				this.createCallChannel();
@@ -52,12 +93,9 @@ export class AppComponent implements OnInit {
 	        		console.log(data);
 	        		// this.sendAppToBackground();
 	        	});
-				// var cordovaCall = cordova.plugins.CordovaCall;
 				if(this.platform.is('ios')){
 					// setTimeout(() => {
 					// 	console.log('connect call');
-					  	// cordovaCall.setAppName('Samanta');
-					  	// cordovaCall.setVideo(true);
 					  	
 					  	// cordovaCall.receiveCall('David Marcus via Samanta',(e) => {
 						// 	console.log('sfsadas', e);

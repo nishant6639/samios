@@ -22,10 +22,10 @@
 					<input type="hidden" *ngIf="user_type == 'interpreter'" name="user_type" [(ngModel)]="FormModel.user_type" value="3">
 					<div class="row">
 						<div class="col-12">
-							<div class="form-row">
+							<!-- <div class="form-row">
 								<label class="form-row-label">Username <sup>*</sup></label>
 								<input type="text" autocomplete="false" name="username" [(ngModel)]="FormModel.username" class="form-control" placeholder="Username" required="required" />
-							</div>
+							</div> -->
 							<div class="form-row">
 								<label class="form-row-label">Full Name <sup>*</sup></label>
 								<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Full Name" required="required" />
@@ -49,15 +49,15 @@
 								<div class="col-7">
 									<div class="form-row">
 										<label class="form-row-label">&nbsp;</label>
-										<input type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
+										<input type="tel" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
 									</div>
 								</div>
 							</div>
-							<div class="form-row">
+							<!-- <div class="form-row">
 								<label class="form-row-label">Address</label>
 								<input type="text" autocomplete="false" name="address" [(ngModel)]="FormModel.address" class="form-control" placeholder="Address" />
-							</div>
-							<div class="form-row">
+							</div> -->
+							<!-- <div class="form-row">
 								<label class="form-row-label">Country <sup>*</sup></label>
 								<span class="down">
 			  						<app-icon name="seldown"></app-icon>
@@ -65,7 +65,7 @@
 								<select class="form-control" name="country_id" [(ngModel)]="FormModel.country_id">
 									<option *ngFor="let country of countries" [value]="country.name">{{ country.name }}</option>
 								</select>
-							</div>
+							</div> -->
 							<hr>
 							<div class="form-row">
 								<label class="form-row-label">Password <sup>*</sup></label>
@@ -228,10 +228,10 @@
 								<label class="form-row-label">Company Name <sup>*</sup></label>
 								<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Company Name" required="required" />
 							</div>
-							<div class="form-row">
+							<!-- <div class="form-row">
 								<label class="form-row-label">Company Address <sup>*</sup></label>
 								<input type="text" autocomplete="false" name="address" [(ngModel)]="FormModel.address" class="form-control" placeholder="Company Address" required="required" />
-							</div>
+							</div> -->
 							<div class="form-row">
 								<label class="form-row-label">Company Email Id <sup>*</sup></label>
 								<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" required="required" />
@@ -251,11 +251,11 @@
 								<div class="col-7">
 									<div class="form-row">
 										<label class="form-row-label">&nbsp;</label>
-										<input type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
+										<input type="tel" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
 									</div>
 								</div>
 							</div>
-							<div class="form-row">
+							<!-- <div class="form-row">
 								<label class="form-row-label">Country <sup>*</sup></label>
 								<span class="down">
 			  						<app-icon name="seldown"></app-icon>
@@ -263,7 +263,7 @@
 								<select class="form-control" name="country_id" [(ngModel)]="FormModel.country_id">
 									<option *ngFor="let country of countries" [value]="country.name">{{ country.name }}</option>
 								</select>
-							</div>
+							</div> -->
 							<hr>
 							<div class="form-row">
 								<label class="form-row-label">Company Reg. No <sup>*</sup></label>
@@ -273,7 +273,7 @@
 								<label class="form-row-label">Company TIN</label>
 								<input type="text" autocomplete="false" name="tin_no" [(ngModel)]="FormModel.tin_no" class="form-control" placeholder="Company TIN" />
 							</div>
-							<div class="form-row">
+							<!-- <div class="form-row">
 								<label class="form-row-label">Type of Company <sup>*</sup></label>
 								<span class="down">
 			  						<app-icon name="seldown"></app-icon>
@@ -281,7 +281,7 @@
 								<select class="form-control" name="type" [(ngModel)]="FormModel.type" >
 									<option value="{{ companyType.id }}" *ngFor="let companyType of companyTypes">{{ companyType.name }}</option>
 								</select>
-							</div>
+							</div> -->
 							<!-- <div class="form-row">
 								<label class="form-row-label">Company Logo</label>
 								<div class="row align-mid">

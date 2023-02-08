@@ -91,8 +91,6 @@ export class ProfilePage implements OnInit {
 			if(this.platform.is('cordova')){
 				OneSignal.removeExternalUserId();
 			}
-			window.localStorage.removeItem('token');
-			window.localStorage.removeItem('user');
       		this.router.navigate(['/login']);
 		})
 		.catch(err => {

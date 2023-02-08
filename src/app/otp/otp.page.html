@@ -11,7 +11,7 @@
 					<div class="form-row" *ngIf="showCodeField == 1">
 						<input type="text" autocomplete="false" name="otp" [(ngModel)]="formModel.otp" class="form-control" placeholder="Insert code" />
 					</div>
-					<p class="text-center m20" *ngIf="showCodeField == 1"><b>Expires in </b> <countdown (event)="takeAction($event)" [config]="{leftTime: 30, format: 'mm:ss'}"></countdown></p>
+					<p class="text-center m20" *ngIf="showCodeField == 1"><b>Expires in </b> <countdown (event)="takeAction($event)" [config]="{leftTime: 120, format: 'mm:ss'}"></countdown></p>
 					<p class="text-center m20" *ngIf="showCodeField == 0"><b>Code Expired</b></p>
 					<div class="row">
 						<div [class.col-6]="showCodeField == 1" [class.col-12]="showCodeField == 0">

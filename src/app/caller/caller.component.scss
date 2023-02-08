@@ -133,12 +133,15 @@
 	// 	left: 20px;
 	// }
 
-	.chat-msg-btn{
+	
+}
+
+.chat-msg-btn{
 		position: absolute;
 		bottom: 10px;
 		left: 0;
 		right: 0;
-		z-index: 4;
+		z-index: 6556;
 		text-shadow: 1px 1px 0px #000;
 		transform: translateZ(1px);
 		// text-align: center;
@@ -160,7 +163,6 @@
 			transform: scale(1.5);
 		}
 	}
-}
 
 .new-admin-msg{
 	position: fixed;
@@ -241,8 +243,9 @@
 
 .my-stream{
 	position: absolute;
-    bottom: 120px;
+    bottom: 150px;
     left: 10px;
+    z-index: 2;
     height: 140px;
     width: 100px;
     overflow: hidden;
@@ -262,6 +265,7 @@
 	position: absolute;
 	top: 0px;
 	left: 0;
+	z-index: 1;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
@@ -290,7 +294,7 @@
 
 .new-callBtns{
 	position: absolute;
-    bottom: 30px;
+    bottom: 70px;
     left: 10px;
     right: 10px;
     padding: 5px;
@@ -300,9 +304,9 @@
     border-radius: 50px;
 	.new-callBtn{
 		display: inline-block;
-		height: 60px;
-		width: 60px;
-		border-radius: 60px;
+		height: 50px;
+		width: 50px;
+		border-radius: 50px;
 		margin: 0px 50px;
 		font-size: 26px;
 		background-color: #FD1231;
@@ -312,14 +316,14 @@
 		// box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
 		&.rotate{
 			transform: rotate(135deg);
-			margin: 15px 13px;
+			// margin: 15px 13px;
 		}
 		&:active{
 			transform: scale(0.7);
 		}
 
 		.mi{
-			line-height: 60px;
+			line-height: 50px;
 			font-size: 30px;
 			text-shadow: 0px 1px 1px #000;
 			// text-shadow: 0px 1px 2px #000;
@@ -328,13 +332,12 @@
 }
 
 .overlay-msg-popup{
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	// background-color: rgba(0,0,0,0.99);
-	background-color: #234;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(4, 31, 58, 0.94);
 	.overlay-msg-wrap{
 		position: absolute;
 		left: 40px;
@@ -343,16 +346,41 @@
 		transform: translateY(-50%);
 		.overlay-loader{
 			display: block;
-			width: 50px;
-			margin: 20px auto;
+		    width: 100px;
+		    margin: 20px auto;
+		    background: #FFF;
+		    border-radius: 50px;
+		    animation: ripple 1s cubic-bezier(0.680, -0.550, 0.265, 1.550) infinite;
 		}
 		.overlay-msg{
 			display: block;
-			color: #FFF;
-			font-size: 14px;
-			text-align: center;
+		    color: #FFF;
+		    font-size: 20px;
+		    text-align: center;
+		    font-weight: 900;
+		    margin-top: 40px;
+		    text-shadow: 0px 1px 2px #000;
 		}
 	}
+}
+
+
+@-webkit-keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255,255,255, 0.3), 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3), 0 0 0 40px rgba(255,255,255, 0);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255,255,255, 0.3), 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3), 0 0 0 40px rgba(255,255,255, 0);
+  }
 }
 
 .rem-time{
@@ -376,7 +404,7 @@
 	&.on-the-call{
 		background-color: transparent;
 		.new-callBtn{
-			margin: 0px 15px;
+			margin: 0px;
 		}
 	}
 	.call-btn-wrapper-full-in{

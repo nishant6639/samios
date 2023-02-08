@@ -286,7 +286,8 @@ export class MiscService {
 	}
 
 	setUserDets(userDets){
-		this.userDets = window.localStorage.setItem('user', userDets);
+		this.userDets = userDets;
+		window.localStorage.setItem('user', userDets);
 		// return JSON.parse(userDets);
 	}
 

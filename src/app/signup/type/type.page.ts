@@ -96,18 +96,21 @@ export class TypePage implements OnInit {
             // data['phone_no'] = data['country_code'] + data['phone_no'];
             // delete data.country_code;
             // // console.log(data);
-            const userProfile = {
-                password: "supersecurepwd",
-                email: data['email']
-            };
-            ConnectyCube.users
-            .signup(userProfile)
-            .then((user) => {
-                data['calling_id'] = user.user.id;
-                this.saveUserDo(data);
-            })
-            .catch((error) => {
-                this.saveUserDo(data);
+            ConnectyCube.createSession()
+            .then((session) => {
+                const userProfile = {
+                    password: "supersecurepwd",
+                    email: data['email']
+                };
+                ConnectyCube.users
+                .signup(userProfile)
+                .then((user) => {
+                    data['calling_id'] = user.user.id;
+                    this.saveUserDo(data);
+                })
+                .catch((error) => {
+                    this.saveUserDo(data);
+                });
             });
         }
         else{
@@ -166,17 +169,17 @@ export class TypePage implements OnInit {
                     .then( response => {
                         this.misc.hideLoader();
                         // console.log(response);
-                        var token = response.data.token;
-                        axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                        var user = JSON.stringify(response.data.user);
-                        window.localStorage.setItem('token', token);
-                        window.localStorage.setItem('user', user);
-                        this.misc.setUserDets(user);
+                        // var token = response.data.token;
+                        // axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                        // var user = JSON.stringify(response.data.user);
+                        // window.localStorage.setItem('token', token);
+                        // window.localStorage.setItem('user', user);
+                        // this.misc.setUserDets(user);
                         if(data['user_type'] == 3){
-                            this.router.navigate(['/otp']);
+                            this.router.navigate(['/login']);
                         }
                         else{
-                            this.router.navigate(['/otp']);
+                            this.router.navigate(['/login']);
                         }
                     })
                     .catch(err => {
@@ -191,17 +194,17 @@ export class TypePage implements OnInit {
                 .then( response => {
                     this.misc.hideLoader();
                     // console.log(response);
-                    var token = response.data.token;
-                    axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                    var user = JSON.stringify(response.data.user);
-                    window.localStorage.setItem('token', token);
-                    window.localStorage.setItem('user', user);
-                    this.misc.setUserDets(user);
+                    // var token = response.data.token;
+                    // axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                    // var user = JSON.stringify(response.data.user);
+                    // window.localStorage.setItem('token', token);
+                    // window.localStorage.setItem('user', user);
+                    // this.misc.setUserDets(user);
                     if(data['user_type'] == 3){
-                        this.router.navigate(['/otp']);
+                        this.router.navigate(['/login']);
                     }
                     else{
-                        this.router.navigate(['/otp']);
+                        this.router.navigate(['/login']);
                     }
                 })
                 .catch(err => {
@@ -304,14 +307,17 @@ export class TypePage implements OnInit {
                 password: "supersecurepwd",
                 email: data['email']
             };
-            ConnectyCube.users
-            .signup(userProfile)
-            .then((user) => {
-                data['calling_id'] = user.user.id;
-                this.saveCompanyDo(data);
-            })
-            .catch((error) => {
-                this.saveCompanyDo(data);
+            ConnectyCube.createSession()
+            .then((session) => {
+                ConnectyCube.users
+                .signup(userProfile)
+                .then((user) => {
+                    data['calling_id'] = user.user.id;
+                    this.saveCompanyDo(data);
+                })
+                .catch((error) => {
+                    this.saveCompanyDo(data);
+                });
             });
             // if(!(data['tin_no'])){
             //     this.misc.showToast('Enter Tin No');
@@ -358,12 +364,12 @@ export class TypePage implements OnInit {
                     .then( response => {
                         this.misc.hideLoader();
                         // console.log(response);
-                        var token = response.data.token;
-                        axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                        var user = JSON.stringify(response.data.user);
-                        window.localStorage.setItem('token', token);
-                        window.localStorage.setItem('user', user);
-                        this.router.navigate(['/otp']);
+                        // var token = response.data.token;
+                        // axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                        // var user = JSON.stringify(response.data.user);
+                        // window.localStorage.setItem('token', token);
+                        // window.localStorage.setItem('user', user);
+                        this.router.navigate(['/login']);
                     })
                     .catch(err => {
                         this.misc.hideLoader();
@@ -377,12 +383,12 @@ export class TypePage implements OnInit {
                 .then( response => {
                     this.misc.hideLoader();
                     // console.log(response);
-                    var token = response.data.token;
-                    axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
-                    var user = JSON.stringify(response.data.user);
-                    window.localStorage.setItem('token', token);
-                    window.localStorage.setItem('user', user);
-                    this.router.navigate(['/otp']);
+                    // var token = response.data.token;
+                    // axios.defaults.headers.common['Authorization'] = 'Bearer '+ token;
+                    // var user = JSON.stringify(response.data.user);
+                    // window.localStorage.setItem('token', token);
+                    // window.localStorage.setItem('user', user);
+                    this.router.navigate(['/login']);
                 })
                 .catch(err => {
                     this.misc.hideLoader();
