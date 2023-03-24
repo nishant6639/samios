@@ -179,10 +179,10 @@
 														</span>
 
 
-														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+														<!-- <span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
 															<img src="assets/images/call.gif" class="call-anim-icon" />
 															<span class="text">Call</span>
-														</span>
+														</span> -->
 
 														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
 															<!-- <i class="fas fa-times"></i> -->
@@ -227,14 +227,14 @@
 														</span>
 
 
-														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
-															<!-- <i class="fas fa-phone"></i> -->
+														<!-- <span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
+															<i class="fas fa-phone"></i> -->
 															<!-- <svg class="feather">
 															  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
-															</svg> -->
+															</svg>
 															<img src="assets/images/call.gif" class="call-anim-icon" />
 															<span class="text">Call</span>
-														</span>
+														</span> -->
 
 														<span class="order-btn cancel" *ngIf="call.first.passed == false && call.first.canc_allowed == 1" (click)="presentAlertConfirm(call.first.id)">
 															<!-- <i class="fas fa-times"></i> -->
@@ -382,14 +382,10 @@
 																</span>
 
 
-																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
-																	<!-- <i class="fas fa-phone"></i> -->
-																	<!-- <svg class="feather">
-																	  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
-																	</svg> -->
+																<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
 																	<img src="assets/images/call.gif" class="call-anim-icon" />
 																	<span class="text">Call</span>
-																</span>
+																</span> -->
 
 																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
 																	<!-- <i class="fas fa-times"></i> -->
@@ -428,14 +424,10 @@
 																</span>
 
 
-																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
-																	<!-- <i class="fas fa-phone"></i> -->
-																	<!-- <svg class="feather">
-																	  	<use xlink:href="assets/icon/feather-sprite.svg#phone"/>
-																	</svg> -->
+																<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
 																	<img src="assets/images/call.gif" class="call-anim-icon" />
 																	<span class="text">Call</span>
-																</span>
+																</span> -->
 
 																<span class="order-btn cancel" *ngIf="this_call.passed == false && this_call.canc_allowed == 1" (click)="presentAlertConfirm(this_call.id)">
 																	<!-- <i class="fas fa-times"></i> -->

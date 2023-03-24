@@ -36,6 +36,7 @@ export class TypePage implements OnInit {
     availabilities:any = {};
     availCheckList:any = [];
     companyTypes:any = [];
+    passShow:any = 0;
     constructor(private router:Router,
         private platform:Platform,
         private route: ActivatedRoute,
@@ -48,6 +49,7 @@ export class TypePage implements OnInit {
     }
 
     ionViewWillEnter(){
+        this.passShow = 0;
         this.route.params.subscribe(params => {
             this.user_type = params['type'];
             this.getCountryList();

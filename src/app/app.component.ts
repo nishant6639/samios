@@ -51,11 +51,19 @@ export class AppComponent implements OnInit {
 				};
 
 				const CONFIG = {
+					chat: {
+					    reconnectionTimeInterval: 1,
+					    ping: {
+					      enable: true,
+					      timeInterval: 10
+					    }
+				  	},
 					videochat: {
-					    answerTimeInterval: 60,
+						alwaysRelayCalls: true,
+					    answerTimeInterval: 600,
 					    dialingTimeInterval: 2
 				    },
-				  	debug: { mode: 0 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
+				  	debug: { mode: 1 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
 				};
 
 				ConnectyCube.init(CREDENTIALS, CONFIG);
@@ -297,7 +305,7 @@ export class AppComponent implements OnInit {
 
 	getPermissions(){
 		this.misc.getAllPermissions();
-		window.localStorage.setItem('permReq', 1);
+		// window.localStorage.setItem('permReq', 1);
 		
 		this.showPerm = 0;
 	}

@@ -194,13 +194,12 @@
 								</span>
 								<p class="text-center"><b>Call Again</b></p>
 							</div>
-							<div class="col-12" style="z-index: 2;" *ngIf="(userDets.user_type == 3)">
+							<!-- <div class="col-12" style="z-index: 2;" *ngIf="(userDets.user_type == 3)">
 								<span (click)="callUser(summary.user_id, summary.id)" class="hire-call-btn" style="margin: 0px auto;">
 									<img src="assets/images/call.gif" />
-									<!-- <i class="fas fa-phone"></i> -->
 								</span>
 								<p class="text-center"><b>Call Again</b></p>
-							</div>
+							</div> -->
 						</div>
 						<div class="prov-dets" *ngIf="summary.passed == false && (summary.call_status == 0 || summary.call_status == 1) && summary.status == 1 && summary.sec <= 0 && summary.disputed == 0">
 							<hr>

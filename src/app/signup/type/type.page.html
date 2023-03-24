@@ -69,11 +69,15 @@
 							<hr>
 							<div class="form-row">
 								<label class="form-row-label">Password <sup>*</sup></label>
-								<input type="password" autocomplete="false" name="password" [(ngModel)]="FormModel.password" (input)="passwordCheck()" class="form-control" placeholder="Password" />
-								<span class="password-meter">
-									<span class="meter-in" style="width: {{ pass_meter_width }}%"></span>
-								</span>
+								<input [type]="(passShow == 1)?'text':'password'" autocomplete="false" name="password" [(ngModel)]="FormModel.password" (input)="passwordCheck()" class="form-control" placeholder="Password" />
+								<button type="button" class="pass-show-btn" (click)="passShow = (passShow == 1)?0:1">
+									<i class="fa fa-eye" aria-hidden="true" *ngIf="passShow == 0"></i>
+									<i class="fa fa-eye-slash" aria-hidden="true" *ngIf="passShow == 1"></i>
+								</button>
 							</div>
+							<span class="password-meter">
+								<span class="meter-in" style="width: {{ pass_meter_width }}%"></span>
+							</span>
 							<div class="form-row">
 								<label class="form-row-label">Re-type Password <sup>*</sup></label>
 								<div class="form-with-icon append">
@@ -296,11 +300,16 @@
 							<hr>
 							<div class="form-row">
 								<label class="form-row-label">Password <sup>*</sup></label>
-								<input type="password" autocomplete="false" name="password" [(ngModel)]="FormModel.password" class="form-control" (input)="passwordCheck()" placeholder="Password" />
-								<span class="password-meter">
-									<span class="meter-in" style="width: {{ pass_meter_width }}%"></span>
-								</span>
+								<input [type]="(passShow == 1)?'text':'password'" autocomplete="false" name="password" [(ngModel)]="FormModel.password" class="form-control" (input)="passwordCheck()" placeholder="Password" />
+
+								<button type="button" class="pass-show-btn" (click)="passShow = (passShow == 1)?0:1">
+									<i class="fa fa-eye" aria-hidden="true" *ngIf="passShow == 0"></i>
+									<i class="fa fa-eye-slash" aria-hidden="true" *ngIf="passShow == 1"></i>
+								</button>
 							</div>
+							<span class="password-meter">
+								<span class="meter-in" style="width: {{ pass_meter_width }}%"></span>
+							</span>
 							<div class="form-row">
 								<label class="form-row-label">Re-type Password <sup>*</sup></label>
 								<input type="password" autocomplete="false" name="confirm_password" [(ngModel)]="FormModel.confirm_password" class="form-control" (input)="passwordCheck()" placeholder="Re-type Password" />

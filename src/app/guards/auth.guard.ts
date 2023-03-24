@@ -44,8 +44,7 @@ export class AuthGuard implements CanActivate {
           'time_offset': offset
         };
 
-        // return true;
-  		 return axios.post(apiUrl + 'auth/user-profile', data)
+  		 axios.post(apiUrl + 'auth/user-profile', data)
 	    .then(response => {
         console.log('userDetsssssss', response);
         this.misc.setUserDets(JSON.stringify(response.data));

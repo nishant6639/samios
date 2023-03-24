@@ -231,7 +231,6 @@ export class HirePage implements OnInit {
       .catch(err => {
         this.misc.hideLoader();
         this.misc.handleError(err);
-      
       });
 	}
 

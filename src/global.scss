@@ -705,13 +705,24 @@ hr{
 		color: #FD1231;
 	}
 }
+.pass-show-btn{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    height: 50px;
+    width: 50px;
+    background: transparent;
+    font-size: 24px;
+    color: #555;
+}
 .password-meter{
 	display: block;
-	height: 7px;
-	margin-top: 7px;
-	width: 100%;
-	border-radius: 10px;
-	background-color: #f9f9f9;
+    height: 7px;
+    margin-top: -15px;
+    margin-bottom: 10px;
+    width: 100%;
+    border-radius: 20px;
+    background-color: #f9f9f9;
 	.meter-in{
 		display: block;
 		// width: 67%;

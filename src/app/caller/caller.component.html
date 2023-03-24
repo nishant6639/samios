@@ -94,9 +94,9 @@
 				<span class="caller-pic-in" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" style="background-image: url({{ other_user.image_url  }});"></span>
 			</div>
 			<h3 class="caller-name">{{ other_user.name }}</h3>
-			<p class="caller-activity" *ngIf="incoming == 1">Incoming Call</p>
-			<p class="caller-activity" *ngIf="outgoing == 1 && ringing == 0">Dialing..</p>
-			<p class="caller-activity" *ngIf="outgoing == 1 && ringing == 1">Ringing..</p>
+			<p class="caller-activity" *ngIf="incoming == 1">Incoming Call Request. Please answer the call to connect with the Caller.</p>
+			<p class="caller-activity" *ngIf="outgoing == 1 && ringing == 0">Dialing. Please wait while the phone connects to the service provider.</p>
+			<p class="caller-activity" *ngIf="outgoing == 1 && ringing == 1">Ringing. The Service provider will be online soon.</p>
 		</div>
 
 		<div class="new-callBtns" *ngIf="outgoing == 1" style="background: transparent;">
@@ -106,7 +106,7 @@
 			</button>
 		</div>
 
-		<div class="new-callBtns" *ngIf="incoming == 1 && (!(platform.is('ios')))" style="background: transparent;">
+		<div class="new-callBtns" *ngIf="incoming == 1" style="background: transparent;">
 			<button (click)="acceptCall()" class="new-callBtn" style="background: #53d075;" draggable="true">
 				<!-- <i class="fas fa-phone"></i> -->
 				<span class="mi">call</span>
@@ -273,7 +273,7 @@
 </div>
 
 
-<div class="overlay" *ngIf="on_call == 0 && incoming == 0 && outgoing == 0" [class.active]="(!(bookingRequest == '')) || (!(ongoingCall == ''))" (click)="bookingRequest = ''; ongoingCall = ''; "></div>
+<div class="overlay" *ngIf="on_call == 0 && incoming == 0 && outgoing == 0" [class.active]="(!(bookingRequest == '')) || ((!(ongoingCall == '')) && (!(userDets.user_type == 3)))" (click)="bookingRequest = ''; ongoingCall = ''; "></div>
 
 <div class="overlay" *ngIf="(showVideoPermPop == 1) || (showAudioPermPop == 1) || (showTopPerm == 1)" [class.active]="(showVideoPermPop == 1) || (showAudioPermPop == 1) || (showTopPerm == 1)"></div>
 
@@ -315,7 +315,7 @@
 				<p>
 					<!-- <span>Requested Slot: </span> -->
 					<!-- <span> </span> -->
-					<span>{{ bookingRequest.date | date: 'LLL' }} {{ bookingRequest.date | date: 'dd' }}, {{ bookingRequest.date | date: 'shortTime' }} for {{ bookingRequest.plan.time_to }} mins.</span>
+					<b>{{ bookingRequest.date | date: 'LLL' }} {{ bookingRequest.date | date: 'dd' }}, {{ bookingRequest.date | date: 'shortTime' }}</b> for <b>{{ bookingRequest.plan.time_to }} mins.</b>
 					<!-- <span> mins</span> -->
 				</p>
 			</div>
@@ -334,7 +334,7 @@
 </div>
 
 
-<div *ngIf="(!(ongoingCall == '')) && (on_call == 0 && incoming == 0 && outgoing == 0)" class="popup request-popup" [class.active]="!(ongoingCall == '')">
+<div *ngIf="(!(ongoingCall == '')) && (on_call == 0 && incoming == 0 && outgoing == 0) && (!(userDets.user_type == 3))" class="popup request-popup" [class.active]="!(ongoingCall == '')">
 	<div class="popup-logo">
 		<img src="assets/images/logo1.png" />
 	</div>
@@ -432,9 +432,10 @@
 	</div>
 </div>
 
-<div class="overlay-msg-popup" *ngIf="!(overlayMsg == '')">
+<div class="overlay-msg-popup" *ngIf="(!(overlayMsg == '')) && (incoming == 0)">
+	<div class="overlay-close" (click)="overlayMsg = ''">x</div>
 	<div class="overlay-msg-wrap">
-		<img src="assets/images/call.gif" class="overlay-loader" />
+		<!-- <img src="assets/images/call.gif" class="overlay-loader" /> -->
 		<div class="overlay-msg">{{ overlayMsg }}</div>
 	</div>
 </div>

@@ -19,11 +19,13 @@ declare var VoIPPushNotification;
 })
 export class LoginPage implements OnInit, OnDestroy {
 	FormModel:any = {};
+    passShow:any = 0;
   	constructor(private misc:MiscService, private platform:Platform, private api:ApiService, private firebase:FirebaseService, private router:Router, private firebasex: FirebaseX) { }
 
   	ngOnInit() {}
 
     ionViewWillEnter(){
+      this.passShow = 0;
       this.FormModel = {};
     }
   	ionViewDidEnter() {

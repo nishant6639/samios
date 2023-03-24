@@ -21,7 +21,11 @@
 							<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" />
 						</div>
 						<div class="form-row">
-							<input type="password" autocomplete="false" name="password" [(ngModel)]="FormModel.password" class="form-control" placeholder="Password" />
+							<input [type]="(passShow == 1)?'text':'password'" autocomplete="false" name="password" [(ngModel)]="FormModel.password" class="form-control" placeholder="Password" />
+							<button type="button" class="pass-show-btn" (click)="passShow = (passShow == 1)?0:1">
+								<i class="fa fa-eye" aria-hidden="true" *ngIf="passShow == 0"></i>
+								<i class="fa fa-eye-slash" aria-hidden="true" *ngIf="passShow == 1"></i>
+							</button>
 						</div>
 						<div class="row">
 							<!-- <div class="col-6">

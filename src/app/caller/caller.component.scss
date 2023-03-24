@@ -337,7 +337,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(4, 31, 58, 0.94);
+    background-color: rgba(4, 31, 58, 0.99);
 	.overlay-msg-wrap{
 		position: absolute;
 		left: 40px;
@@ -363,7 +363,18 @@
 		}
 	}
 }
-
+.overlay-close{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	height: 40px;
+	width: 40px;
+	line-height: 40px;
+	text-align: center;
+	z-index: 123123;
+	color: #FFF;
+	font-size: 32px;
+}
 
 @-webkit-keyframes ripple {
   0% {
