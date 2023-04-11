@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MiscService } from './services/misc.service';
 import { ApiService } from './services/api.service';
-import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
+// import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
 import { Platform, NavController } from '@ionic/angular';
 import { Router, GuardsCheckStart, GuardsCheckEnd, ActivatedRoute } from '@angular/router';
 // import { StatusBar } from '@ionic-native/status-bar/ngx';
@@ -39,7 +39,7 @@ export class AppComponent implements OnInit {
 		private navController: NavController,
 		private deeplinks: Deeplinks,
 		private router:Router,
-		private splashScreen: SplashScreen,
+		// private splashScreen: SplashScreen,
 		private nativeAudio: NativeAudio) {
 			// this.misc.getAllPermissions();
 			this.platform.ready().then(async () => {
@@ -63,14 +63,15 @@ export class AppComponent implements OnInit {
 					    answerTimeInterval: 600,
 					    dialingTimeInterval: 2
 				    },
-				  	debug: { mode: 1 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
+				  	debug: { mode: 0 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
 				};
 
 				ConnectyCube.init(CREDENTIALS, CONFIG);
-
-				var cordovaCall = cordova.plugins.CordovaCall;
-			  	cordovaCall.setAppName('Samanta');
-			  	cordovaCall.setVideo(true);
+				if(this.platform.is('ios')){
+					var cordovaCall = cordova.plugins.CordovaCall;
+				  	cordovaCall.setAppName('Samanta');
+				  	cordovaCall.setVideo(true);
+			  	}
 
 			  	if(this.platform.is('ios')){
 	          		var push = await VoIPPushNotification.init();
@@ -93,14 +94,10 @@ export class AppComponent implements OnInit {
 		              	console.log(e);
 		          	});
 	          	}
-				this.splashScreen.hide();
+				// this.splashScreen.hide();
 
 				this.createCallChannel();
-				this.firebasex.onMessageReceived()
-	        	.subscribe(data => {
-	        		console.log(data);
-	        		// this.sendAppToBackground();
-	        	});
+	        	
 				if(this.platform.is('ios')){
 					// setTimeout(() => {
 					// 	console.log('connect call');
@@ -204,12 +201,14 @@ export class AppComponent implements OnInit {
 
 	ngOnInit(){
 		
+		this.getPermissions();
 		var permReq = window.localStorage.getItem('permReq');
 		if(permReq == undefined || permReq == null){
-			this.showPerm = 1;
+			// this.showPerm = 1;
+			this.getPermissions();
 		}
 		else{
-			this.showPerm = 0;
+			// this.showPerm = 0;
 		}
 
 		this.api.getAppVer()
@@ -455,7 +454,7 @@ export class AppComponent implements OnInit {
 		    vibration: false,
 		    light: false,
 		    lightColor: parseInt("FF0000FF", 16).toString(),
-		    importance: 2,
+		    importance: 4,
 		    badge: false,
 		    visibility: 1,
 		};

@@ -285,7 +285,7 @@ public class BackgroundModeExt extends CordovaPlugin {
             // }
         }
         else{
-            PluginResult res   = new PluginResult(Status.OK, false);
+            PluginResult res = new PluginResult(Status.OK, false);
             callback.sendPluginResult(res);
         }
     }

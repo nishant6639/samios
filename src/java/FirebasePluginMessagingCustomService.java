@@ -201,7 +201,7 @@ public class FirebasePluginMessagingService extends FirebaseMessagingService {
             dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
             // dialogIntent.addCategory(Intent.CATEGORY_HOME);
             Bundle bundle = new Bundle();
-            bundle.putBoolean("cdvStartInBackground", true);
+            // bundle.putBoolean("cdvStartInBackground", true);
             dialogIntent.putExtras(bundle);
             startActivity(dialogIntent);
 

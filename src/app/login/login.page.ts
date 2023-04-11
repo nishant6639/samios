@@ -40,58 +40,48 @@ export class LoginPage implements OnInit, OnDestroy {
       });
     	var data = this.FormModel;
 
-      ConnectyCube.createSession()
-      .then((session) => {
-        let userProfile = {
-          password: "supersecurepwd",
-          email: data['email']
-        };
-        ConnectyCube.users
-        .signup(userProfile)
-        .then(async (user) => {
-          console.log(user);
-          data['calling_id'] = user.user.id;
-          // alert(data.calling_id);
-          // alert(user.user.id);
-          if(this.platform.is('ios')){
-            var push = await VoIPPushNotification.init();
-            await push.on('registration', (data_v) => {
-                console.log("[Ionic] voip registration callback called");
-                console.log('voip token is ',data_v.deviceToken);
-                //data.deviceToken;
-                // voip_token = data_v.deviceToken;
-                data['voip_token'] = data_v.deviceToken;
-                this.loginUserDo(data);
-                //do something with the device token (probably save it to your backend service)
-            });
-          }
-          else{
-            this.loginUserDo(data);
-          }
-        })
-        .catch(async(error) => {
-          console.log(error);
-          let userProfile = {
-              password: "supersecurepwd",
-              email: data['email']
-          };
+      try{
 
-          ConnectyCube.login(userProfile)
+
+        const CREDENTIALS = {
+            appId: 6798,
+            authKey: "KbVKtzAQvPFAdtw",
+            authSecret: "zrXRtdLamjF7fmq"
+        };
+
+        const CONFIG = {
+          chat: {
+              reconnectionTimeInterval: 1,
+              ping: {
+                enable: true,
+                timeInterval: 10
+              }
+            },
+          videochat: {
+            alwaysRelayCalls: true,
+              answerTimeInterval: 600,
+              dialingTimeInterval: 2
+            },
+            debug: { mode: 0 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
+        };
+
+        await ConnectyCube.init(CREDENTIALS, CONFIG);
+
+        ConnectyCube.createSession()
+        .then((session) => {
+          let userProfile = {
+            password: "supersecurepwd",
+            email: data['email']
+          };
+          ConnectyCube.users
+          .signup(userProfile)
           .then(async (user) => {
             console.log(user);
-            data['calling_id'] = user.id;
+            data['calling_id'] = user.user.id;
+            // alert(data.calling_id);
+            // alert(user.user.id);
             if(this.platform.is('ios')){
               var push = await VoIPPushNotification.init();
-              // push.on('notification', function(data) {
-              //     console.log("[Ionic] notification callback called");
-              //     console.log(data);
-
-              //     // do something based on received data
-              // });
-
-              push.on('error', function(e) {
-                  console.log(e);
-              });
               await push.on('registration', (data_v) => {
                   console.log("[Ionic] voip registration callback called");
                   console.log('voip token is ',data_v.deviceToken);
@@ -105,13 +95,54 @@ export class LoginPage implements OnInit, OnDestroy {
             else{
               this.loginUserDo(data);
             }
+          })
+          .catch(async(error) => {
+            console.log(error);
+            let userProfile = {
+                password: "supersecurepwd",
+                email: data['email']
+            };
+
+            ConnectyCube.login(userProfile)
+            .then(async (user) => {
+              console.log(user);
+              data['calling_id'] = user.id;
+              if(this.platform.is('ios')){
+                var push = await VoIPPushNotification.init();
+                // push.on('notification', function(data) {
+                //     console.log("[Ionic] notification callback called");
+                //     console.log(data);
+
+                //     // do something based on received data
+                // });
+
+                push.on('error', function(e) {
+                    console.log(e);
+                });
+                await push.on('registration', (data_v) => {
+                    console.log("[Ionic] voip registration callback called");
+                    console.log('voip token is ',data_v.deviceToken);
+                    //data.deviceToken;
+                    // voip_token = data_v.deviceToken;
+                    data['voip_token'] = data_v.deviceToken;
+                    this.loginUserDo(data);
+                    //do something with the device token (probably save it to your backend service)
+                });
+              }
+              else{
+                this.loginUserDo(data);
+              }
+            });
+            // this.loginUserDo(data);
           });
-          // this.loginUserDo(data);
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      })
+        })
+        .catch(err => {
+          console.log(err);
+        })
+      }
+      catch(err){
+        this.loginUserDo(data);
+      }
       // console.log(data);
     }
     loginUserDo(data){

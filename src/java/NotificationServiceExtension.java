@@ -26,19 +26,19 @@ public class NotificationServiceExtension implements OSRemoteNotificationReceive
             
             String type = (String) data.get("ongoing");
             
-            Log.i("OneSignalExample", "Type: " + type);
+            // Log.i("OneSignalExample", "Type: " + type);
 
             mutableNotification.setExtender(builder -> {
                 
-                Log.i("OneSignalExample", "Type Inside Func: " + type);
+                // Log.i("OneSignalExample", "Type Inside Func: " + type);
 
                 if(type.equals("true")){
-                    Log.i("OneSignalExample", "Type inside loop: " + type);
+                    // Log.i("OneSignalExample", "Type inside loop: " + type);
                     builder.setOngoing(true);
                 }
                 // }
                 
-                Log.i("OneSignalExample", "Type after Func: " + type);
+                // Log.i("OneSignalExample", "Type after Func: " + type);
 
                 return builder;
             });
@@ -47,7 +47,7 @@ public class NotificationServiceExtension implements OSRemoteNotificationReceive
 
         } catch (JSONException e) {
             //some exception handler code.
-            Log.i("OneSignalExample", "Error: " + e);
+            // Log.i("OneSignalExample", "Error: " + e);
             notificationReceivedEvent.complete(mutableNotification);
         }
     }
