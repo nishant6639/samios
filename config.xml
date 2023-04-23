@@ -28,21 +28,22 @@
     <preference name="StatusBarOverlaysWebView" value="false" />
     <preference name="StatusBarBackgroundColor" value="#FD1231" />
     <preference name="android-minSdkVersion" value="22" />
-    <preference name="android-targetSdkVersion" value="31" />
-    <preference name="android-compileSdkVersion" value="31" />
+    <preference name="android-targetSdkVersion" value="33" />
+    <preference name="android-compileSdkVersion" value="33" />
     <platform name="android">
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity">
             <activity android:exported="true" />
             <receiver android:exported="true" />
             <service android:exported="true" />
         </edit-config>
-        <config-file mode="merge" parent="/manifest/application" target="AndroidManifest.xml">
-            <meta-data android:name="com.onesignal.NotificationServiceExtension" android:value="com.samantapp.app.NotificationServiceExtension" />
-        </config-file>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application" xmlns:android="http://schemas.android.com/apk/res/android">
             <application android:networkSecurityConfig="@xml/network_security_config" />
             <service android:exported="true" />
         </edit-config>
+        <config-file mode="merge" parent="/manifest/application" target="AndroidManifest.xml">
+            <meta-data android:name="com.onesignal.NotificationServiceExtension" android:value="com.samantapp.app.NotificationServiceExtension" />
+        </config-file>
+        <resource-file src="src/java/NotificationServiceExtension.java" target="app/src/main/java/com/samantapp/app/NotificationServiceExtension.java" />
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <resource-file src="resources/android/raw/ring.mp3" target="app/src/main/res/raw/ring.mp3" />
         <allow-intent href="market:*" />
@@ -71,7 +72,6 @@
         <resource-file src="resources/android/onesignal/drawable-xhdpi/ic_stat_onesignal_miss.png" target="app/src/main/res/drawable-xhdpi/ic_stat_onesignal_miss.png" />
         <resource-file src="resources/android/onesignal/drawable-xxhdpi/ic_stat_onesignal_miss.png" target="app/src/main/res/drawable-xxhdpi/ic_stat_onesignal_miss.png" />
         <resource-file src="resources/android/onesignal/drawable-xxxhdpi/ic_stat_onesignal_miss.png" target="app/src/main/res/drawable-xxxhdpi/ic_stat_onesignal_miss.png" />
-        <resource-file src="src/java/NotificationServiceExtension.java" target="app/src/main/java/com/samantapp/app/NotificationServiceExtension.java" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
         <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
@@ -175,8 +175,6 @@
     </platform>
     <plugin name="cordova-plugin-statusbar" spec="2.4.2" />
     <plugin name="cordova-plugin-device" spec="2.0.2" />
-    <plugin name="cordova-plugin-ionic-webview" spec="^4.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
     <allow-navigation href="*" />
-    <allow-navigation href="http://localhost:8100" sessionid="6ce850f2" />
 </widget>

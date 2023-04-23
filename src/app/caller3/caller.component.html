@@ -1,0 +1,57 @@
+<div class="call-screen" [class.shown]="on_call == 1">
+  <div class="video-loader" *ngIf="video_loading == 1">
+    <img src="assets/images/cloader2.gif" />
+  </div>
+  <div id="localStreamDiv" class="local-video">
+    <video id="localStream" poster="noposter"></video>
+  </div>
+  <div id="remoteStreamDiv" class="remote-video">
+    <video id="remoteStream" poster="noposter"></video>
+  </div>
+  <div class="call-button-wrap">
+    <button (click)="setAudioMute()">
+      <span class="mi green">mic</span>
+      Mute Audio
+    </button>
+    <button (click)="setVideoMute()">
+      <span class="mi green">videocam</span>
+      Stop Video
+    </button>
+    <button (click)="stopCall()">
+      <span class="mi red">call_end</span>
+      End Call
+    </button>
+  </div>
+  <!-- <button (click)="rejectCall()">Reject</button> -->
+  <!-- <div id="videochat-buttons-container">
+    <button id="videochat-mute-unmute" class="videochat-button" disabled></button>
+    <button id="videochat-stop-call" class="videochat-button"></button>
+    <button id="videochat-switch-camera" class="videochat-button" disabled></button>
+    <button id="videochat-sharing-screen" class="videochat-button">
+      <i id="videochat-sharing-screen-icon" class="fas fa-tv"></i>
+    </button>
+  </div> -->
+</div>
+
+<div class="incoming-call-screen" *ngIf="incoming == 1">
+  <div class="call-button-wrap">
+    <button (click)="acceptCall()">
+      <span class="mi green">call</span>
+      Accept
+    </button>
+    <button (click)="rejectCall()">
+      <span class="mi red">call_end</span>
+      Reject
+    </button>
+  </div>
+</div>
+
+
+<div class="dialing-screen" *ngIf="dialing == 1">
+  <div class="call-button-wrap">
+    <button (click)="stopCall()">
+      <span class="mi red">call_end</span>
+      End
+    </button>
+  </div>
+</div>

@@ -1,0 +1,505 @@
+<div class="new-call-screen" [class.incoming]="incoming == 1" [class.outgoing]="outgoing == 1" [class.on-call]="on_call == 1">
+
+
+	
+
+	<div class="rem-time" id="remTimeWrap" [class.active]="on_call == 1">
+		<span id="remText">{{ rem_text }}</span>&nbsp;
+		<span id="remMin" class="big"></span>
+		<span class="big">:</span>
+		<span id="remSec" class="big">{{ seconds }}</span>
+	</div>
+
+	<div class="extend-call-popup text-center" id="extendPop" [class.display]="callExtendRequest == 1 && on_call == 1">
+		<p id="remText1"></p>
+		<div class="ext-rem-time">
+			<span id="remMin1"></span>
+			<span>:</span>
+			<span id="remSec1"></span>
+		</div>
+		<p>Do you want to extend the call?</p>
+		<div class="extend-btns">
+			<span>
+				<button class="yes" (click)="extend(1)">
+					Yes
+				</button>
+			</span>
+			<span>
+				<button class="no" (click)="extend(0)">
+					No
+				</button>
+			</span>
+		</div>
+	</div>
+
+	<div class="extend-call-popup text-center" [class.display]="callExtendRequested == 1 && on_call == 1">
+		<p id="remText2"></p>
+		<div class="ext-rem-time">
+			<span id="remMin2"></span>
+			<span>:</span>
+			<span id="remSec2">{{ seconds }}</span>
+		</div>
+		<p>User requested to extend the call. Allow?</p>
+		<div class="extend-btns">
+			<span>
+				<button class="yes" (click)="extendAllow(1)">
+					Yes
+				</button>
+			</span>
+			<span>
+				<button class="no" (click)="extendAllow(0)">
+					No
+				</button>
+			</span>
+		</div>
+	</div>
+
+	<div class="my-stream" style="z-index: 2;">
+		<div class="no-video-poster" *ngIf="video_muted == 1">
+			<span class="no-video-poster-wave" *ngIf="audio_muted == 0" [class.big]="activeScreen == 2"></span>
+			<span class="poster-img" *ngIf="!(userDets == undefined) && userDets.image_url == null" [class.big]="activeScreen == 2" style="background-image: url(assets/images/dp2.png);"></span>
+			<span class="poster-img" *ngIf="!(userDets == undefined) && !(userDets.image_url == null)" [class.big]="activeScreen == 2" style="background-image: url({{ userDets.image_url  }});"></span>
+		</div>
+		<div class="mute-poster" *ngIf="audio_muted == 1" style="left: 50%; top: 50%; transform: translate(-20px, -20px);">
+			<!-- <i class="fas fa-microphone-slash"></i> -->
+			<span class="mi">mic_off</span>
+		</div>
+		<video muted playsinline webkit-playsinline poster="noposter" id="myVideoElementId"></video>
+	</div>
+	<div class="remote-stream" style="z-index: 1;">
+		<div class="no-video-poster" *ngIf="remote_video_muted == 1">
+			<span class="no-video-poster-wave" *ngIf="remote_audio_muted == 0" [class.big]="activeScreen == 1"></span>
+			<span class="poster-img" *ngIf="!(other_user == undefined) && other_user.image_url == null" [class.big]="activeScreen == 1" style="background-image: url(assets/images/dp2.png);"></span>
+			<span class="poster-img" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" [class.big]="activeScreen == 1" style="background-image: url({{ other_user.image_url  }});"></span>
+		</div>
+		<div class="mute-poster big-mute" *ngIf="remote_audio_muted == 1">
+			<!-- <i class="fas fa-microphone-slash"></i> -->
+			<span class="mi">mic_off</span>
+		</div>
+		<video playsinline webkit-playsinline poster="noposter" id="remoteVideoElementId"></video>
+	</div>
+
+
+
+	<div class="call-btn-wrapper-full in-out-call" style="z-index: 3;" *ngIf="incoming == 1 || outgoing == 1">
+
+		<div class="call-btn-wrapper-full-in">
+			<span class="call-btn-wrapper-full-in" *ngIf="!(other_user == undefined) && other_user.image_url == null" style="background-image: url(assets/images/dp2.png);"></span>
+			<!-- <span class="call-btn-wrapper-full-in" *ngIf="!(other_user == undefined) && other_user.image_url == null" style="background-image: url(assets/images/grad.jpeg);"></span> -->
+			<span class="call-btn-wrapper-full-in" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" style="background-image: url({{ other_user.image_url  }});"></span>
+		</div>
+		<div class="caller-dets-wrap">
+			<div class="caller-pic">
+				<span class="caller-pic-in" *ngIf="!(other_user == undefined) && other_user.image_url == null" style="background-image: url(assets/images/dp2.png);"></span>
+				<span class="caller-pic-in" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" style="background-image: url({{ other_user.image_url  }});"></span>
+			</div>
+			<h3 class="caller-name">{{ other_user.name }}</h3>
+			<p class="caller-activity" *ngIf="incoming == 1">Incoming Call Request. Please answer the call to connect with the Caller.</p>
+			<p class="caller-activity" *ngIf="outgoing == 1 && ringing == 0">Dialing. Please wait while the phone connects to the service provider.</p>
+			<p class="caller-activity" *ngIf="outgoing == 1 && ringing == 1">Ringing. The Service provider will be online soon.</p>
+		</div>
+
+		<div class="new-callBtns" *ngIf="outgoing == 1" style="background: transparent;">
+			<button (click)="endCall(1)" class="new-callBtn">
+				<!-- <i class="fas fa-phone"></i> -->
+				<span class="mi">call_end</span>
+			</button>
+		</div>
+
+		<div class="new-callBtns" *ngIf="incoming == 1" style="background: transparent;">
+			<button (click)="acceptCall()" class="new-callBtn" style="background: #53d075;" draggable="true">
+				<!-- <i class="fas fa-phone"></i> -->
+				<span class="mi">call</span>
+			</button>
+			<button (click)="rejectCall()" class="new-callBtn">
+				<!-- <i class="fas fa-phone"></i> -->
+				<span class="mi">call_end</span>
+			</button>
+		</div>
+	</div>
+
+	<div class="call-btn-wrapper-full on-the-call" style="z-index: 3;" *ngIf="on_call == 1">
+		<div class="new-callBtns" style="display: flex;">
+			<!-- <div class="call-btn-on-call" style="flex: 1;"> -->
+				<!-- =========================================== -->
+				<!-- Settings Button -->
+				<!-- =========================================== -->
+				
+				<!-- <button (click)="flipAudio()" class="new-callBtn" style="background: transparent;">
+					<span class="mi">volume_up</span>
+				</button> -->
+
+				<!-- =========================================== -->
+				<!-- Settings button ends -->
+				<!-- =========================================== -->
+			<!-- </div> -->
+			
+
+
+			<!-- <div class="call-btn-on-call" style="flex: 1;">
+				 =========================================== -->
+				<!-- Settings Button -->
+				<!-- =========================================== 
+				
+				<button (click)="flipCamera()" class="new-callBtn" style="background: transparent;">
+					<span class="mi">flip_camera_ios</span>
+				</button>
+
+				=========================================== -->
+				<!-- Settings button ends -->
+				<!-- =========================================== 
+			</div> -->
+
+			<div class="call-btn-on-call" style="flex: 1;">
+				<!-- =========================================== -->
+				<!-- Audio Control Buttons -->
+				<!-- =========================================== -->
+				
+				<button *ngIf="audio_muted == 0" (click)="muteAudio()" class="new-callBtn" style="background: transparent;">
+					<span class="mi">mic</span>
+					<!-- <i class="fas fa-microphone"></i> -->
+					<!-- <i class="fas fa-microphone-slash"></i> -->
+				</button>
+
+				<button *ngIf="audio_muted == 1" (click)="unmuteAudio()" class="new-callBtn" style="background: transparent;">
+					<span class="mi">mic_off</span>
+					<!-- <i class="fas fa-microphone-slash"></i> -->
+					<!-- <i class="fas fa-microphone-slash"></i> -->
+				</button>
+				
+				<!-- =========================================== -->
+				<!-- Audo Control Button ends -->
+				<!-- =========================================== -->
+			</div>
+
+			<div class="call-btn-on-call" style="flex: 1;">
+				<!-- =========================================== -->
+				<!-- Video Control buttons -->
+				<!-- =========================================== -->
+				
+				<button *ngIf="video_muted == 0" (click)="muteVideo()" class="new-callBtn" style="background: transparent;">
+					<!-- <i class="fas fa-video"></i> -->
+					<span class="mi">videocam</span>
+				</button>
+				
+				<button *ngIf="video_muted == 1" (click)="unmuteVideo()" class="new-callBtn" style="background: transparent;">
+					<span class="mi">videocam_off</span>
+					<!-- <i class="fas fa-video-slash"></i> -->
+				</button>
+				
+				<!-- =========================================== -->
+				<!-- Video control buttons ends -->
+				<!-- =========================================== -->
+			</div>
+
+			<div class="call-btn-on-call" style="flex: 1;">
+				<!-- =========================================== -->
+				<!-- Call End button -->
+				<!-- =========================================== -->
+				
+				<button (click)="endCall()" class="new-callBtn">
+					<!-- <i class="fas fa-phone"></i> -->
+					<span class="mi">call_end</span>
+				</button>
+				
+				<!-- =========================================== -->
+				<!-- Call End button ends -->
+				<!-- =========================================== -->
+			</div>
+
+		</div>
+		<!-- <div class="new-callBtns" *ngIf="on_call == 1">
+
+
+		</div> -->
+	</div>
+
+	<div class="show-devices-screen" *ngIf="showDevicesList == 1">
+		<div *ngIf="videoDevices.length > 0" class="form-row video-lists">
+			<label>Video Input</label>
+			<select class="form-control" (change)="switchVideo()" [(ngModel)]="video_device_selected">
+				<option [value]="video_device.deviceId" *ngFor="let video_device of videoDevices">{{ video_device.label }}</option>
+			</select>
+		</div>
+		<div *ngIf="audioDevices.length > 0" class="form-row video-lists">
+			<label>Audio Input</label>
+			<select class="form-control" (change)="switchAudio()" [(ngModel)]="audio_device_selected">
+				<option [value]="audio_device.deviceId" *ngFor="let audio_device of audioDevices">{{ audio_device.label }}</option>
+			</select>
+		</div>
+		<div *ngIf="audioOutDevices.length > 0" class="form-row video-lists">
+			<label>Audio Output</label>
+			<select class="form-control">
+				<option *ngFor="let audio_out_device of audioOutDevices">{{ audio_out_device.label }}</option>
+			</select>
+		</div>
+		<div class="form-row">
+			<button class="btn btn-primary btn-full" (click)="showDevicesList = 0;">Done</button>
+		</div>
+	</div>
+	<!-- <div class="call-btns" *ngIf="callStage == 1 || callStage == 4">
+		<span (click)="disconnectMyCall()" class="call-btn call disconnect">
+			<i class="fas fa-phone"></i>
+		</span>
+	</div> -->
+
+	<div class="chat-msg-btn" *ngIf="on_call == 1" (click)="chatWin = 1; newChat = 0;">
+		<span class="icon">
+			<i class="fas fa-angle-up"></i>
+		</span>
+		<span class="text">Click to open message <span class="badge new-msg" *ngIf="newChat == 1">New</span></span>
+	</div>
+	<div class="chat-window" *ngIf="on_call == 1 && chatWin == 1">
+		<div class="return-wrap" (click)="chatWin = 0;">
+			<i class="fa fa-angle-left"></i>
+			Return to Call
+		</div>
+		<div class="msg-cont">
+			<div class="msg-wrap">
+				<div class="msgs" *ngFor="let msg of chatMsgs" [class.to_me]="!(msg.from == userDets.id)" [class.from_me]="msg.from == userDets.id">
+					<span class="bubble">{{ msg.message }}</span>
+				</div>
+			</div>
+		</div>
+		<form (submit)="sendMsg()">
+			<div class="msg-form">
+				<input type="text" autocomplete="false" name="message" [(ngModel)]="message" placeholder="Write" />
+				<button type="submit" class="msg-button">
+					<i class="far fa-paper-plane"></i>
+				</button>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+<div class="overlay" *ngIf="on_call == 0 && incoming == 0 && outgoing == 0" [class.active]="(!(bookingRequest == '')) || ((!(ongoingCall == '')) && (!(userDets.user_type == 3)))" (click)="bookingRequest = ''; ongoingCall = ''; "></div>
+
+<div class="overlay" *ngIf="(showVideoPermPop == 1) || (showAudioPermPop == 1) || (showTopPerm == 1)" [class.active]="(showVideoPermPop == 1) || (showAudioPermPop == 1) || (showTopPerm == 1)"></div>
+
+<div *ngIf="(!(bookingRequest == '')) && (on_call == 0 && incoming == 0 && outgoing == 0)" class="popup request-popup" [class.active]="!(bookingRequest == '')">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Interpreting job Request</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row">
+			<div class="col-12">
+				<p><b>{{ bookingRequest.user_name }}</b></p>
+			</div>
+			<!-- <div class="col-4">
+				<p>
+					<span>Duration: </span>
+					<span *ngIf="bookingRequest.plan_id==1">15</span>
+					<span *ngIf="bookingRequest.plan_id==2">30</span>
+					<span *ngIf="bookingRequest.plan_id==3">45</span>
+					<span *ngIf="bookingRequest.plan_id==4">60</span>
+					<span *ngIf="bookingRequest.plan_id==5">2</span>
+					<span></span>
+				</p>
+			</div> -->
+			<div class="col-12">
+				<div class="ord-lang text-center">
+					<div class="lang-select-list">
+			  			<div class="lang-set-title">
+				  			<span class="sm-btn">{{ bookingRequest.language_from_obj.language_name }}</span>
+				  			<span class="icon bg"></span>
+				  			<span class="sm-btn">{{ bookingRequest.language_to_obj.language_name }}</span>
+			  			</div>
+			  		</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<p>
+					<!-- <span>Requested Slot: </span> -->
+					<!-- <span> </span> -->
+					<b>{{ bookingRequest.date | date: 'LLL' }} {{ bookingRequest.date | date: 'dd' }}, {{ bookingRequest.date | date: 'shortTime' }}</b> for <b>{{ bookingRequest.plan.time_to }} mins.</b>
+					<!-- <span> mins</span> -->
+				</p>
+			</div>
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<button (click)="acceptOrder(bookingRequest.id, 1)" class="btn btn-primary">Accept</button>
+					</div>
+					<div class="col-12" style="margin-top: 20px;">
+						<button (click)="acceptOrder(bookingRequest.id, -1)" class="btn btn-outline">Decline</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div *ngIf="(!(ongoingCall == '')) && (on_call == 0 && incoming == 0 && outgoing == 0) && (!(userDets.user_type == 3))" class="popup request-popup" [class.active]="!(ongoingCall == '')">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Ongoing Call</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row">
+			<div class="col-12">
+				<p><b>{{ ongoingCall.user_name }}</b></p>
+			</div>
+			<div class="col-12">
+				<div class="ord-dets-wrap" style="padding: 0;background: transparent;">
+					<div class="ord-people">
+						<div class="ord-person text-right">
+							<div class="ord-person-in">
+								<span class="img-wrap">
+									<img *ngIf="ongoingCall.user.image_url == null" src="assets/images/dp2.png" />
+									<img *ngIf="!(ongoingCall.user.image_url == null)" [src]="ongoingCall.user.image_url" />
+								</span>
+								<span class="name" *ngIf="!(userDets.id == ongoingCall.user.id)">{{ ongoingCall.user.name }}</span>
+								<span class="name" *ngIf="(userDets.id == ongoingCall.user.id)">You</span>
+								<span class="type">Hirer</span>
+							</div>
+						</div>
+						<div class="ord-person text-left">
+							<div class="ord-person-in">
+								<span class="img-wrap">
+									<img *ngIf="ongoingCall.interpreter.image_url == null" src="assets/images/dp2.png" />
+									<img *ngIf="!(ongoingCall.interpreter.image_url == null)" [src]="ongoingCall.interpreter.image_url" />
+								</span>
+								<span class="name" *ngIf="!(userDets.id == ongoingCall.interpreter.id)">{{ ongoingCall.interpreter.name }}</span>
+								<span class="name" *ngIf="(userDets.id == ongoingCall.interpreter.id)">You</span>
+								<span class="type">Interpreter</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- <div class="col-4">
+				<p>
+					<span>Duration: </span>
+					<span *ngIf="ongoingCall.plan_id==1">15</span>
+					<span *ngIf="ongoingCall.plan_id==2">30</span>
+					<span *ngIf="ongoingCall.plan_id==3">45</span>
+					<span *ngIf="ongoingCall.plan_id==4">60</span>
+					<span *ngIf="ongoingCall.plan_id==5">2</span>
+					<span></span>
+				</p>
+			</div> -->
+			<div class="col-12">
+				<div class="ord-lang text-center">
+					<div class="lang-select-list">
+			  			<div class="lang-set-title">
+				  			<span class="sm-btn">{{ ongoingCall.language_from_obj.language_name }}</span>
+				  			<span class="icon bg"></span>
+				  			<span class="sm-btn">{{ ongoingCall.language_to_obj.language_name }}</span>
+			  			</div>
+			  		</div>
+				</div>
+			</div>
+			<div class="col-12">
+				<p>
+					<!-- <span>Requested Slot: </span> -->
+					<!-- <span> </span> -->
+					<span>{{ ongoingCall.date | date: 'LLL' }} {{ ongoingCall.date | date: 'dd' }}, {{ ongoingCall.date | date: 'shortTime' }} for {{ ongoingCall.plan.time_to }} mins.</span>
+					<!-- <span> mins</span> -->
+				</p>
+			</div>
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<p class="text-center m20 msg-box" style="color: #FD1231; font-style: italic;" *ngIf="!(userDets.user_type == 3)">Your interpreter is ready please call now.</p>
+						<p class="text-center m20 msg-box" style="color: #FD1231; font-style: italic;" *ngIf="(userDets.user_type == 3)">Your Caller is ready please call now.</p>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-12" style="z-index: 2;" *ngIf="!(userDets.user_type == 3)">
+						<span (click)="callUser(ongoingCall.service_provider_id, ongoingCall.id)" class="hire-call-btn" style="margin: 0px auto;">
+							<img src="assets/images/call.gif" />
+							<!-- <i class="fas fa-phone"></i> -->
+						</span>
+						<!-- <p class="text-center"><b>Call Again</b></p> -->
+					</div>
+					<div class="col-12" style="z-index: 2;" *ngIf="(userDets.user_type == 3)">
+						<span (click)="callUser(ongoingCall.user_id, ongoingCall.id)" class="hire-call-btn" style="margin: 0px auto;">
+							<img src="assets/images/call.gif" />
+							<!-- <i class="fas fa-phone"></i> -->
+						</span>
+						<!-- <p class="text-center"><b>Call Again</b></p> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="overlay-msg-popup" *ngIf="(!(overlayMsg == '')) && (incoming == 0)">
+	<div class="overlay-close" (click)="overlayMsg = ''">x</div>
+	<div class="overlay-msg-wrap">
+		<!-- <img src="assets/images/call.gif" class="overlay-loader" /> -->
+		<div class="overlay-msg">{{ overlayMsg }}</div>
+	</div>
+</div>
+
+<div *ngIf="showVideoPermPop == 1" class="popup request-popup" [class.active]="showVideoPermPop == 1" style="z-index: 12314223421323123123 !important;">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Give Video Permission</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row">
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<button (click)="switchToSettings()" class="btn btn-primary">Go to Settings</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="showTopPerm == 1" class="popup request-popup" [class.active]="showTopPerm == 1" style="z-index: 12314223421323123123 !important;">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Allow Appear on Top</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row">
+			<div class="col-12">
+				<p>This app requires permission to appear on top of other app. This permission is crucial as it is needed for displaying the incoming call screen.</p>
+			</div>
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<button (click)="openTopPermission()" class="btn btn-primary">Go to Settings</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div *ngIf="showAudioPermPop == 1" class="popup request-popup" [class.active]="showAudioPermPop == 1" style="z-index: 12314223421323123123 !important;">
+	<div class="popup-logo">
+		<img src="assets/images/logo1.png" />
+	</div>
+	<div class="popup-title text-center">
+		<span class="text">Give Audio Permission</span>
+	</div>
+	<div class="popup-content text-center">
+		<div class="row">
+			<div class="col-12">
+				<div class="row">
+					<div class="col-12">
+						<button (click)="switchToSettings()" class="btn btn-primary">Go to Settings</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

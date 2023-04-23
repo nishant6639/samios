@@ -4,7 +4,8 @@ import { ApiService } from '../../services/api.service';
 import { CallService } from '../../services/call.service';
 import { FirebaseService } from '../../services/firebase.service';
 import { AlertController } from '@ionic/angular';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+// import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+declare let ConnectyCube;
 
 @Component({
   selector: 'app-home',
@@ -25,7 +26,7 @@ export class HomePage implements OnInit, OnDestroy {
   						private api:ApiService,
   						private firebase:FirebaseService,
   						private calling:CallService,
-  						private localNotifications: LocalNotifications
+  						// private localNotifications: LocalNotifications
   						) {
   	}
 
@@ -177,20 +178,48 @@ export class HomePage implements OnInit, OnDestroy {
 		this.api.acceptOrder(data)
 		.then(resp => {
 			var order_date = new Date((resp.data.order.date + " UTC").replace(/-/g, "/"));
-			if(status == 1){
-				this.localNotifications.schedule({
-				   	title: "Upcoming order.",
-				   	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
-				   	trigger: {at: new Date(new Date(order_date).getTime() - 300000)},
-				   	led: 'FF0000',
-				   	sound: null
+			const params = {
+				name: "My meeting",
+				// start_date: order_date,
+				// end_date: new Date(order_date.setHours(order_date.getHours() + 4)),
+				attendees: [
+					{ id: parseInt(resp.data.user.calling_id)},
+					{ id: parseInt(resp.data.provider.calling_id)}
+				],
+				record: false,
+				chat: true
+			};
+
+			ConnectyCube.meeting.create(params)
+			.then(meeting => {
+				let confRoomId = meeting._id;
+				var data1 = {
+					order_id: resp.data.order.id,
+					meeting_id: confRoomId
+				};
+				this.api.updateMeetingId(data1)
+				.then(resp => {
+
+				})
+				.catch(err => {
+
 				});
+			})
+			.catch(error => { });
+			if(status == 1){
+				// this.localNotifications.schedule({
+				//    	title: "Upcoming order.",
+				//    	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
+				//    	trigger: {at: new Date(new Date(order_date).getTime() - 300000)},
+				//    	led: 'FF0000',
+				//    	sound: null
+				// });
 			}
 			var message = {
 				'type': 'order_accepted',
 				'order': resp.data.order
 			};
-			this.firebase.sendCallMsgsFn(resp.data.order.target_user, JSON.stringify(message));
+			this.firebase.sendCallMsgsFn(resp.data.order.target_user_msg, JSON.stringify(message));
 			this.bookingRequest = "";
 			this.misc.hideLoader();
 			this.getBookings();

@@ -10,11 +10,11 @@ import { ProviderdetsPage } from './providerdets/providerdets.page';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 // import { CallKitService } from './services/callkit.service';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+// import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+import OneSignal from 'onesignal-cordova-plugin';
 declare let window: any;
 declare let cordova:any;
 declare let ConnectyCube:any;
-declare let VoIPPushNotification:any;
 // import 'webrtc-adapter';
 @Component({
 	selector: 'app-root',
@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
 	keepSplash:any = 1;
 	showPerm:any = 0;
 	constructor(
-		private firebasex: FirebaseX,
+		// private firebasex: FirebaseX,
 		private api:ApiService,
 		private backgroundMode: BackgroundMode,
 		public platform: Platform,
@@ -43,6 +43,21 @@ export class AppComponent implements OnInit {
 		private nativeAudio: NativeAudio) {
 			// this.misc.getAllPermissions();
 			this.platform.ready().then(async () => {
+				this.misc.onesignal = OneSignal;
+				this.misc.onesignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+				this.misc.onesignal.promptForPushNotificationsWithUserResponse((accepted) => {
+					console.log("User accepted notifications: " + accepted);
+				});
+				// if(!(this.firebasex.hasPermission())){
+				// 	await this.firebasex.grantPermission();
+				// 	    // console.log("Notifications permission was " + (hasPermission ? "granted" : "denied"));
+				// 	// });
+				// 	if(this.platform.is('ios')){
+				// 		// this.firebasex.grantCriticalPermission(function(hasPermission){
+				// 		//     console.log("Critical notifications permission was " + (hasPermission ? "granted" : "denied"));
+				// 		// });
+				// 	}
+				// }
 				
 				const CREDENTIALS = {
 				  	appId: 6798,
@@ -51,53 +66,40 @@ export class AppComponent implements OnInit {
 				};
 
 				const CONFIG = {
-					chat: {
-					    reconnectionTimeInterval: 1,
-					    ping: {
-					      enable: true,
-					      timeInterval: 10
-					    }
-				  	},
-					videochat: {
-						alwaysRelayCalls: true,
-					    answerTimeInterval: 600,
-					    dialingTimeInterval: 2
-				    },
+					// chat: {
+					//     reconnectionTimeInterval: 1,
+					//     ping: {
+					//       enable: true,
+					//       timeInterval: 10
+					//     }
+				  	// },
+					// videochat: {
+					// 	alwaysRelayCalls: false,
+					//     answerTimeInterval: 60,
+					//     dialingTimeInterval: 2
+				    // },
 				  	debug: { mode: 0 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
 				};
 
 				ConnectyCube.init(CREDENTIALS, CONFIG);
-				if(this.platform.is('ios')){
+				// if(this.platform.is('ios')){
 					var cordovaCall = cordova.plugins.CordovaCall;
 				  	cordovaCall.setAppName('Samanta');
 				  	cordovaCall.setVideo(true);
-			  	}
+			  	// }
 
-			  	if(this.platform.is('ios')){
-	          		var push = await VoIPPushNotification.init();
-					push.on('notification', (data) => {
-		              	console.log("[Ionicssssss] notification callback called");
-		              	console.log(data);
-		              	// var cordovaCall = cordova.plugins.CordovaCall;
-						//   	cordovaCall.setAppName('Samanta');
-						//   	cordovaCall.setVideo(true);
-						//   	cordovaCall.receiveCall('David Marcus via Samanta',(e) => {
-						// 		console.log('sfsadas', e);
-						// 	},
-						// 	(err) => {
-						// 		console.log(err);
-						// 	});
-		              	// do something based on received data
-		          	});
-
-		          	push.on('error', function(e) {
-		              	console.log(e);
-		          	});
-	          	}
 				// this.splashScreen.hide();
 
 				this.createCallChannel();
-	        	
+				// setTimeout(() => {
+				// 	// console.log('connect call');
+					
+					
+				// }, 10000);
+				// setTimeout(() => {
+				// 	console.log('connect call');
+				// 	cordova.plugins.CordovaCall.connectCall();
+				// }, 5000);
 				if(this.platform.is('ios')){
 					// setTimeout(() => {
 					// 	console.log('connect call');
@@ -201,7 +203,7 @@ export class AppComponent implements OnInit {
 
 	ngOnInit(){
 		
-		this.getPermissions();
+		// this.getPermissions();
 		var permReq = window.localStorage.getItem('permReq');
 		if(permReq == undefined || permReq == null){
 			// this.showPerm = 1;
@@ -318,45 +320,7 @@ export class AppComponent implements OnInit {
 
 
 	listenToMessage(){
-  	// 	this.firebase.onMessageReceived()
-  	// 	.subscribe(data => {
-  	// 		var messagebody = JSON.parse(data.message);
-			// if(messagebody.type == 'order_requested'){
-		  		
-			// }
-			// if(messagebody.type == 'incoming_call'){
-			// 	// this.splashScreen.hide();
-			// 	this.keepSplash = 0;
-			// 	// this._ngZone.run(() => {
-			// 	// 	var incomingData = {
-			// 	// 		'order' : messagebody.order_dets,
-			// 	// 		'user' : messagebody.user_dets,
-			// 	// 		'my_user_id' : messagebody.my_user_id
-			// 	// 	};
-			// 	// 	this.incomingCall(incomingData);
-			// 	// });
-			// 	this.backgroundMode.moveToForeground();
-			// 	// Turn screen on
-			// 	this.backgroundMode.wakeUp();
-			// 	// Turn screen on and show app even locked
-			// 	this.backgroundMode.unlock();
-			// }
-			// if(messagebody.type == 'receiver_enabled'){
-
-			// }
-			// if(messagebody.type == 'order_updated'){
-
-			// }
-
-			// if(messagebody.type == 'order_accepted'){
-		  		
-			// }
-
-			// if(messagebody.type == 'in_call_messages'){
-		  		
-			// }
-
-  	// 	});
+		
   	}
 
 	openStore(){
@@ -436,14 +400,14 @@ export class AppComponent implements OnInit {
 		};
 
 		// Create the channel
-		this.firebasex.createChannel(channel)
-		.then(channel_c => {
+		// this.firebasex.createChannel(channel)
+		// .then(channel_c => {
 
-		    console.log('Channel_c created: ' + channel_c);
-		}).
-		catch(error =>{
-		   console.log('Create channel error: ' + error);
-		});
+		//     console.log('Channel_c created: ' + channel_c);
+		// }).
+		// catch(error =>{
+		//    console.log('Create channel error: ' + error);
+		// });
 
 		var channel1:any  = {
 		    // channel ID - must be unique per app package
@@ -460,14 +424,14 @@ export class AppComponent implements OnInit {
 		};
 
 		// Create the channel
-		this.firebasex.createChannel(channel1)
-		.then(channel_c => {
+		// this.firebasex.createChannel(channel1)
+		// .then(channel_c => {
 
-		    console.log('Channel_c1 created: ' + channel_c);
-		}).
-		catch(error =>{
-		   console.log('Create channel error: ' + error);
-		});
+		//     console.log('Channel_c1 created: ' + channel_c);
+		// }).
+		// catch(error =>{
+		//    console.log('Create channel error: ' + error);
+		// });
 
 	}
 }

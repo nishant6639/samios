@@ -281,7 +281,7 @@ NSString* const KEY_VOIP_PUSH_TOKEN = @"PK_deviceToken";
     CDVPluginResult* pluginResult = nil;
     NSArray<CXCall *> *calls = self.callController.callObserver.calls;
 
-    if([calls count] == 1) {
+    if([calls count] > 0) {
         [self.provider reportOutgoingCallWithUUID:calls[0].UUID connectedAtDate:nil];
         pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Call connected successfully"];
     } else {

@@ -4,7 +4,7 @@ import { ApiService } from '../services/api.service';
 import { CallService } from '../services/call.service';
 import { FirebaseService } from '../services/firebase.service';
 import { AlertController } from '@ionic/angular';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+// import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import {
   CalendarEvent,
   CalendarEventAction,
@@ -39,7 +39,7 @@ export class BookingsPage implements OnInit {
   						private api:ApiService,
   						private firebase:FirebaseService,
   						private calling:CallService,
-  						private localNotifications: LocalNotifications
+  						// private localNotifications: LocalNotifications
   						) {
   	}
 
@@ -201,19 +201,19 @@ export class BookingsPage implements OnInit {
 		.then(resp => {
 			var order_date = new Date((resp.data.order.date + " UTC").replace(/-/g, "/"));
 			if(status == 1){
-				this.localNotifications.schedule({
-						title: "Upcoming order.",
-				   	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
-				   	trigger: {at: new Date(new Date(order_date).getTime() - 300000)},
-				   	led: 'FF0000',
-				   	sound: null
-				});
+				// this.localNotifications.schedule({
+				// 		title: "Upcoming order.",
+				//    	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
+				//    	trigger: {at: new Date(new Date(order_date).getTime() - 300000)},
+				//    	led: 'FF0000',
+				//    	sound: null
+				// });
 			}
 			var message = {
 				'type': 'order_accepted',
 				'order': resp.data.order
 			};
-			this.firebase.sendCallMsgsFn(resp.data.order.target_user, JSON.stringify(message));
+			this.firebase.sendCallMsgsFn(resp.data.order.target_user_msg, JSON.stringify(message));
 
 			this.bookingRequest = "";
 			this.misc.hideLoader();

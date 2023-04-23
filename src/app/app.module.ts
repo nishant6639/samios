@@ -20,7 +20,7 @@ import { AppComponent } from './app.component';
 import { CallerComponent } from './caller/caller.component';
 import { AppRoutingModule } from './app-routing.module';
 import { NgCircleProgressModule } from 'ng-circle-progress';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+// import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 // import { Push, PushObject, PushOptions } from '@ionic-native/push/ngx';
 import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule, AngularFireDatabase } from '@angular/fire/database';
@@ -36,7 +36,7 @@ import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
 import { InAppBrowser } from '@ionic-native/in-app-browser/ngx';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+// import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { NativeRingtones } from '@ionic-native/native-ringtones/ngx';
 import { NgxTippyModule } from 'ngx-tippy-wrapper';
@@ -79,7 +79,7 @@ import { pageTransition } from './page-transition';
 		AndroidPermissions,
 		DatePicker,
  	   	AngularFireDatabase,
- 	   	FirebaseX,
+ 	   	// FirebaseX,
  	   	OneSignal,
  	   	StatusBar,
  	   	SplashScreen,
@@ -95,7 +95,7 @@ import { pageTransition } from './page-transition';
  	   	BackgroundMode,
  	   	InAppBrowser,
  	   	NativeAudio,
- 	   	LocalNotifications,
+ 	   	// LocalNotifications,
  	   	NativeRingtones,
  	   	ConnectivityProvider,
  	   	// PowerManagement,

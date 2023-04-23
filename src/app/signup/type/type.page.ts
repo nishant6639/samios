@@ -3,8 +3,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { MiscService } from '../../services/misc.service';
 import { Platform } from '@ionic/angular';
 import { ApiService } from '../../services/api.service';
-import OneSignal from 'onesignal-cordova-plugin';
-import { FirebaseX } from '@ionic-native/firebase-x/ngx';
+// import OneSignal from 'onesignal-cordova-plugin';
+// import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 
 declare var require: any;
 const axios = require('axios').default;
@@ -42,7 +42,7 @@ export class TypePage implements OnInit {
         private route: ActivatedRoute,
         private misc:MiscService,
         private api:ApiService,
-        private firebasex:FirebaseX
+        // private firebasex:FirebaseX
     ) { }
 
     ngOnInit() {
@@ -148,24 +148,24 @@ export class TypePage implements OnInit {
         this.platform.ready().then(async () => {
             if(this.platform.is('cordova') || this.platform.is('android') || this.platform.is('ios')) {
 
-                await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
-                    console.log("User accepted notifications: " + accepted);
-                });
+                // await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
+                //     console.log("User accepted notifications: " + accepted);
+                // });
                 let fcm = "";
-                await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-                await this.firebasex.getToken()
-                .then(token => {
-                    console.log(`The token is ${token}`);
-                    fcm = token;
-                }) // save the token server-side and use it to push notifications to this device
-                await OneSignal.getDeviceState((state) => {
+                // await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+                // await this.firebasex.getToken()
+                // .then(token => {
+                //     console.log(`The token is ${token}`);
+                //     fcm = token;
+                // }) // save the token server-side and use it to push notifications to this device
+                // await OneSignal.getDeviceState((state) => {
                   // console.log(state.userId);
-                    if(state.userId == undefined){
-                      this.saveUser();
-                      return;
-                    }
+                    // if(state.userId == undefined){
+                    //   this.saveUser();
+                    //   return;
+                    // }
                     delete data.confirm_password;
-                    data['fcm'] = state.userId;
+                    // data['fcm'] = state.userId;
                     data['fcm_call'] = fcm;
                     this.api.registerUser(data)
                     .then( response => {
@@ -188,7 +188,7 @@ export class TypePage implements OnInit {
                         this.misc.hideLoader();
                         this.misc.handleError(err);
                     });
-                });
+                // });
             }
             else{
                 delete data.confirm_password;
@@ -343,24 +343,24 @@ export class TypePage implements OnInit {
         this.misc.showLoader();
         this.platform.ready().then(async () => {
             if(this.platform.is('cordova')){
-                await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
-                    console.log("User accepted notifications: " + accepted);
-                });
+                // await OneSignal.promptForPushNotificationsWithUserResponse( (accepted) => {
+                //     console.log("User accepted notifications: " + accepted);
+                // });
                 let fcm = "";
-                await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-                await this.firebasex.getToken()
-                .then(token => {
-                    console.log(`The token is ${token}`);
-                    fcm = token;
-                }) // save the token server-side and use it to push notifications to this device
-                await OneSignal.getDeviceState((state) => {
+                // await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+                // await this.firebasex.getToken()
+                // .then(token => {
+                //     console.log(`The token is ${token}`);
+                //     fcm = token;
+                // }) // save the token server-side and use it to push notifications to this device
+                // await OneSignal.getDeviceState((state) => {
                     // console.log(state.userId);
-                    if(state.userId == undefined){
-                      this.saveCompany();
-                      return;
-                    }
+                    // if(state.userId == undefined){
+                    //   this.saveCompany();
+                    //   return;
+                    // }
                     delete data.confirm_password;
-                    data['fcm'] = state.userId;
+                    // data['fcm'] = state.userId;
                     data['fcm_call'] = fcm;
                     this.api.registerCompany(data)
                     .then( response => {
@@ -377,7 +377,7 @@ export class TypePage implements OnInit {
                         this.misc.hideLoader();
                         this.misc.handleError(err);
                     })
-                });
+                // });
             }
             else{
                 delete data.confirm_password;

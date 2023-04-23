@@ -206,6 +206,15 @@ export class ApiService {
         return Promise.reject(err)
       });
     }
+    getUserById(data){
+      return axios.post(apiUrl + 'auth/user-profile', data)
+      .then(function(response){
+        return response.data;
+      })
+      .catch(function(err){
+        return Promise.reject(err)
+      });
+    }
 
     sendPwCode(data){
       return axios.post(apiUrl+'auth/send-pw-code', data)
@@ -627,6 +636,15 @@ export class ApiService {
 
     updateOrder(data){
       return axios.post(apiUrl + 'user/update-order', data)
+      .then(function(response){
+        return response.data;
+      })
+      .catch(function(err){
+        return Promise.reject(err)
+      });
+    }
+    updateMeetingId(data){
+      return axios.post(apiUrl + 'user/update-meeting-id', data)
       .then(function(response){
         return response.data;
       })

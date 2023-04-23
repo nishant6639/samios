@@ -1,488 +1,109 @@
-.call-screen-wrap{
+.call-screen{
+	display: none;
 	position: fixed;
 	top: 0;
 	left: 0;
-	bottom: 0;
-	right: 0;
-	z-index: 1234523432;
-	display: none;
-	background-color: #000;
-	&.in-call{
-		// background-color: transparent;
-	}
+	height: 100%;
+	width: 100%;
+	z-index: 100;
+	background-color: #1b1d26;
 	&.shown{
 		display: block;
 	}
 
-	.ring-anim{
-		height: 200px;
-	    width: 200px;
-	    position: absolute;
-	    left: 50%;
-	    top: 50%;
-	    transform: translate(-50%, -50%);
-	    border: 2px dotted #FFF;
-	    border-radius: 150px;
-	    padding: 20px;
-	    filter: brightness(20) invert(1);
-		img{
-			width: 100%;
-			height: auto;
-		}
-	}
-	.call-status{
+	.video-loader{
 		position: absolute;
-		top: 100px;
-		left: 0;
-		right: 0;
-		z-index: 3;
-		text-align: center;
-		color: #FFF;
-	}
-	.call-screen{
-		position: absolute;
-		z-index: 3;
-		bottom: 150px;
-		right: 20px;
-		height: 150px;
-		width: 105px;
-		opacity: 0;
-		overflow: hidden;
-		border: none;
-		border-radius: 10px;
-		// transition: all 0.3s ease-in-out;
-		&.shown{
-			opacity: 1;
-			border: 2px solid #DDD;
-		}
-		&.active{
-			height: unset;
-			width: unset;
-			border: none;
-			border-radius: 0px;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			z-index: 1;
-			&.reconnect{
-				filter: blur(5px);
-			}
-			video{
-				z-index: -2 !important;
-			}
-		}
-		video{
-			position: relative;
-			height: 100%;
-			min-width: 100%;
-			max-width: 100%;
-			opacity: 0;
-			left: 50%;
-			object-fit: cover;
-			z-index: -1 !important;
-			transform: rotateY(180deg);
-			-webkit-transform: scaleX(-1) translateX(50%);
-			transition: all 0.2s ease-in-out;
-			&.shown{
-				opacity: 1;
-			}
-		}
-	}
-
-	.reconnecting-wrap{
-		position: absolute;
-		bottom: 0px;
-		left: 0px;
 		top: 0;
-		right: 0px;
-		background-color: rgba(25,25,25,0.7);
-		// filter: blur(5px);
-		display: block;
-		// transform: translateZ(1px);
-		z-index: 2;
-		text-align: center;
-		p{
-			position: absolute;
-		    top: 40%;
-		    left: 0;
-		    right: 0;
-		    transform: translateY(-50%);
-		    color: #FFF;
-		    font-weight: 700;
-		    text-align: center;
-		    font-size: 15px;
-		}
-	}
-
-	.call-btns{
-		position: absolute;
-		bottom: 70px;
-		left: 10px;
-		right: 10px;
-		display: block;
-		transform: translateZ(1px);
-		z-index: 5;
-		text-align: center;
-	}
-
-	// button{
-	// 	z-index: 12344334;
-	// 	position: fixed;
-	// 	bottom: 20px;
-	// 	left: 20px;
-	// }
-
-	
-}
-
-.chat-msg-btn{
-		position: absolute;
-		bottom: 10px;
 		left: 0;
-		right: 0;
-		z-index: 6556;
-		text-shadow: 1px 1px 0px #000;
-		transform: translateZ(1px);
-		// text-align: center;
-		.icon{
-			display: block;
-			height: 20px;
-			width: 20px;
-			color: #FFF;
-			margin: 5px auto;
-		}
-		.text{
-			display: block;
-			text-align: center;
-			color: #FFF;
-			font-size: 13px;
-		}
-
-		.badge{
-			transform: scale(1.5);
-		}
-	}
-
-.new-admin-msg{
-	position: fixed;
-	top: 20px;
-	right: 20px;
-	width: 300px;
-	z-index: 1234;
-	opacity: 0;
-	pointer-events: none;
-	transition: all 0.4s ease-in-out;
-	.close-notif{
-		position: absolute;
-		top: -10px;
-		right: -10px;
-		height: 20px;
-		width: 20px;
-		font-size: 13px;
-		line-height: 20px;
-		z-index: 123;
-		text-align: center;
-		border-radius: 20px;
-		background-color: #FFF;
-		box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
-
-	}
-	.new-admin-msg-in{
-		position: relative;
-		z-index: 12;
-		display: block;
-		background-color: #FFF;
-		padding: 20px;
-		border-radius: 10px;
-		box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
-		font-size: 14px;
-		font-weight: 700;
-		padding-left: 60px;
-		.icon{
-			display: inline-block;
+		height: 100%;
+		width: 100%;
+		z-index: 11;
+		background-color: rgba(255,255,255,0.2);
+		backdrop-filter: blur(5px);
+		img{
 			position: absolute;
-			height: 40px;
-			width: 40px;
-			font-size: 24px;
-			border-radius: 40px;
+			left: 50%;
 			top: 50%;
-			margin-top: -20px;
-			left: 10px;
-			background-color: #FD1231;
-			color: #FFF;
-			line-height: 40px;
-			text-align: center;
+			transform: translate(-50%, -50%);
+			width: 50px;
+			height: 50px;
 		}
-	}
-	&.active{
-		opacity: 1;
-		pointer-events: auto;
 	}
 }
 
-
-.new-call-screen{
-	position: fixed;
-	height: 100vh;
-	width: 100vw;
+.local-video{
+	position: absolute;
+	bottom: 100px;
+	right: 20px;
+	height: 100px;
+	width: 70px;
+	z-index: 12;
+	overflow: hidden;
+	video{
+		width: auto;
+	    height: 100%;
+	    transform: translateX(-50%) scaleX(-1) !important;
+	    left: 50%;
+	    position: relative;
+	}
+}
+.remote-video{
+	position: absolute;
 	top: 0;
 	left: 0;
-	background-color: #000;
-	display: none;
-	&.incoming{
-		display: block;
-	}
-	&.on-call{
-		display: block;
-	}
-	&.outgoing{
-		display: block;
-	}
-}
-
-.my-stream{
-	position: absolute;
-    bottom: 150px;
-    left: 10px;
-    z-index: 2;
-    height: 140px;
-    width: 100px;
-    overflow: hidden;
-    border: 2px solid #FFF;
-    border-radius: 10px;
-    box-shadow: 2px 2px 5px rgba(76, 76, 76, 0.4);
-	video{
-		height: 100%;
-		width: auto;
-		position: relative;
-		transform: translateX(-50%) scaleX(-1) !important;
-		left: 50%;
-	}
-}
-
-.remote-stream{
-	position: absolute;
-	top: 0px;
-	left: 0;
-	z-index: 1;
 	height: 100%;
 	width: 100%;
 	overflow: hidden;
+	z-index: 1;
 	video{
-		height: 100%;
 		width: auto;
-		position: relative;
-		transform: translateX(-50%);
-		left: 50%;
-		// width: 100%;
+	    height: 100%;
+	    transform: translateX(-50%);
+	    left: 50%;
+	    position: relative;
 	}
 }
 
-.show-devices-screen{
-	z-index: 4;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 80%;
-	max-width: 400px;
-	background-color: #FFF;
-	border-radius: 10px;
-	padding: 20px;
-	transform: translate(-50%, -50%);
+.dialing-screen{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 50;
+	background-color: #1b1d26;
 }
 
-.new-callBtns{
-	position: absolute;
-    bottom: 70px;
-    left: 10px;
-    right: 10px;
-    padding: 5px;
-    z-index: 3;
-    text-align: center;
-    background: rgba(149, 143, 233, 0.56);
-    border-radius: 50px;
-	.new-callBtn{
-		display: inline-block;
-		height: 50px;
-		width: 50px;
-		border-radius: 50px;
-		margin: 0px 50px;
-		font-size: 26px;
-		background-color: #FD1231;
-		color: #FFF;
-		padding: 0px;
-		// line-height: 60px;
-		// box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
-		&.rotate{
-			transform: rotate(135deg);
-			// margin: 15px 13px;
-		}
-		&:active{
-			transform: scale(0.7);
-		}
+.incoming-call-screen{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 50;
+	background-color: #1b1d26;
 
-		.mi{
-			line-height: 50px;
-			font-size: 30px;
-			text-shadow: 0px 1px 1px #000;
-			// text-shadow: 0px 1px 2px #000;
-		}
-	}
 }
 
-.overlay-msg-popup{
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(4, 31, 58, 0.99);
-	.overlay-msg-wrap{
-		position: absolute;
-		left: 40px;
-		right: 40px;
-		top: 50%;
-		transform: translateY(-50%);
-		.overlay-loader{
-			display: block;
-		    width: 100px;
-		    margin: 20px auto;
-		    background: #FFF;
-		    border-radius: 50px;
-		    animation: ripple 1s cubic-bezier(0.680, -0.550, 0.265, 1.550) infinite;
-		}
-		.overlay-msg{
-			display: block;
-		    color: #FFF;
-		    font-size: 20px;
-		    text-align: center;
-		    font-weight: 900;
-		    margin-top: 40px;
-		    text-shadow: 0px 1px 2px #000;
-		}
-	}
-}
-.overlay-close{
+.call-button-wrap{
 	position: absolute;
-	top: 10px;
+	bottom: 10px;
+	left: 10px;
 	right: 10px;
-	height: 40px;
-	width: 40px;
-	line-height: 40px;
-	text-align: center;
-	z-index: 123123;
-	color: #FFF;
-	font-size: 32px;
-}
-
-@-webkit-keyframes ripple {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255,255,255, 0.3), 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3), 0 0 0 40px rgba(255,255,255, 0);
-  }
-}
-
-@keyframes ripple {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255,255,255, 0.3), 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3);
-  }
-  100% {
-    box-shadow: 0 0 0 5px rgba(255,255,255, 0.3), 0 0 0 10px rgba(255,255,255, 0.3), 0 0 0 15px rgba(255,255,255, 0.3), 0 0 0 40px rgba(255,255,255, 0);
-  }
-}
-
-.rem-time{
-	opacity: 0;
-	transform: translateY(-50px);
-	transition: all 0.5s linear;
-	transition-delay: 1s;
-	&.active{
-		opacity: 1;
-		transform: translateY(0px);
-	}
-}
-
-.call-btn-wrapper-full{
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	background-color: #777;
-	&.on-the-call{
+	z-index: 12;
+	display: flex;
+	height: 50px;
+	padding: 0px;
+	overflow: hidden;
+	background-color: rgba(255, 255, 255, 0.20);
+	backdrop-filter: blur(2px);
+	border-radius: 100px;
+	button{
+		flex: 1;
 		background-color: transparent;
-		.new-callBtn{
-			margin: 0px;
-		}
-	}
-	.call-btn-wrapper-full-in{
-		z-index: 1;
-		position: absolute;
-		top: -20px;
-		left: -20px;
-		right: -20px;
-		bottom: -20px;
-		background-size: cover;
-		background-position: center left;
-		filter: blur(5px) brightness(90%);
-		&:before{
-			content: "";
-			z-index: 2;
-			position: absolute;
-			top: 0;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			// background-color: rgba(255,255,255,0.1);
-		}
-	}
-	.caller-dets-wrap{
-		position: absolute;
-		top: 150px;
-		z-index: 3;
-		left: 0;
-		right: 0;
-		.caller-pic{
-			display: block;
-			position: relative;
-			height: 160px;
-			width: 160px;
-			margin: 0px auto;
-			border-radius: 160px;
-			overflow: hidden;
-			// border: 1px solid #777;
-			// position: absolute;
-			.caller-pic-in{
-				position: absolute;
-				top: 0;
-				left: 0;
-				right: 0;
-				bottom: 0;
-				background-size: cover;
-				background-position: center center;
-			}
-		}
-		.caller-name{
-			font-size: 30px;
-			text-shadow: 0px 1px 2px #000;
+		// backdrop-filter: blur(2px);
+		height: 100%;
+		color: #FFF;
+		.mi{
 			color: #FFF;
-			font-weight: 600;
-			margin-top: 20px;
-			padding: 0px 30px;
-			text-align: center;
+			vertical-align: middle;
+    		margin-right: 5px;
 		}
-		.caller-activity{
-			font-size: 15px;
-			text-shadow: 0px 1px 2px #000;
-			color: #FFF;
-			font-weight: 300;
-			margin-top: 5px;
-			padding: 0px 30px;
-			text-align: center;
-		}
-
 	}
 }

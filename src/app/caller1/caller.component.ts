@@ -17,13 +17,13 @@ import { Observable } from 'rxjs';
 import { Router, NavigationStart, NavigationEnd, NavigationError, NavigationCancel, RoutesRecognized, ActivatedRoute } from '@angular/router';
 import { Insomnia } from '@ionic-native/insomnia/ngx';
 import { AudioManagement } from '@ionic-native/audio-management/ngx';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+// import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 declare let cordova:any;
 declare let AudioToggle:any;
 
 @Component({
-	selector: 'app-caller',
+	selector: 'app-caller1',
 	templateUrl: './caller.component.html',
 	styleUrls: ['./caller.component.scss'],
 })
@@ -179,7 +179,7 @@ export class CallerComponent implements AfterViewInit {
 		private platform: Platform,
 		private _ngZone: NgZone,
 		private nativeAudio: NativeAudio,
-		private localNotifications: LocalNotifications,
+		// private localNotifications: LocalNotifications,
 		private db: AngularFireDatabase, private insomnia: Insomnia) {
 
 	}

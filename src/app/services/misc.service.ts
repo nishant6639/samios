@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Toast } from '@ionic-native/toast/ngx';
 import { LoadingController } from '@ionic/angular';
-import OneSignal from 'onesignal-cordova-plugin';
+// import OneSignal from 'onesignal-cordova-plugin';
 import { Platform } from '@ionic/angular';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { Diagnostic } from '@ionic-native/diagnostic/ngx';
@@ -23,6 +23,7 @@ export class MiscService {
 	loading:any;
 	backSub:any;
 	userDets:any;
+	onesignal:any;
   	constructor(
   		private toast:Toast,
   		public loadingCtrl:LoadingController,
@@ -52,12 +53,12 @@ export class MiscService {
       			cordova.plugins.iosrtc.registerGlobals();
     			}
 	      	if (this.platform.is('cordova')) {
-	      			await OneSignal.promptForPushNotificationsWithUserResponse( async (accepted) => {
-		            console.log("User accepted notifications: " + accepted);
-		            await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-		          });
-		          await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-	          	await this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED]);
+	      			// await OneSignal.promptForPushNotificationsWithUserResponse( async (accepted) => {
+		          //   console.log("User accepted notifications: " + accepted);
+		          //   await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+		          // });
+		          // await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+	          	await this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED, this.androidPermissions.PERMISSION.CALL_PHONE]);
 	          	if(!(this.platform.is('ios'))) {
 		          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
 		              	result => {
@@ -127,9 +128,9 @@ export class MiscService {
 			    				console.log('enabled and activated');
 			    				cordova.plugins.backgroundMode.disableWebViewOptimizations();
 			    				// cordova.plugins.backgroundMode.excludeFromTaskList();
-								});
-							}
-	      	}
+						});
+							// }
+	      			}
 	      	// navigator.mediaDevices.getUserMedia({ audio: true, video: true })
 	      	// .then(stream => {
 	      	// 	// stream
@@ -143,7 +144,8 @@ export class MiscService {
 	      	// .catch(err => {
 
 	      	// });
-  		});
+  			}
+		});
 	}
 
 

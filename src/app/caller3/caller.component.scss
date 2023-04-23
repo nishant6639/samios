@@ -1,0 +1,109 @@
+.call-screen{
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	z-index: 100;
+	background-color: #1b1d26;
+	&.shown{
+		display: block;
+	}
+
+	.video-loader{
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		z-index: 11;
+		background-color: rgba(255,255,255,0.2);
+		backdrop-filter: blur(5px);
+		img{
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			transform: translate(-50%, -50%);
+			width: 50px;
+			height: 50px;
+		}
+	}
+}
+
+.local-video{
+	position: absolute;
+	bottom: 100px;
+	right: 20px;
+	height: 100px;
+	width: 70px;
+	z-index: 12;
+	overflow: hidden;
+	video{
+		width: auto;
+	    height: 100%;
+	    transform: translateX(-50%) scaleX(-1) !important;
+	    left: 50%;
+	    position: relative;
+	}
+}
+.remote-video{
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	z-index: 1;
+	video{
+		width: auto;
+	    height: 100%;
+	    transform: translateX(-50%);
+	    left: 50%;
+	    position: relative;
+	}
+}
+
+.dialing-screen{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 50;
+	background-color: #1b1d26;
+}
+
+.incoming-call-screen{
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	z-index: 50;
+	background-color: #1b1d26;
+
+}
+
+.call-button-wrap{
+	position: absolute;
+	bottom: 10px;
+	left: 10px;
+	right: 10px;
+	z-index: 12;
+	display: flex;
+	height: 50px;
+	padding: 0px;
+	overflow: hidden;
+	background-color: rgba(255, 255, 255, 0.20);
+	backdrop-filter: blur(2px);
+	border-radius: 100px;
+	button{
+		flex: 1;
+		background-color: transparent;
+		// backdrop-filter: blur(2px);
+		height: 100%;
+		color: #FFF;
+		.mi{
+			color: #FFF;
+			vertical-align: middle;
+    		margin-right: 5px;
+		}
+	}
+}

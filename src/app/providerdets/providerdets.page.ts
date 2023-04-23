@@ -4,7 +4,7 @@ import { MiscService } from '../services/misc.service';
 import { FirebaseService } from '../services/firebase.service';
 import { ApiService } from '../services/api.service';
 import { SocialSharing } from '@ionic-native/social-sharing/ngx';
-import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
+// import { LocalNotifications } from '@ionic-native/local-notifications/ngx';
 import { AlertController } from '@ionic/angular';
 
 @Component({
@@ -31,7 +31,7 @@ export class ProviderdetsPage implements OnInit {
   showMoreLoad:any = 0;
   @ViewChildren('popupTemp') ces:QueryList<ElementRef>;
   	constructor(private socialSharing: SocialSharing,
-    private localNotifications: LocalNotifications,
+    // private localNotifications: LocalNotifications,
     private router:Router,
     // private el: ElementRef,
     private route: ActivatedRoute,
@@ -177,13 +177,13 @@ export class ProviderdetsPage implements OnInit {
               var order_date = new Date((response.data.order.date + " UTC").replace(/-/g, "/"));
               var trigger_time = new Date(new Date(order_date).getTime() - 300000);
               // console.log(trigger_time);
-              this.localNotifications.schedule({
-                  title: "Upcoming order.",
-                  text: 'Thank you for using Samanta. Your interpreter will be online in five minutes.',
-                  trigger: {at: trigger_time},
-                  led: 'FF0000',
-                  sound: null
-              });
+              // this.localNotifications.schedule({
+              //     title: "Upcoming order.",
+              //     text: 'Thank you for using Samanta. Your interpreter will be online in five minutes.',
+              //     trigger: {at: trigger_time},
+              //     led: 'FF0000',
+              //     sound: null
+              // });
               var message = {
                 'type': 'order_requested',
                 'order': response.data.order
