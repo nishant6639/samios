@@ -14,7 +14,7 @@ import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import OneSignal from 'onesignal-cordova-plugin';
 declare let window: any;
 declare let cordova:any;
-declare let ConnectyCube:any;
+// declare let ConnectyCube:any;
 // import 'webrtc-adapter';
 @Component({
 	selector: 'app-root',
@@ -30,165 +30,54 @@ export class AppComponent implements OnInit {
 	keepSplash:any = 1;
 	showPerm:any = 0;
 	constructor(
-		// private firebasex: FirebaseX,
-		private api:ApiService,
-		private backgroundMode: BackgroundMode,
-		public platform: Platform,
-		private misc: MiscService,
-		// private callkit:CallKitService,
-		private navController: NavController,
-		private deeplinks: Deeplinks,
-		private router:Router,
-		// private splashScreen: SplashScreen,
-		private nativeAudio: NativeAudio) {
-			// this.misc.getAllPermissions();
-			this.platform.ready().then(async () => {
+	// private firebasex: FirebaseX,
+	private api:ApiService,
+	private backgroundMode: BackgroundMode,
+	public platform: Platform,
+	private misc: MiscService,
+	// private callkit:CallKitService,
+	private navController: NavController,
+	private deeplinks: Deeplinks,
+	private router:Router,
+	// private splashScreen: SplashScreen,
+	private nativeAudio: NativeAudio) {
+		// this.misc.getAllPermissions();
+		this.platform.ready().then(() => {
+			if(this.platform.is('cordova')){
+
 				this.misc.onesignal = OneSignal;
 				this.misc.onesignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
 				this.misc.onesignal.promptForPushNotificationsWithUserResponse((accepted) => {
 					console.log("User accepted notifications: " + accepted);
 				});
-				// if(!(this.firebasex.hasPermission())){
-				// 	await this.firebasex.grantPermission();
-				// 	    // console.log("Notifications permission was " + (hasPermission ? "granted" : "denied"));
-				// 	// });
-				// 	if(this.platform.is('ios')){
-				// 		// this.firebasex.grantCriticalPermission(function(hasPermission){
-				// 		//     console.log("Critical notifications permission was " + (hasPermission ? "granted" : "denied"));
-				// 		// });
-				// 	}
-				// }
-				
-				const CREDENTIALS = {
-				  	appId: 6798,
-				  	authKey: "KbVKtzAQvPFAdtw",
-				  	authSecret: "zrXRtdLamjF7fmq"
-				};
+			}
+			
+			this.createCallChannel();
+			if(this.platform.is('ios')){
+			}
+			else{
+				cordova.plugins.diagnostic.requestRuntimePermission((status) =>{
+					switch(status){
+					case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+						
+						console.log("Permission granted to make phone calls");
+						break;
+						case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+							console.log("Permission to use the camera has not been requested yet");
+							break;
+						case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCe:
+							console.log("Permission denied to use the camera - ask again?");
+							break;
 
-				const CONFIG = {
-					// chat: {
-					//     reconnectionTimeInterval: 1,
-					//     ping: {
-					//       enable: true,
-					//       timeInterval: 10
-					//     }
-				  	// },
-					// videochat: {
-					// 	alwaysRelayCalls: false,
-					//     answerTimeInterval: 60,
-					//     dialingTimeInterval: 2
-				    // },
-				  	debug: { mode: 0 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
-				};
-
-				ConnectyCube.init(CREDENTIALS, CONFIG);
-				// if(this.platform.is('ios')){
-					var cordovaCall = cordova.plugins.CordovaCall;
-				  	cordovaCall.setAppName('Samanta');
-				  	cordovaCall.setVideo(true);
-			  	// }
-
-				// this.splashScreen.hide();
-
-				this.createCallChannel();
-				// setTimeout(() => {
-				// 	// console.log('connect call');
-					
-					
-				// }, 10000);
-				// setTimeout(() => {
-				// 	console.log('connect call');
-				// 	cordova.plugins.CordovaCall.connectCall();
-				// }, 5000);
-				if(this.platform.is('ios')){
-					// setTimeout(() => {
-					// 	console.log('connect call');
-					  	
-					  	// cordovaCall.receiveCall('David Marcus via Samanta',(e) => {
-						// 	console.log('sfsadas', e);
-						// },
-						// (err) => {
-						// 	console.log(err);
-						// });
-					// }, 10000);
-					// setTimeout(() => {
-						// console.log('connect call');
-						// cordova.plugins.CordovaCall.connectCall();
-					// }, 30000);
-				}
-				else{
-					cordova.plugins.diagnostic.requestRuntimePermission((status) =>{
-					    switch(status){
-					        case cordova.plugins.diagnostic.permissionStatus.GRANTED:
-					        	// cordova.plugins.diagnostic.requestRuntimePermission((status1) =>{
-								//     switch(status1){
-								//         case cordova.plugins.diagnostic.permissionStatus.GRANTED:
-								        	
-								            console.log("Permission granted to make phone calls");
-											// setTimeout(() => {
-											// 	// 	console.log('connect call');
-											// 	var cordovaCall = cordova.plugins.CordovaCall;
-											//   	cordovaCall.setAppName('Samanta');
-											//   	cordovaCall.setVideo(true);
-											  	
-											//   	cordovaCall.receiveCall('David Marcus via Samanta',(e) => {
-											// 		console.log('sfsadas', e);
-											// 	},
-											// 	(err) => {
-											// 		console.log(err);
-											// 	});
-											// }, 10000);
-											// setTimeout(() => {
-												// console.log('connect call');
-												// cordova.plugins.CordovaCall.connectCall();
-											// }, 30000);
-								            break;
-
-								        // case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
-								        //     console.log("Permission to use the camera has not been requested yet");
-								        //     break;
-
-								        // case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCe:
-								        //     console.log("Permission denied to use the camera - ask again?");
-								        //     break;
-
-								        // case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
-								        //     console.log("Permission permanently denied to use the camerasss - guess we won't be using it then!");
-								        //     break;
-
-								    // }
-								// }, (error) => {
-								    // console.error("The following error occurred: "+error);
-								// }, cordova.plugins.diagnostic.permission.ANSWER_PHONE_CALLS);
-					            console.log("Permission granted to make phone calls");
-					            break;
-
-					        case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
-					            console.log("Permission to use the camera has not been requested yet");
-					            break;
-
-					        case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCe:
-					            console.log("Permission denied to use the camera - ask again?");
-					            break;
-
-					        case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
-					            console.log("Permission permanently denied to use the camera - guess we won't be using it then!");
-					            break;
-
-					    }
-					}, (error) => {
-					    console.error("The following error occurred: "+error);
-					}, cordova.plugins.diagnostic.permission.READ_PHONE_NUMBERS);
-				}
-
-				//simulate your friend answering the call 5 seconds after you call
-				// setTimeout(() => {
-				// 	console.log('connect call');
-				//   cordova.plugins.CordovaCall.connectCall();
-				// }, 15000);
-				
-				
-			});
+						case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+							console.log("Permission permanently denied to use the camera - guess we won't be using it then!");
+							break;
+					}
+				}, (error) => {
+					console.error("The following error occurred: "+error);
+				}, cordova.plugins.diagnostic.permission.READ_PHONE_NUMBERS);
+			}
+		});
 	}
 
 	sendAppToBackground(){

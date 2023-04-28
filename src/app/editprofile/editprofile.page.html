@@ -47,10 +47,10 @@
 					<form (submit)="saveUser()">
 						<div class="row">
 							<div class="col-12">
-								<div class="form-row" *ngIf="!(userDets.user_type == 4)">
+								<!-- <div class="form-row" *ngIf="!(userDets.user_type == 4)">
 									<label class="form-row-label">Username <sup>*</sup></label>
 									<input type="text" autocomplete="false" name="username" [(ngModel)]="FormModel.username" class="form-control" placeholder="Username" required="required" />
-								</div>
+								</div> -->
 								<div class="form-row" *ngIf="!(userDets.user_type == 4)">
 									<label class="form-row-label">Full Name <sup>*</sup></label>
 									<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Full Name" required="required" />
@@ -59,11 +59,11 @@
 									<label class="form-row-label">Company Name <sup>*</sup></label>
 									<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Company Name" required="required" />
 								</div>
-								<div class="form-row">
+								<!-- <div class="form-row">
 									<label class="form-row-label">Email Id <sup>*</sup></label>
 									<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" required="required" />
-								</div>
-								<div class="row">
+								</div> -->
+								<!-- <div class="row">
 									<div class="col-5">
 										<div class="form-row">
 											<label class="form-row-label">Phone Number <sup>*</sup></label>
@@ -81,7 +81,7 @@
 											<input type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
 										</div>
 									</div>
-								</div>
+								</div> -->
 								<!-- <div class="form-row">
 									<label class="form-row-label">Address</label>
 									<input type="text" autocomplete="false" name="address" [(ngModel)]="FormModel.address" class="form-control" placeholder="Address" />

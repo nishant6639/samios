@@ -67,6 +67,15 @@
                 <span class="text">Personal Details</span>
               </a>
             </li>
+            <li *ngIf="(userDets.user_type == 3)">
+              <a routerLink="/avail">
+                <span class="icon">
+                  <!-- <i class="fas fa-user"></i> -->
+                  <app-icon name="clock"></app-icon>
+                </span>
+                <span class="text">My Availabilities</span>
+              </a>
+            </li>
             <li *ngIf="!(userDets.user_type == 3)">
               <a routerLink="/favs">
                 <span class="icon">

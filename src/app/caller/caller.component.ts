@@ -37,34 +37,52 @@ const axios = require('axios').default;
 export class CallerComponent implements AfterViewInit {
 
 	mediaParams:any = {
-	    audio: false,
-	    video: true,
-	    // elementId: "localStream",
-	    // options: {
-	      // muted: true,
-	      // mirror: true,
-	    // },
+	    audio: true,
+	    video: true
   	};
   	calleesIds:any = [];
   	incoming:any = 0;
   	on_call:any = 0;
+	timeInt:any = null
   	dialing:any = 0;
   	video_loading:any = 0;
   	userDets:any = {};
   	callToEnd:any;
 	noteRef:any;
+	dialCallBck:any = null;
 	noteRefSub:any;
+	activeScreen:any = 0;
 	prev_conn_val:any = true;
 	cordovaCall:any;
   	connected:any = 0;
+	connCallBck:any = null;
 	showTopPerm:any = 0;
+	internet:any = true;
 	showAudioPermPop:any = 0;
+	callExtendShown:any = 0;
+	callExtendRequest:any = 0;
+	ringing:any = 0;
+	rem_text:any = "";
+	minutes:any = "";
+	seconds:any = "";
+	chatMsgs:any = [];
+	audio_muted:any = 0;
 	showVideoPermPop:any = 0;
 	overlayMsg:any = "";
+	reconnecting:any = 0;
+	video_muted:any = 0;
 	callExtendRequested:any = 0;
 	callExtended:any = 0;
 	remote_audio_muted:any = 0;
 	remote_video_muted:any = 0;
+	showVideoSelf:any = 1;
+	connecting:any = 0;
+	callStartTime:any;
+	chatWin:any = 0;
+	message:any="";
+	itemRef:any;
+	itemRefSub:any;
+	newChat:any = 0;
   	$calling:any = document.getElementById("signal-in");
 	$dialing:any = document.getElementById("signal-out");
 	$endCall:any = document.getElementById("signal-end");
@@ -99,7 +117,9 @@ export class CallerComponent implements AfterViewInit {
 	state:any = 'resumed';
 	ongoingCall:any = "";
 	bookingRequest:any = "";
-	restartEN:any = 0;
+	call_stopped:any = 0;
+	chat_connected:any = 0;
+	pltfrm:any;
 
   	constructor(
   		private misc:MiscService,
@@ -112,29 +132,32 @@ export class CallerComponent implements AfterViewInit {
   		// private firebasex: FirebaseX,
   		private platform:Platform
 	) {
+		this.pltfrm = platform;
 		this.call.initCall(this.callInit.bind(this));
 		this.call.initDestroy(this.callDestroy.bind(this));
 		this.firebase.initSendCallMsg(this.sendCallMsgs.bind(this));
 		this.platform.ready().then(() => {
 			this.cordovaCall = cordova.plugins.CordovaCall;
+			this.cordovaCall.setAppName('Samanta');
+			this.cordovaCall.setVideo(true);
 			
 			// this.OneSignalInit();
-			if(this.platform.is('ios')){
-				cordova.plugins.iosrtc.registerGlobals();
-			}
+			// if(this.platform.is('ios')){
+				// cordova.plugins.iosrtc.registerGlobals();
+			// }
 
 			this.userDets = this.misc.getUserDets();
 
 			this.router.events.forEach((event) => {
 				// console.log('sdfsdf');
-		      	if(event instanceof NavigationEnd) {
+		      		if(event instanceof NavigationEnd) {
 
 					console.log('nav end');
 
-		        	this.getPopupEvents();
+		        		this.getPopupEvents();
 
-		      	}
-		    });
+		      		}
+		    	});
 		});
   	}
 
@@ -144,10 +167,16 @@ export class CallerComponent implements AfterViewInit {
 
   	ngAfterViewInit(){
   		this.platform.ready()
-  		.then(() => {
-			// this.userDets = this.misc.getUserDets();
-			this.OneSignalInit();
-			this.voipInit();
+  		.then(() => {     
+			this.checkTopPerm();
+			this.platform.resume.subscribe(() => {     
+				this.checkTopPerm();
+				this.getPopupEvents();
+			});
+			if(this.platform.is('cordova')){
+				this.OneSignalInit();
+				this.voipInit();
+			}
 			this.initCallService();
 			this.receiveMessage();
   			// if(this.platform.is('ios')){
@@ -182,6 +211,7 @@ export class CallerComponent implements AfterViewInit {
 	}
 
   	initCallService = () => {
+		this.listenEvents();
   		// this.listenEvents();
   		// alert('sdas');
   		let CREDENTIALS = {
@@ -192,53 +222,160 @@ export class CallerComponent implements AfterViewInit {
 
 		let CONFIG = {
 			chat: {
-			    // reconnectionTimeInterval: 1,
-			//     ping: {
-			//       enable: true,
-			//       timeInterval: 1
-			//     }
-				// reconnectionTimeInterval:0,
-		  	},
-			// videochat: {
-			// 	alwaysRelayCalls: false,
-			//     answerTimeInterval: 600,
-			    // dialingTimeInterval: 5
-		    // },
+
+			},
+			videochat: {
+				alwaysRelayCalls:false,
+				disconnectTimeInterval: 600
+			},
 		  	debug: { mode: 1 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
 		};
 
   		ConnectyCube.init(CREDENTIALS, CONFIG);
 
-      	// this.$loader.classList.remove("hidden");
-      	// this.$caption.classList.add("hidden");
 		let user = {
 			password: "supersecurepwd",
 			email: this.userDets.email
 		};
-      	ConnectyCube.createSession(user)
-        .then(() => {
-        	this.listenEvents();
-        	// ConnectyCube.chat.connect({ userId: this.userDets.calling_id, password: "supersecurepwd" });
-    	})
-        .then(() => {
-			// this.connected = 1;
-          	// this.$loginScreen.classList.add("hidden");
-          	// this.$callScreen.classList.remove("hidden");
-          	// this.$loader.classList.add("hidden");
-          	// this.$caption.classList.remove("hidden");
-          	// resolve();
-        })
-        .catch((err) => {
+		ConnectyCube.createSession(user)
+		.then(() => {
+			ConnectyCube.chat.connect({ userId: this.userDets.calling_id, password: "supersecurepwd" })
+			.then(() => {
+				this.chat_connected = 1;
+			});
+		})
+		.catch((err) => {
 
-        });
+		});
   	};
+
+	  reInitCallService = () => {
+		return;
+		console.log('reinitializing call service');
+		this.chat_connected = 0;
+		if(this.internet == false){
+			setTimeout(() => {
+				this.reInitCallService();
+			}, 1000);
+			return false;
+		}
+		// await ConnectyCube.chat.disconnect();
+		// await ConnectyCube.logout().catch((error) => {});
+		// await ConnectyCube.destroySession();
+
+		let CREDENTIALS = {
+			appId: 6798,
+			authKey: "KbVKtzAQvPFAdtw",
+			authSecret: "zrXRtdLamjF7fmq"
+		};
+
+		let CONFIG = {
+			chat: {
+				reconnectionTimeInterval: 0,
+				reconnect: {
+					enable: false,
+				},
+			},
+			videochat: {
+				alwaysRelayCalls:false,
+				disconnectTimeInterval: 600
+			},
+				debug: { mode: 1 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
+		};
+
+		ConnectyCube.init(CREDENTIALS, CONFIG);
+
+		let user = {
+			password: "supersecurepwd",
+			email: this.userDets.email
+		};
+		ConnectyCube.createSession(user)
+		.then(() => {
+			ConnectyCube.chat.connect({ userId: this.userDets.calling_id, password: "supersecurepwd" })
+			.then(() => {
+				this.listenEvents();
+				this.chat_connected = 1;
+				if(this.reconnecting == 1){
+					this.chatAndCallReconnect();
+				}
+			});
+		})
+		.catch((err) => {
+
+		});
+
+  	};
+
+	onDisconnectedListener = () => {
+	};
+
+	chatAndCallReconnect = () => {
+		if(ConnectyCube.chat.isConnected == false){
+			setTimeout(() => {
+				this.chatAndCallReconnect();
+			}, 1000);
+			return false;
+		}
+		let extension1 = {};
+		console.log('3');
+		if(!(this._session == null)){
+			this._session.stop(extension1);
+		}
+		let options= {};
+		this._session = ConnectyCube.videochat.createNewSession(
+			this.calleesIds,
+			ConnectyCube.videochat.CallType.VIDEO,
+			options
+		);
+		
+		const video:any = document.getElementById("localStream");
+		if(!(video.srcObject == undefined || video.srcObject == null)){
+			for(const track of video.srcObject.getTracks()) {
+				track.stop();
+			}
+	  	}
+		const video_rem:any = document.getElementById("remoteStream");
+		  if(!(video_rem.srcObject == undefined || video_rem.srcObject == null)){
+		    for(const track of video_rem.srcObject.getTracks()) {
+			track.stop();
+		    }
+	      	}
+
+
+		this._session
+		.getUserMedia(this.mediaParams)
+		.then((stream) => {
+			console.log('stream got');
+			this._session.attachMediaStream("localStream", stream, {
+				muted: true,
+				mirror: true,
+			});
+			
+			console.log('stream attached');
+
+			let extension = {
+				order: this.order,
+				other_user: this.userDets,
+				auto_accept: 1
+			};
+
+			this._session.call(extension, error => {
+				console.log(error);
+			});
+
+			console.log('called');
+
+			// this.setCallLog(this.userDets.id, 'init_call', new Date());
+
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+	}
 
   	logout = () => {
 	    ConnectyCube.chat.disconnect();
 	    ConnectyCube.destroySession();
-
-	    // this.$callScreen.classList.add("hidden");
-	    // this.$loginScreen.classList.remove("hidden");
   	};
 
   	OneSignalInit(){
@@ -306,8 +443,20 @@ export class CallerComponent implements AfterViewInit {
 							notificationReceivedEvent.complete(notificationReceivedEvent.notification);
 						}
 						else{
+							if(data.type == 'disconnect'){
+								var extension = {
+									initiator: 0
+								};
+								if(!(this._session == null)){
+									this._session.stop(extension);
+									this.hideOutgoingCallModal();
+									this.hideIncomingCallModal();
+									this.hideOnCallModal();
+								}
+							}
 							notificationReceivedEvent.complete(notificationReceivedEvent.notification);
 						}
+						
 					}
 					else{
 						notificationReceivedEvent.complete(notificationReceivedEvent.notification);
@@ -358,7 +507,7 @@ export class CallerComponent implements AfterViewInit {
 					
 					if(message.type == "ringing"){
 						this._ngZone.run(()=>{
-							// this.ringing = 1;
+							this.ringing = 1;
 						});
 					}
 
@@ -385,17 +534,21 @@ export class CallerComponent implements AfterViewInit {
 						this.order = message.order;
 						this.other_user = message.other_user;
 						if(this.platform.is('android')){
-							this.cordovaCall.receiveCall('Incoming Call via Samanta',(e) => {
-								console.log('sfsadas', e);
-							},
-							(err) => {
-								console.log(err);
-							});
+							// this.cordovaCall.receiveCall('Incoming Call via Samanta',(e) => {
+							// 	console.log('sfsadas', e);
+							// },
+							// (err) => {
+							// 	console.log(err);
+							// });
 						}
 						this.showIncomingCallModal();
 					}
 
 					if(message.type == "stop_call"){
+						if(this.on_call == 0){
+							return false;
+						}
+
 						this.hideOnCallModal();
 						this.hideOutgoingCallModal();
 						this.hideIncomingCallModal();
@@ -410,6 +563,28 @@ export class CallerComponent implements AfterViewInit {
 							});
 						}
 					}
+
+					if(message.type == 'reject_call'){
+						// this.resetDialingCallback();
+						this.hideOnCallModal();
+						this.hideOutgoingCallModal();
+						this.hideIncomingCallModal();
+						if((!(this._session == null)) && (this._session.currentRoomId == this.order.meeting_id)){
+							this._session
+							.leave()
+							.then(() => {
+								this._session = null;
+							})
+							.catch((error) => {
+								console.log(error);
+							});
+						}
+					}
+
+					if(message.type == 'reconnect'){
+						this.order.meeting_id = message.meeting_id;
+						this.startCall();
+					};
 				}
 			});
 		}
@@ -417,12 +592,7 @@ export class CallerComponent implements AfterViewInit {
 		.snapshotChanges()
 		.subscribe(action => {
 			console.log('fbconnnn',action.payload.val());
-			if(action.payload.val() == true){
-				if(this.restartEN == 1){
-					this.restartEN = 0;
-					this.restartICE();
-				}
-			}
+			this.internet = action.payload.val();
 			// if(this.prev_conn_val == false && action.payload.val() == true){
 			// 	console.log('init firebase');
 			// 	this.prev_conn_val = action.payload.val();
@@ -437,305 +607,321 @@ export class CallerComponent implements AfterViewInit {
 		});
 	}
 
+	connectingTimeoutCallback = () => {
+		// var count = 0;
+		// this.connCallBck = setInterval(() => {
+		// 	count++;
+		// 	if(count > 4){
+		// 	clearInterval(this.connCallBck);
+				
+		// 		this.stopCall();
+		// 	}
+		// }, 5000);
+	};
+
+	resetConnectingCallBack = () => {
+		// clearInterval(this.connCallBck);
+		// this.connCallBck = null;
+	};
+
+	dialingCallback = () => {
+		// this.dialCallBck = setTimeout(() => {
+		// 	this.stopCall();
+		// }, 60000);
+	};
+
+	resetDialingCallback = () => {
+		// clearTimeout(this.dialCallBck);
+		// this.dialCallBck = null;
+	};
+
 
   	listenEvents(){
   		this.platform.ready().then(() => {
-			this.cordovaCall.on('answer', (event) => {
-				console.log(event);
-				this.acceptCall();
+
+			document.addEventListener("offline", () => {
+				this._ngZone.run(() => {
+					// this.onInternetDisconnected();
+				});
+			}, false);
+
+			document.addEventListener("online", () => {
+				this._ngZone.run(() => {
+					this.reloadApp();
+				});
 			});
-			// this.platform.resume.subscribe(() => {
-			// 	this.state = 'resumed';
-			// 	console.log('resumed');
-			// 	this.cordovaCall.endCall();
-			// 	this.setAudioForCall();
-			// });
-			// this.platform.pause.subscribe(() => {
-			// 	this.state = 'paused';
-			// 	console.log('paused');
-			// 	// this.cordovaCall.endCall();
-			// });
-			// this.firebasex.onMessageReceived()
-			// .subscribe(data => {
-			// 	console.log(data);
-			// 	if(data.notification_foreground){
-			// 		this.order_id = data.order_id;
-			// 		// this._ngZone.run(() => {
-			// 		// 	this.overlayMsg = "Waiting for Incoming Call";
-			// 		// 	// alert('incoming');
-			// 		// });
-			// 		this.showIncomingCallModal();
-			// 		// this.incoming = 1;
-			// 	}
-			// 	// this.sendAppToBackground();
-			// });
+			window.ononline = () => {
+				this._ngZone.run(() => {
+					this.reloadApp();
+				});
+			    // alert('You are now online');
+			}
+
+			window.onoffline = () => {
+			    // alert('You are now offline');
+			    this._ngZone.run(() => {
+					// this.onInternetDisconnected();
+				});
+			}
+
+			try{
+				ConnectyCube.chat.onReconnectListener = undefined;
+				ConnectyCube.chat.onDisconnectedListener = undefined;
+				ConnectyCube.videochat.onCallListener = undefined;
+				ConnectyCube.videochat.onAcceptCallListener = undefined;
+				ConnectyCube.videochat.onRemoteStreamListener = undefined;
+				ConnectyCube.videochat.onRejectCallListener = undefined;
+				ConnectyCube.videochat.onStopCallListener = undefined;
+				ConnectyCube.videochat.onUserNotAnswerListener = undefined;
+				ConnectyCube.videochat.onSessionConnectionStateChangedListener = undefined;
+			}
+			catch(err){
+				console.log(err);
+			}
 
         		try{
-					ConnectyCube.videochatconference.onParticipantJoinedListener = this.onParticipantJoinedListener.bind(this);
-					ConnectyCube.videochatconference.onParticipantLeftListener = this.onParticipantLeftListener.bind(this);
-					ConnectyCube.videochatconference.onRemoteStreamListener = this.onRemoteStreamListener.bind(this);
-					ConnectyCube.videochatconference.onSlowLinkListener = (session, userId, uplink, nacks) => {};
-					ConnectyCube.videochatconference.onRemoteConnectionStateChangedListener = this.onRemoteConnectionStateChangedListener.bind(this);
-					ConnectyCube.videochatconference.onSessionConnectionStateChangedListener = this.onSessionConnectionStateChangedListener.bind(this);
-					// ConnectyCube.videochatconference.onMessage/Listener = this.onMessageListener.bind(this);
+				if(this.platform.is('ios')){
+					this.cordovaCall.on('answer', (event) => {
+						console.log(event);
+						this._ngZone.run(() => {
+							this.acceptCall();
+						});
+					});
 				}
-				catch(err){
-					console.log(err);
-				}
-		});
-
-	}
-
-	onRemoteConnectionStateChangedListener = (session, userId, iceState) => {
-		if(iceState == 'disconnected'){
-			if((!(this._session == null)) && (this._session.currentRoomId == this.order.meeting_id)){
-				this.restartEN = 1
+				ConnectyCube.chat.onReconnectListener = this.onReconnectListener.bind(this);
+				ConnectyCube.chat.onDisconnectedListener = this.onDisconnectedListener.bind(this);
+				ConnectyCube.videochat.onCallListener = this.onCallListener.bind(this);
+				ConnectyCube.videochat.onAcceptCallListener = this.onAcceptCallListener.bind(this);
+				ConnectyCube.videochat.onRemoteStreamListener = this.onRemoteStreamListener.bind(this);
+				ConnectyCube.videochat.onRejectCallListener = this.onRejectCallListener.bind(this);
+				ConnectyCube.videochat.onStopCallListener = this.onStopCallListener.bind(this);
+				ConnectyCube.videochat.onUserNotAnswerListener = this.onUserNotAnswerListener.bind(this);
+				ConnectyCube.videochat.onSessionConnectionStateChangedListener = this.onSessionConnectionStateChangedListener.bind(this);
 			}
-			// this.restartICE();
-		}
-	};
+			catch(err){
+				console.log(err);
+			}
 
-
-	onMessageListener = () => {
-		alert('got message');
-	};
-
-	onParticipantJoinedListener = (session, userId, userDisplayName, isExistingParticipant) => {
-		this._ngZone.run(() => {
-			this.cordovaCall.connectCall();
-			console.log('joined');
-			this.showOnCallModal();
-			this.hideOutgoingCallModal();
-			this.hideIncomingCallModal();
 		});
-	};
 
-	// onRemoteStreamListener = (session, userId, stream) => {
-	// 	console.log('asdasd');
-	// };
-
-	onParticipantLeftListener = (session, userId) => {
-		console.log('left');
-		// this.hideOnCallModal();
-		// this.hideOutgoingCallModal();
-		// this.hideIncomingCallModal();
-		// if((!(this._session == null)) && (this._session.currentRoomId == this.order.meeting_id)){
-		// 	this._session
-		// 	.leave()
-		// 	.then(() => {
-		// 		this._session = null;
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(error);
-		// 	});
-		// }
 	}
 
-	onInternetDisconnected(){
-		// this._ngZone
-		this.connected = 0;
-		console.log('offline app');
-		// ConnectyCube.chat.markInactive();
-	}
 
-	onInternetReconnected(){
-		console.log('online app');
-		setTimeout(() => {
-			// this.reInitCallService();
-		}, 2000);
-		// ConnectyCube.chat.markActive();
-	}
-
-	onDisconnectedListener = () => {
-		console.log('chat disconnected');
-		// console.log(p1);
+	reloadApp(){
+		if(this.dialing == 1 || this.incoming == 1 || this.on_call == 1){
+			setTimeout(() => {
+				this.reloadApp();
+			}, 1000);
+			return;
+		}
+		location.reload();
 	}
 
 	onReconnectListener = () => {
-		console.log('chat reconnected');
-		// this.reInitCallService();
-		// console.log(p1);
-	};
-
-
-	async callInit(order,order_id){
-		console.log(order);
-		// if(this.connected == 0){
-		// 	setTimeout(() => {
-		// 		this.callInit(order_id);
-		// 	}, 1000);
-		// 	return;
-		// }
-		// setTimeout(() => {
-	    	this.router.navigate(['/']);
-	    // }, 2000);
-		// alert(order_id);
-		// this.dialing = 1;
-
-		this.showOutgoingCallModal();
-		var data = {
-	      	'order_id': order_id,
-	      	'outgoing': 1
-	    };
-	    this.api.getOrderDetails(data)
-	    .then(resp => {
-	    	console.log(resp);
-	    	this.order = resp.data.order;
-	    	this.other_user = resp.data.user;
-			this.cordovaCall.sendCall('Outgoing Call via Samanta');
-				if(!(resp.data.end_time == null)){
-				this.callToEnd = new Date((resp.data.end_time+" UTC").replace(/-/g, '/')).toISOString();
-			}
-			this.calleesIds = [this.other_user.calling_id]; // User's ids
-			// const dialog = this.order.meeting_id;
-			// const opponentId = this.other_user.calling_id;
-			// const message = {
-			// 	type: 'chat',
-			// 	body: "How are you today?",
-			// 	extension: {
-			// 		save_to_history: 1,
-			// 		// dialog_id: this.order.meeting_id
-			// 	},
-			// 	markable: 1
-			// };
-
-			// ConnectyCube.chat.send(opponentId, message);
-			// message.id = ConnectyCube.chat.send(opponentId, message);
-			var message = {
-				type: 'incoming_call',
-				order: this.order,
-				other_user: this.userDets
-			};
-			this.sendCallMsgs(this.other_user.id,JSON.stringify(message));
-	        this.setCallLog(this.userDets.id, 'init_call', new Date());
-	    	this.joinToRoom();
-    	})
-    	.catch(err => {
-    		this.hideOutgoingCallModal();
-    		console.log(err);
-    		this.misc.handleError(err);
-    	});
 
 	}
 
-
-	// async startCall(){
-		// let calleesIds = [this.other_user.calling_id]; // User's ids
-
-	defaultSettings = () => {
-    	// if (isMobile) {
-      	// 	this.$switchSharingScreenButton.disabled = true;
-    	// }
-  	};
-
-
-	// showSnackbar(msg){
-	// 	console.log(msg);
-	// }
-
-  	addStreamElements = (opponents) => {
-	    // const $videochatStreams = document.getElementById("videochat-streams");
-	    // const $videochatStreamsTemplate = document.getElementById(
-	    //   "videochat-streams-template"
-	    // );
-	    // const videochatStreamsTemplate = Handlebars.compile(
-	    //   $videochatStreamsTemplate.innerHTML
-	    // );
-
-	    // if (opponents.length === 2) {
-	    //   $videochatStreams.classList.value = "grid-2-1";
-	    // } else if (opponents.length === 3) {
-	    //   $videochatStreams.classList.value = "grid-2-2";
-	    // }
-
-	    // document.getElementById("call").classList.add("hidden");
-	    // document.getElementById("videochat").classList.remove("hidden");
-	    // $videochatStreams.innerHTML = videochatStreamsTemplate({ opponents });
-  	};
-
+	// Event fired when incoming call is received.
 	onCallListener = (session, extension) => {
-		
-	};
-
-	onAcceptCallListener = (session, userId, extension) => {
-		
-	};
-
-	onRejectCallListener = (session, userId, extension:any = {}) => {
-	    
-	};
-
-
-	onStopCallListener = (session, userId, extension) => {
-
-  	};
-
-  	onUserNotAnswerListener = (session, userId) => {
-	    
-  	};
-
-  	onRemoteStreamListener = (session, userId, stream) => {
-	    if (!this._session) {
-	      return false;
-	    }
-
-	    let remoteStreamSelector = `remoteStream`;
-		this._session.attachMediaStream(remoteStreamSelector, stream);
-
-  	};
-
-
-  	acceptCall = () => {
-		if(this.order.id == undefined){
-			setTimeout(() => {
-				this.acceptCall();
-			}, 1000);
+		if(extension.auto_accept == 1){
+			this._session = session;
+			if(this.on_call == 0){
+				var extension1 = {};
+				this._session.reject({
+					reject_auto: 1
+				});
+			}
+			this._session
+			.getUserMedia(this.mediaParams)
+			.then((stream) => {
+				console.log('stream got');
+				this._session.attachMediaStream("localStream", stream, {
+					muted: true,
+					mirror: true,
+				});
+				let extension = {};
+				this._session.accept(extension);
+				// this.showOnCallModal();
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 			return false;
 		}
-  		this.showOnCallModal();
-		this.hideIncomingCallModal();
-		this.joinToRoom();
-  		// this.order_id = 
-  		// var data = {
-		// 	'order_id': this.order_id
-		// };
-	    // 	this.api.getOrderDetails(data)
-	    // 	.then(async (resp) => {
-	    // 	console.log(resp);
-	    // 	this.order = resp.data.order;
-	    // 	this.other_user = resp.data.user;
-	    // 	if(!(resp.data.end_time == null)){
-		// 	this.callToEnd = new Date((resp.data.end_time+" UTC").replace(/-/g, '/')).toISOString();
-		// }
-		// this.calleesIds = [this.other_user.calling_id]; // User's ids
-	        // this.setCallLog(this.userDets.id, 'init_call', new Date());
-    	// })
-    	// .catch(err => {
-    		// this.hideOutgoingCallModal();
-    		// console.log(err);
-    		// this.misc.handleError(err);
-    	// });
-  	};
+		this._session = session;
+		this.order = extension.order;
+		this.other_user = extension.other_user;
+		this.showIncomingCallModal();
+	};
 
-  	setAudioForCall = async () => {
-		if(this.platform.is('ios')){
-			await cordova.plugins.iosrtc.initAudioDevices();
-			await cordova.plugins.iosrtc.selectAudioOutput('speaker');
-			await cordova.plugins.iosrtc.turnOnSpeaker(true);
-			await AudioToggle.setAudioMode('speaker');
+	// Event fired when other user accepts incoming call.
+	onAcceptCallListener = (session, userId, extension) => {
+		this.connecting = 1;
+		this.showOnCallModal();
+	};
+
+	// Event fired when stream is received from the other side.
+	onRemoteStreamListener = (session, userID, remoteStream) => {
+		console.log('got remote stream');
+		// attach the remote stream to DOM element
+		this._session.attachMediaStream("remoteStream", remoteStream);
+		// this._session.unmute();
+		this._ngZone.run(() => {
+			setTimeout(() => {
+				this.router.navigate(['/']);
+				this.connecting = 0;
+				this.getChatData();
+				this.callStartTime = new Date();
+				this.timeInt = setInterval(() => {
+					this.getRemainingTime();
+				}, 1000);
+			}, 2000);
+		});
+		// console.log(this._session.peerConnections[this.other_user.calling_id].restartIce());
+	};
+
+	// Event fired when call is rejected from the other side.
+	onRejectCallListener = (session, userId, extension:any = {}) => {
+		console.log('rejected');
+	    	this.hideOutgoingCallModal();
+		if(extension.reject_auto == 1){
+			this.stopCall();
 		}
+		else{
+			window.location.href = "/summary/"+this.order.id;
+		}
+
+	};
+
+	// Event fired when call is ended from either side.
+	onStopCallListener = (session, userId, extension) => {
+		console.log('stopped by ', session);
+		console.log('current session', this._session);
+		// if(session.currentUserId == )
+		if(extension.initiator == 1){
+			let extension1 = {
+				inititator: 0
+			};
+			console.log('1');
+			this._session.stop(extension1);
+			this.hideOnCallModal();
+			this.hideIncomingCallModal();
+			this.hideOutgoingCallModal();
+		}
+		// this._session.
   	};
 
-  	rejectCall = (session, extension = {}) => {
-	    
+	// When call was not received on the other side.
+  	onUserNotAnswerListener = (session, userId) => {
+		let extension = {
+			initiator: 1
+		};
+		this._session.stop(extension);
+		this.setCallLog(this.userDets.id, 'no_answer', new Date());
+		window.location.href = "/summary/"+this.order.id;
+  	};
+
+
+	callUser(id, order_id){
+		this.ongoingCall = "";
+	    	this.call.call(id, order_id);
+  	}
+
+	// Initiate outgoing call.
+	callInit(order,order_id){
+		this.showOutgoingCallModal();
+		if(this.chat_connected == 0){
+			setTimeout(() => {
+				this.callInit(order, order_id);
+			}, 2000);
+			return false;
+		}
+		console.log(order);
+		var data = {
+			'order_id': order_id,
+			'outgoing': 1
+		};
+		this.api.getOrderDetails(data)
+	    	.then(resp => {
+	    	console.log(resp);
+	    	this.order = resp.data.order;
+	    	this.other_user = resp.data.user;
+			if(!(resp.data.end_time == null)){
+				this.callToEnd = new Date((resp.data.end_time+" UTC").replace(/-/g, '/')).toISOString();
+			}
+			this.calleesIds = [this.other_user.calling_id]; // User's ids
+			this.startCall();
+		})
+		.catch(err => {
+			this.hideOutgoingCallModal();
+			console.log(err);
+			this.misc.handleError(err);
+		});
+	}
+
+	// When call is received from button on ios, End callkit to prepare audi session for video streaming.
+	acceptCallMid = () => {
+		if(this.platform.is('ios')){
+			this.cordovaCall.endCall();
+		}
+
+		this.acceptCall()
+	}
+
+  	acceptCall = () => {
+		this.showOnCallModal();
+		if(this.call_stopped == 1){
+			this.call_stopped = 0;
+			return false;
+		}
+		if(this.on_call == 1 && this._session == null){
+			setTimeout(() => {
+				this.acceptCall();
+			},1000);
+			return false;
+		}
+		this.setCallLog(this.userDets.id, 'received', new Date());
+
+		this._session
+		.getUserMedia(this.mediaParams)
+		.then((stream) => {
+			console.log('stream got');
+			this._session.attachMediaStream("localStream", stream, {
+				muted: true,
+				mirror: true,
+			});
+			let extension = {};
+			this._session.accept(extension);
+			// this.showOnCallModal();
+		})
+		.catch((error) => {
+			console.log(error);
+		});
+  	};
+
+  	setAudioForCall = () => {
+		// if(this.platform.is('ios')){
+		// 	await cordova.plugins.iosrtc.initAudioDevices();
+		// 	await cordova.plugins.iosrtc.selectAudioOutput('speaker');
+		// 	await cordova.plugins.iosrtc.turnOnSpeaker(true);
+		// 	await AudioToggle.setAudioMode('speaker');
+		// }
+  	};
+
+  	rejectCall = () => {
+		this.hideIncomingCallModal();
+	    	this._session.reject();
+	    	if(this.platform.is('ios')){
+			this.cordovaCall.endCall();
+		}
   	};
 
   	startAudioCall = () => {
-	    this.startCall(ConnectyCube.videochat.CallType.AUDIO)
+	    this.startCall()
   	}
 
   	joinToRoom = () => {
-	    this.startCall(ConnectyCube.videochat.CallType.VIDEO)
+	    this.startCall()
   	}
 
   	setCallLog(user_id, action, time){
@@ -774,23 +960,25 @@ export class CallerComponent implements AfterViewInit {
 			});
 		}
 	}
+	
 
   	startCall = (callType=null, resume=0) => {
 
 		try{
-			this._session = ConnectyCube.videochatconference.createNewSession();
-			// console.log(this._session);
-
-			if(this._session.currentRoomId == this.order.meeting_id){
-				return;
+			if(this.platform.is('ios')){
+				this.cordovaCall.connectCall();
 			}
-			// if(this.state == 'paused'){
 
-			// }
-			// else{
-			// this.cordovaCall.receiveCall('Temp Call');
-			// this.cordovaCall.mute();
-			this.setAudioForCall();
+			var options = {
+
+			};
+
+			this._session = ConnectyCube.videochat.createNewSession(
+				this.calleesIds,
+				ConnectyCube.videochat.CallType.VIDEO,
+				options
+			);
+
 			this._session
 			.getUserMedia(this.mediaParams)
 			.then((stream) => {
@@ -800,14 +988,15 @@ export class CallerComponent implements AfterViewInit {
 					mirror: true,
 				});
 
-				this._session
-				.join(this.order.meeting_id, parseInt(this.userDets.calling_id), this.userDets.name)
-				.then(() => {
-					console.log('joined');
-				})
-				.catch((error) => {
-					console.log(error);
+				let extension = {
+					order: this.order,
+					other_user: this.userDets,
+					auto_accept: 0
+				};
+				this._session.call(extension, error => {
+
 				});
+				this.setCallLog(this.userDets.id, 'init_call', new Date());
 			})
 			.catch((error) => {
 				console.log(error);
@@ -815,84 +1004,90 @@ export class CallerComponent implements AfterViewInit {
 		}
 		catch(err){
 			console.log(err);
-			// setTimeout(() => {
+			setTimeout(() => {
 				this.startCall()
-			// }, 1000)
+			}, 5000)
 		}
 	};
 
-	restartCall = (callType=null, resume=0) => {
+	resetCall = (callType=null, resume=0) => {
+		if(this.internet == false){
+			setTimeout(() => {
+				this.resetCall();
+			}, 2000);
+			return false;
+		}
 
 		try{
-			this._session = ConnectyCube.videochatconference.createNewSession();
-			// console.log(this._session);
-
-			if(this._session.currentRoomId == this.order.meeting_id){
-				return;
-			}
-			// if(this.state == 'paused'){
-
-			// }
-			// else{
-			// this.cordovaCall.receiveCall('Temp Call');
-			// this.cordovaCall.mute();
-			this.setAudioForCall();
-			this._session
-			.getUserMedia(this.mediaParams)
-			.then((stream) => {
-				console.log('stream got');
-				this._session.attachMediaStream("localStream", stream, {
-					muted: true,
-					mirror: true,
-				});
-
-				this._session
-				.join(this.order.meeting_id, parseInt(this.userDets.calling_id), this.userDets.name)
-				.then(() => {
-					// console.log('joined');
-					this._session
-					.leave()
-					.then(() => {
-						this.joinToRoom()
+			// if(this.userDets.user_type == 3){
+				const params = {
+					name: "My meeting",
+					// start_date: order_date,
+					// end_date: new Date(order_date.setHours(order_date.getHours() + 4)),
+					attendees: [
+						{ id: parseInt(this.userDets.calling_id)},
+						{ id: parseInt(this.other_user.calling_id)}
+					],
+					record: false,
+					chat: true
+				};
+	
+				ConnectyCube.meeting.create(params)
+				.then(meeting => {
+					let confRoomId = meeting._id;
+					var data1 = {
+						order_id: this.order.id,
+						meeting_id: confRoomId
+					};
+					this.api.updateMeetingId(data1)
+					.then(resp => {
+						this.order.meeting_id = confRoomId;
+						this.startCall();
+						var message = {
+							type: 'reconnect',
+							meeting_id: confRoomId
+						};
+						this.sendCallMsgs(this.other_user.id, JSON.stringify(message));
 					})
-					.catch((error) => {
-						console.log(error);
+					.catch(err => {
+	
 					});
 				})
-				.catch((error) => {
-					console.log(error);
-				});
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+				.catch(error => { });
+			// }
 		}
 		catch(err){
-			console.log(err);
-			// setTimeout(() => {
-				this.startCall()
-			// }, 1000)
+			
 		}
 	};
 
-	stopCall = (userId = null) => {
-		var message = {
-			type: 'stop_call'
+	stopCall = (befcon = 0) => {
+		// if(this.on_call == 1 && this._session == null){
+			// setTimeout(() => {
+				// this.stopCall();
+			// }, 1000);
+			// return false;
+		// }
+
+		let extension = {
+			initiator: 1
 		};
-		this.sendCallMsgs(this.other_user.id, JSON.stringify(message));
-		this.hideOnCallModal();
-		this.hideOutgoingCallModal();
-		this.hideIncomingCallModal();
-		if((!(this._session == null)) && (this._session.currentRoomId == this.order.meeting_id)){
-			this._session
-			.leave()
-			.then(() => {
-				this._session = null;
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+
+		if(!(this._session == null)){
+
+			console.log('2');
+			this._session.stop(extension);
+			if(befcon == 1){
+				this.setCallLog(this.userDets.id, 'no_answer', new Date());
+			}
+			else{
+				this.setCallLog(this.userDets.id, 'disconnected', new Date());
+			}
 		}
+
+		this.hideOnCallModal();
+		this.hideIncomingCallModal();
+		this.hideOutgoingCallModal();
   	};
 
   	onDevicesChangeListener = () => {
@@ -903,7 +1098,7 @@ export class CallerComponent implements AfterViewInit {
       	// .then((mediaDevices) => {
 	    //     this.mediaDevicesIds = mediaDevices?.map(({ deviceId }) => deviceId);
 
-	    //     if (this.mediaDevicesIds.length < 2 || this._session.callType === ConnectyCube.videochat.CallType.AUDIO) {
+	    //     if (this.mediaDevicesIds.length < 2 || this._session.callType === ) {
 	    //       this.$switchCameraButton.disabled = true;
 
 	    //       if (this.activeDeviceId &&
@@ -921,29 +1116,58 @@ export class CallerComponent implements AfterViewInit {
 
   	onSessionConnectionStateChangedListener = (
 	    session,
+		userId,
 	    iceState
   	) => {
-	    // console.log(
-	    //   "[onSessionConnectionStateChangedListener]",
-	    //   userID,
-	    //   connectionState
-	    // );
-
+		console.log(session);
+		console.log(userId);
 		console.log('RCE: ', iceState);
-		// if(iceState == 'disconnected'){
-		// 	// setTimeout(() => {
-				
-		// 		this.restartICE();
-		// 	// }, 5000);
-		// }
-	    // if(iceState == 'disconnected'){
-	    	// this.stopCall();
-	    	// this.startCall();
-	    // }
+		if(iceState == ConnectyCube.videochat.SessionConnectionState.DISCONNECTED){
+			this._ngZone.run(() => {
+				this.reconnecting = 1;
+				setTimeout(() => {
+					if(this.reconnecting == 1){
+						this.stopCall();
+					}
+				}, 3000);
+				// this.reInitCallService();
+				// this._session.peerConnections[this.other_user.calling_id].restartIce()
+			});
+		}
 
+		if(iceState == ConnectyCube.videochat.SessionConnectionState.FAILED){
+			// this._ngZone.run(() => {
+				console.log('reconnecting after failed', this._session.state);
+				// if(this._session.state == 5){
+					console.log('reconnecting after failed again');
+					// this.reconnecting = 1;
+					// return false;
+				// }
+				// else{
+					let extension = {};
+					this._session.stop(extension);
+					this._session = null;
+					this.hideOutgoingCallModal();
+					this.hideIncomingCallModal();
+					this.hideOnCallModal();
+					// if(this.userDets.user_type == 3){
+					// 	this.reInitCallService();
+					// }
+				// }
+				// this._session.peerConnections[this.other_user.calling_id].restartIce()
+			// });
+		}
+
+
+
+		if(iceState == ConnectyCube.videochat.SessionConnectionState.CONNECTED){
+			this._ngZone.run(() => {
+				this.reconnecting = 0;
+			});
+		}
   	};
 
-  	async reconnectVideo(){
+  	reconnectVideo(){
   		
   	}
 
@@ -951,22 +1175,49 @@ export class CallerComponent implements AfterViewInit {
     	
   	};
 	setAudioMute = () => {
+		if(this.audio_muted == 0){
+			this._session.mute("audio");
+			this.audio_muted = 1;
+			var call_message = {
+				'type': 'audio_muted',
+				'value': this.audio_muted
+			};
+			this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
+		}
+		else{
+			this._session.unmute("audio");
+			this.audio_muted = 0;
+			var call_message = {
+				'type': 'audio_muted',
+				'value': this.audio_muted
+			};
+			this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
+		}
+	};
 
+	setVideoMute = () => {
+		if(this.video_muted == 0){
+			this._session.mute("video");
+			this.video_muted = 1;
+			var call_message = {
+				'type': 'video_muted',
+				'value': this.video_muted
+			};
+			this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
+		}
+		else{
+			this._session.unmute("video");
+			this.video_muted = 0;
+			var call_message = {
+				'type': 'video_muted',
+				'value': this.video_muted
+			};
+			this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
+		}
 	};
 
   	restartICE = () => {
-		this._session
-		.leave()
-		.then(() => {
-			this._session = null;
-		})
-		.catch((error) => {
-			console.log(error);
-		});
-  	};
-
-  	setVideoMute = () => {
-	    
+		
   	};
 
   	switchCamera = () => {
@@ -1024,18 +1275,19 @@ export class CallerComponent implements AfterViewInit {
 
   	showIncomingCallModal = () => {
   		this._incomingCallModal("show");
-    	this.showIncomingNotification();
-    	// if(this.platform.is('cordova') && this.platform.is('android')){
-			// cordova.plugins.RingtonePlayer.play();
-		// }
+    		this.showIncomingNotification();
+    		if(this.platform.is('cordova') && this.platform.is('android')){
+			cordova.plugins.RingtonePlayer.play();
+			this.bringAppToForeground();
+		}
   	};
 
   	hideIncomingCallModal = () => {
   		this._incomingCallModal("hide");
   		this.hideCallNotification();
-    	// if(this.platform.is('cordova') && this.platform.is('android')){
-			// cordova.plugins.RingtonePlayer.stop();
-		// }
+    		if(this.platform.is('cordova') && this.platform.is('android')){
+			cordova.plugins.RingtonePlayer.stop();
+		}
   	};
 
 
@@ -1096,19 +1348,51 @@ export class CallerComponent implements AfterViewInit {
 
   	// On Call Modal
   	showOnCallModal = () => {
+		this.connecting = 1;
+		if(this.platform.is('cordova') && this.platform.is('android')){
+			cordova.plugins.RingtonePlayer.stop();
+		}
   		this._onCallModal("show");
   		this.showOngoingCallNotification();
   	};
 
   	hideOnCallModal = () => {
   		const video:any = document.getElementById("localStream");
-      	if(!(video.srcObject == undefined || video.srcObject == null)){
-	      	for(const track of video.srcObject.getTracks()) {
-	        	track.stop();
-	      	}
+      		if(!(video.srcObject == undefined || video.srcObject == null)){
+			for(const track of video.srcObject.getTracks()) {
+				track.stop();
+			}
 	  	}
+		const video_rem:any = document.getElementById("remoteStream");
+		  if(!(video_rem.srcObject == undefined || video_rem.srcObject == null)){
+		    for(const track of video_rem.srcObject.getTracks()) {
+			    track.stop();
+		    }
+	      	}
+		this.connecting = 0;
+		this._session = null;
   		this._onCallModal("hide");
-		this.cordovaCall.endCall();
+		if(this.platform.is('ios')){
+			this.cordovaCall.endCall();
+		}
+		this.callExtendShown = 0;
+		this.callExtendRequest = 0;
+		this.rem_text = "";
+		this.minutes = "";
+		this.seconds = "";
+		
+		this.audio_muted = 0;
+		this.video_muted = 0;
+		this.remote_audio_muted = 0;
+		this.remote_video_muted = 0;
+		this.reconnecting = 0;
+		this.chatWin = 0;
+		
+		clearInterval(this.timeInt);
+		this.timeInt = null;
+		window.location.href = "/summary/"+this.order.id;
+		// this.router.navigate(["/summary/"+this.order.id]);
+		// this.cordovaCall.endCall();
   		// this.hideCallNotification();
   	};
 
@@ -1142,7 +1426,13 @@ export class CallerComponent implements AfterViewInit {
 
 
   	sendCallMsgs(id, message){
-		console.log(id);
+		if(this.internet == false){
+			setTimeout(() => {
+				this.sendCallMsgs(id, message);
+			}, 1000);
+			return false;
+		}
+		// console.log(id);
 		let sendRef = this.db.object('user'+id);
 		sendRef.set(message);
 	}
@@ -1181,6 +1471,258 @@ export class CallerComponent implements AfterViewInit {
 		});
 	}
 
+	acceptOrder(order_id, status){
+		var data = {
+			'order_id': order_id,
+			'status' : status
+		};
+		this.misc.showLoader();
+		this.api.acceptOrder(data)
+		.then(resp => {
+			var order_date = new Date((resp.data.order.date + " UTC").replace(/-/g, "/"));
+          		if(status == 1){
+				var trigger_time = new Date(new Date(order_date).getTime() - 300000);  
+				// console.log(trigger_time);
+				// this.localNotifications.schedule({
+				//    	title: "Upcoming order.",
+				//    	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
+				//    	trigger: {at: trigger_time},
+				//    	led: 'FF0000',
+				//    	sound: null
+				// });
+			}
+
+			this.bookingRequest = "";
+
+			this.misc.hideLoader();
+			// alert('accepted');
+			var message = {
+				'type': 'order_accepted',
+				'order': resp.data.order
+			};
+			this.sendCallMsgs(resp.data.order.user_id, JSON.stringify(message));
+			this._ngZone.run(() => {
+				this.firebase.UserAcceptFn();
+  			});
+		})
+		.catch(err => {
+
+		});
+	}
+
+
+	checkTopPerm(){
+		this.platform.ready().then(() => {
+			// alert('dfsdfs');
+			if(this.platform.is('android')){
+				cordova.plugins.backgroundMode.getForegroundPermissionStatus(res => {
+					console.log(res);
+					this._ngZone.run(() => {
+						if(res == false){
+							this.showTopPerm = 1;
+						}
+						else{
+							this.showTopPerm = 0;
+						}
+					});
+				});
+			}
+		});
+	}
+
+	openTopPermission(){
+		cordova.plugins.backgroundMode.requestForegroundPermission();
+	}
+
+
+	getRemainingTime(){
+		var endTime = new Date((this.order.to_time+" UTC").replace(/-/g, '/'));
+		var total = endTime.getTime() - new Date().getTime();
+		
+		var timeNow = new Date().getTime() - this.callStartTime.getTime();
+		var time_passed = timeNow/1000;
+		// if(time_passed > 60){
+		// 	this.showCancel = 0;
+		// }
+		// else{
+		// 	this.showCancel = 1;
+		// }
+
+		if(total < 0 && this.callExtended == 0){
+			clearInterval(this.timeInt);
+			this.timeInt = null;
+			if(!(this.userDets.user_type == 3)){
+				this.stopCall();
+				return;
+			}
+		}
+		else{
+			if(!(this.callToEnd == null)){
+				if(((new Date()).toISOString()) >= this.callToEnd){
+					clearInterval(this.timeInt);
+					if(!(this.userDets.user_type == 3)){
+						this.stopCall();
+					}
+				}
+			}
+			if(total < 0){
+				var rem_text = "Extra Time";
+				total = (new Date().getTime()) - (endTime.getTime());
+			}
+			else{
+				var rem_text = "Remaining time";
+			}
+			var seconds:any = Math.floor( (total/1000) % 60 );
+			var minutes:any = Math.floor( (total/1000/60) % 60 );
+			var totalMinutes:any = Math.floor((total/1000/60));
+			if(minutes < 2 && this.order.user_id == this.userDets.id && this.callExtendShown == 0){
+				this.callExtendRequest = 1;
+			}
+			
+			if(minutes < 0){
+			
+				minutes = -(minutes);
+			
+			}
+			if(seconds < 0){
+			
+				seconds = -(seconds);
+			
+			}
+
+			if(minutes < 10){
+				minutes = "0"+minutes;
+			}
+
+			if(seconds < 10){
+				seconds = "0"+seconds;
+			}
+
+			this.rem_text = rem_text;
+			this.minutes = minutes;
+			this.seconds = seconds;
+			
+			document.querySelector('#remText').innerHTML = ""+rem_text;
+			document.querySelector('#remMin').innerHTML = ""+minutes;
+			document.querySelector('#remSec').innerHTML = ""+seconds;
+			document.querySelector('#remText1').innerHTML = ""+rem_text;
+			document.querySelector('#remMin1').innerHTML = ""+minutes;
+			document.querySelector('#remSec1').innerHTML = ""+seconds;
+			document.querySelector('#remText2').innerHTML = ""+rem_text;
+			document.querySelector('#remMin2').innerHTML = ""+minutes;
+			document.querySelector('#remSec2').innerHTML = ""+seconds;
+
+		}
+	}
+
+	// Receive and subscribe to messages.
+
+	getChatData(){
+		// this.userDets = this.misc.getUserDets();
+		this.chatMsgs = [];
+		this.itemRef = this.db.object('chat'+this.order.id);
+		this.itemRefSub = this.itemRef.snapshotChanges().subscribe(action => {
+			if(!(action.payload.val() == null)){
+				this.chatMsgs = action.payload.val();
+				if(!(this.chatMsgs == "")){
+					this.chatMsgs = JSON.parse(this.chatMsgs);
+					this.chatMsgs.map((item,index) => {
+						if(item.from == this.other_user.id){
+							if(item.read == 0){
+								this.newChat = 1;
+								return false;
+							}
+						}
+					});
+					// this.newChat = 0;
+					// if(this.chatWin == 0){
+					// 	this.newChat = 1;
+					// }
+				}
+				else{
+					this.chatMsgs = [];
+				}
+			}
+		});
+	}
+
+	//Send Chat Message
+
+	sendMsg(){
+		if(this.message == ""){
+			this.misc.showToast('Please enter a message.');
+			return;
+		}
+
+		var data = {
+			"message": this.message,
+			"from": this.userDets.id,
+			read: 0
+		};
+
+		this.chatMsgs.push(data);
+
+		var apidata = JSON.stringify(this.chatMsgs);
+		const sendRef = this.db.object('chat'+this.order.id);
+		sendRef.set(apidata);
+		this.message = "";
+	}
+
+	openChatWindow = () => {
+		this.newChat = 0;
+		this.chatWin = (this.chatWin == 0)?1:0;
+		this.chatMsgs.map((item, index) => {
+			var this_msg = item;
+			if(this_msg.from == this.other_user.id){
+				this_msg.read = 1;
+			}
+			this.chatMsgs[index] = this_msg;
+		});
+		var apidata = JSON.stringify(this.chatMsgs);
+		const sendRef = this.db.object('chat'+this.order.id);
+		sendRef.set(apidata);
+	};
+
+
+	extend(val){
+		this.callExtendRequest = 0;
+		this.callExtendShown = 1;
+		if(val == 0){
+			this.callExtended = 0;
+		}
+		else{
+
+			var call_message = {
+				'type': 'extension_requested'
+			};
+			this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
+			
+		}
+	}
+
+
+	extendAllow(val){
+		this.callExtendRequested = 0;
+		if(val == 0){
+			this.callExtended = 0;
+
+			var call_message = {
+				'type': 'extension_denied'
+			};
+			this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
+		}
+		else{
+			this.callExtended = 1;
+
+			var call_message = {
+				'type': 'extension_allowed'
+			};
+			this.sendCallMsgs(this.other_user.id, JSON.stringify(call_message));
+		}
+	}
+	
+
+
   	callDestroy(){
 		// alert('sdsdsa');
 		// ConnectyCube.chat.disconnect();
@@ -1196,11 +1738,24 @@ export class CallerComponent implements AfterViewInit {
 			// this.lastUser = null;
 			window.localStorage.removeItem('token');
 			window.localStorage.removeItem('user');
+			ConnectyCube.chat.disconnect();
 			ConnectyCube.logout().catch((error) => {});
-          	axios.defaults.headers.common['Authorization'] = 'Bearer ';
-			this.router.navigate(['/login']);
+			ConnectyCube.destroySession();
+			axios.defaults.headers.common['Authorization'] = 'Bearer ';
+			// this.router.navigate(['/login']);
+			window.location.href = "/login";
 			// ConnectyCube.destroySession().catch((error) => {});
 		});
+	}
+
+	bringAppToForeground(){
+		// this.platform.ready().then( () => {
+		if(this.platform.is('android')) {
+			cordova.plugins.backgroundMode.wakeUp();
+			cordova.plugins.backgroundMode.unlock();
+			cordova.plugins.backgroundMode.moveToForeground();
+		}
+		// });
 	}
 
 }

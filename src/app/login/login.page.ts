@@ -127,7 +127,7 @@ export class LoginPage implements OnInit, OnDestroy {
                     console.log(e);
                 });
                 await push.on('registration', (data_v) => {
-                  alert('login2');
+                  // alert('login2');
                     console.log("[Ionic] voip registration callback called");
                     console.log('voip token is ',data_v.deviceToken);
                     //data.deviceToken;
@@ -155,12 +155,12 @@ export class LoginPage implements OnInit, OnDestroy {
       // console.log(data);
     }
     loginUserDo(data){
-      alert('login1');
+      // alert('login1');
       console.log(data);
       try{
         this.platform.ready().then(async () => {
           console.log(this.platform);
-          alert('login3');
+          // alert('login3');
           if(this.platform.is('cordova') && (this.platform.is('android') || this.platform.is('ios'))) {
             console.log('dfsfs');
             // await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");

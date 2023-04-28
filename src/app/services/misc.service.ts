@@ -47,10 +47,10 @@ export class MiscService {
 	    });
 	}
 
-	async getAllPermissions(){
-  		this.platform.ready().then(async () => {
+	getAllPermissions(){
+  		this.platform.ready().then(() => {
   				if (this.platform.is('ios')) {
-      			cordova.plugins.iosrtc.registerGlobals();
+      			// cordova.plugins.iosrtc.registerGlobals();
     			}
 	      	if (this.platform.is('cordova')) {
 	      			// await OneSignal.promptForPushNotificationsWithUserResponse( async (accepted) => {
@@ -58,8 +58,21 @@ export class MiscService {
 		          //   await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
 		          // });
 		          // await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-	          	await this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED, this.androidPermissions.PERMISSION.CALL_PHONE]);
-	          	if(!(this.platform.is('ios'))) {
+	          	this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED, this.androidPermissions.PERMISSION.CALL_PHONE]);
+	          	if((this.platform.is('ios'))) {
+				cordova.plugins.backgroundMode.setDefaults({ silent: true });
+				// cordova.plugins.backgroundMode.requestForegroundPermission();
+			  	cordova.plugins.backgroundMode.enable();
+				cordova.plugins.backgroundMode.disableBatteryOptimizations();
+				cordova.plugins.backgroundMode.disableWebViewOptimizations();
+			}
+			else{
+
+				cordova.plugins.backgroundMode.setDefaults({ silent: true });
+				// cordova.plugins.backgroundMode.requestForegroundPermission();
+			  	cordova.plugins.backgroundMode.enable();
+				  cordova.plugins.backgroundMode.disableBatteryOptimizations();
+				  cordova.plugins.backgroundMode.disableWebViewOptimizations();
 		          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
 		              	result => {
 		              		// console.log('Has permission?', result.hasPermission)
@@ -118,32 +131,18 @@ export class MiscService {
 		              	}
 		          	);
 
-	          		// this.foregroundService.start('Running in Background', 'Background Service', 'icon', 3, 10);
 			      		cordova.plugins.backgroundMode.setDefaults({ silent: true });
-			      		cordova.plugins.backgroundMode.requestForegroundPermission();
-			    			cordova.plugins.backgroundMode.enable();
-			    			cordova.plugins.backgroundMode.disableBatteryOptimizations();
-			    			console.log('bac mode enable');
-			    			cordova.plugins.backgroundMode.on('activate', () => {
-			    				console.log('enabled and activated');
-			    				cordova.plugins.backgroundMode.disableWebViewOptimizations();
-			    				// cordova.plugins.backgroundMode.excludeFromTaskList();
-						});
-							// }
+			      		// cordova.plugins.backgroundMode.requestForegroundPermission();
+					cordova.plugins.backgroundMode.enable();
+					cordova.plugins.backgroundMode.disableBatteryOptimizations();
+					cordova.plugins.backgroundMode.disableWebViewOptimizations();
+					console.log('bac mode enable');
+					
+					// cordova.plugins.backgroundMode.on('activate', () => {
+						// console.log('enabled and activated');
+						// cordova.plugins.backgroundMode.disableWebViewOptimizations();
+					// });
 	      			}
-	      	// navigator.mediaDevices.getUserMedia({ audio: true, video: true })
-	      	// .then(stream => {
-	      	// 	// stream
-	      	// 	if(stream && stream.getTracks()){
-					// 		stream.getTracks().forEach(track => {
-					// 			track.stop();
-					// 			// this.myScreen.srcObject.removeTrack(track);
-					// 		})
-					// 	}
-	      	// })
-	      	// .catch(err => {
-
-	      	// });
   			}
 		});
 	}
@@ -163,7 +162,7 @@ export class MiscService {
 				// console.log(value);
 				this.toast.show(value[0], '5000', 'center').subscribe(
 				  	toast => {
-				    	// console.log(toast);
+				    		console.log(toast);
 				  	}
 				);
 			});

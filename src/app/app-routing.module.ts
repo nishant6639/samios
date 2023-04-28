@@ -148,6 +148,10 @@ const routes: Routes = [
   {
     path: 'conf',
     loadChildren: () => import('./conf/conf.module').then( m => m.ConfPageModule)
+  },
+  {
+    path: 'avail',
+    loadChildren: () => import('./avail/avail.module').then( m => m.AvailPageModule)
   }
 ];
 

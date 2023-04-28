@@ -146,6 +146,9 @@
 								<div class="upcoming-cont">
 									<div>
 										<div class="upcoming-item" [class.faded]="call.first.status == 0 && !(userDets.user_type == 3)">
+											<span class="order-count-start" *ngIf="call.first.today == 1 && call.first.sec > 0">
+												Starts in <countdown [config]="{leftTime: call.first.sec, format: 'hh:mm:ss'}" (event)="takeAction($event)"></countdown>
+											</span>
 											<span class="date-wrap" [class.today]="call.today">
 												<span class="month" *ngIf="!call.today">{{ call.first.start | date: 'LLL' }}</span>
 												<span class="date" *ngIf="!call.today">{{ call.first.start | date: 'dd' }}</span>
@@ -191,9 +194,9 @@
 
 													<span *ngIf="call.first.status == 1">
 
-														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+														<!-- <span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
 															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
-														</span>
+														</span> -->
 
 
 														<!-- <span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
@@ -230,9 +233,9 @@
 
 													<span *ngIf="call.first.status == 1">
 
-														<span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
+														<!-- <span class="order-btn count" *ngIf="call.first.today == 1 && call.first.sec > 0">
 															<countdown [config]="{leftTime: call.first.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
-														</span>
+														</span> -->
 
 
 														<span class="order-btn call" *ngIf="call.first.call_status < 2 && call.first.passed == false && call.first.sec <= 0" (click)="callUser(call.first.target_user, call.first.id)">
@@ -262,6 +265,9 @@
 										<div class="subupcoming">
 											<div *ngFor="let this_call of call.calls">
 												<div *ngIf="!(this_call.id == call.first.id)" class="upcoming-item" [class.faded]="this_call.status == 0 && !(userDets.user_type == 3)">
+													<span class="order-count-start" *ngIf="this_call.today == 1 && this_call.sec > 0">
+														Starts in <countdown [config]="{leftTime: this_call.sec, format: 'hh:mm:ss'}" (event)="takeAction($event)"></countdown>
+													</span>
 													<span class="arrow-diag"></span>
 													<div class="title" *ngIf="userDets.user_type == 3">{{ this_call.user_name }}</div>
 													<div class="title" *ngIf="!(userDets.user_type == 3)">{{ this_call.service_provider_name }}</div>
@@ -367,9 +373,9 @@
 
 															<span *ngIf="this_call.status == 1">
 
-																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
 																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
-																</span>
+																</span> -->
 
 
 																<!-- <span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">
@@ -406,9 +412,9 @@
 
 															<span *ngIf="this_call.status == 1">
 
-																<span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
+																<!-- <span class="order-btn count" *ngIf="this_call.today == 1 && this_call.sec > 0">
 																	<countdown [config]="{leftTime: this_call.sec, format: 'mm:ss'}" (event)="takeAction($event)"></countdown>
-																</span>
+																</span> -->
 
 
 																<span class="order-btn call" *ngIf="this_call.call_status < 2 && this_call.passed == false && this_call.sec <= 0" (click)="callUser(this_call.target_user, this_call.id)">

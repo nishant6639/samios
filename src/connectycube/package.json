@@ -1,0 +1,119 @@
+{
+  "_from": "connectycube@^3.22.1",
+  "_id": "connectycube@3.24.1",
+  "_inBundle": false,
+  "_integrity": "sha512-uzmJsxBi515Ytz9Of0m58bsCEXXM5SeNb+KELwbEYkvhig8mHaYR9Pk+GrovGw+60/1lRK3XrsFZ5pQ0fPIRBA==",
+  "_location": "/connectycube",
+  "_phantomChildren": {
+    "asynckit": "0.4.0",
+    "delayed-stream": "1.0.0",
+    "encoding": "0.1.13",
+    "mime-types": "2.1.30"
+  },
+  "_requested": {
+    "type": "range",
+    "registry": true,
+    "raw": "connectycube@^3.22.1",
+    "name": "connectycube",
+    "escapedName": "connectycube",
+    "rawSpec": "^3.22.1",
+    "saveSpec": null,
+    "fetchSpec": "^3.22.1"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/connectycube/-/connectycube-3.24.1.tgz",
+  "_shasum": "b8c0a27341543e04a67f0a8805feba4cd64c3f03",
+  "_spec": "connectycube@^3.22.1",
+  "_where": "/Volumes/Extradata/html/samios1",
+  "author": {
+    "name": "ConnectyCube team",
+    "email": "support@connectycube.com"
+  },
+  "bugs": {
+    "url": "https://github.com/ConnectyCube/connectycube-js-sdk-releases/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "@xmpp/client": "0.9.2",
+    "crypto-js": "3.1.9-1",
+    "fbemitter": "2.1.1",
+    "form-data": "2.3.2",
+    "node-fetch": "1.7.3"
+  },
+  "deprecated": false,
+  "description": "ConnectyCube chat and video chat JavaScript SDK",
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/plugin-proposal-class-properties": "7.8.3",
+    "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
+    "@babel/plugin-transform-runtime": "7.9.0",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/runtime": "7.9.2",
+    "babel-loader": "^8.1.0",
+    "clean-webpack-plugin": "^3.0.0",
+    "ghooks": "^1.3.2",
+    "jaguarjs-jsdoc": "^1.1.0",
+    "jasmine": "^4.0.2",
+    "jasmine-browser-runner": "^1.0.0",
+    "jasmine-core": "^4.0.1",
+    "jasmine-spec-reporter": "^7.0.0",
+    "jsdoc": "^3.6.5",
+    "nyc": "^15.1.0",
+    "open-cli": "^7.0.1",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib",
+    "dist/connectycube.min.js",
+    "dist/connectycube.min.map"
+  ],
+  "gitHead": "72a30148c6d5ea35f1cb31fdd1b628ce9b94ee89",
+  "homepage": "https://developers.connectycube.com/reactnative",
+  "keywords": [
+    "connectycube",
+    "messaging",
+    "videocalling",
+    "javascript",
+    "nativescript",
+    "react-native",
+    "nodejs",
+    "sdk",
+    "cloud",
+    "api",
+    "chat",
+    "videochat",
+    "communication",
+    "webrtc",
+    "storage",
+    "users",
+    "push notifications",
+    "calling"
+  ],
+  "license": "Apache-2.0",
+  "main": "lib/cubeMain.js",
+  "name": "connectycube",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ConnectyCube/connectycube-js-sdk-releases.git"
+  },
+  "scripts": {
+    "build.all": "npm run build.release && npm run build.dev",
+    "build.dev": "webpack --config webpack.config.js --env.development",
+    "build.release": "webpack --config webpack.config.js --env.production",
+    "coverage:node": "nyc --reporter=lcov npm run test:node && open-cli ./coverage/lcov-report/index.html",
+    "docs": "rimraf docs && mkdir docs && jsdoc -c ./jsdoc.conf",
+    "installDependencies": "npm install && npm install -g jasmine",
+    "test:browser": "jasmine-browser-runner serve --config=__tests__/support/jasmine-browser.json",
+    "test:node": "jasmine --config=__tests__/support/jasmine-node.json",
+    "watch": "webpack --watch --config webpack.config.js --env.development"
+  },
+  "version": "3.24.1"
+}

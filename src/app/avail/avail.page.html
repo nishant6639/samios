@@ -1,0 +1,238 @@
+<ion-content>
+  <div class="page-title">
+    <span routerLink="/profile" class="back"><i class="fas fa-angle-left"></i></span>
+  <span class="text">My Availability</span>
+  </div>
+  <div class="page-content">
+    <div *ngIf="show == 0">
+    <div class="circle-loader">
+      <img src="assets/images/cloader.gif" />
+    </div>
+  </div>
+  <div *ngIf="show == 1">
+      <div class="profile-head" style="margin-bottom: 50px;">
+        <span class="img" *ngIf="userDets.image_url">
+          <img [src]="userDets.image_url" />
+        </span>
+          <span class="img" *ngIf="!(userDets.image_url)">
+            <img src="assets/images/dp.png" />
+          </span>
+        <span class="hi">Hi,</span>
+        <span class="name">{{ userDets.name }}</span>
+      <!-- <label style="width: 100%; display: block; color: #FD1231;" for="userfileInp">Change Image</label>
+      <input type="file" style="display: none;" name="dp" #userfile id="userfileInp" (change)="onDpChange(userfile.files)" /> -->
+      </div>
+      <!-- <div class="row align-mid form-title-wrap">
+      <div class="col-5">
+        <div class="form-title" (click)="activeSection='personal'" [class.no-bold]="!(activeSection == 'personal')">Your Information</div>
+      </div>
+      <div class="col-7">
+        <div class="row">
+          <div class="col-6" *ngIf="(userDets.user_type == 3)">
+            <div class="form-title" (click)="activeSection='services'" [class.no-bold]="!(activeSection == 'services')">Services</div>
+          </div>
+          <div class="col-6" *ngIf="(userDets.user_type == 3)">
+            <div class="form-title" (click)="activeSection='reviews'" [class.no-bold]="!(activeSection == 'reviews')">Reviews</div>
+          </div>
+        </div>
+      </div> -->
+      <!-- <div class="col-5 text-right">
+        <span class="form-req">
+          * Required
+        </span>
+      </div> -->
+    <!-- </div> -->
+    <div class="row" *ngIf="activeSection == 'personal'">
+      <div class="col-12">
+        <form (submit)="saveUser()">
+          <div class="row">
+            <div class="col-12">
+              <div *ngIf="(userDets.user_type == 3)">
+                <div class="row avail-check-item align-mid" *ngFor="let day of daysValArr">
+                  <div class="col-3">
+                    <span class="checkbox-wrap">
+                      <input type="checkbox" id="checkAvail{{ day }}" name="tnc" (change)="availCheck(day)" [checked]="availCheckList.includes(day)" />
+                      <label for="checkAvail{{ day }}">{{ days[day] }}</label>
+                    </span>
+                  </div>
+                  <div class="col-8">
+                    <div class="avail-check-item-dets">
+                      <span (click)="selectDateFor(day)" *ngIf="availabilities[day] == undefined" [class.disabled]="!(availCheckList.includes(day))">(Select Time)</span>
+                      <span *ngIf="!(availabilities[day] == undefined)" [class.disabled]="!(availCheckList.includes(day))">{{ availabilities[day]['start_time'] }} to {{ availabilities[day]['end_time'] }} <span (click)="selectDateFor(day)">(Change)</span></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row" *ngIf="activeSection == 'services'">
+      <div class="col-12">
+        <div class="row align-mid form-title-wrap">
+          <div class="col-7">
+            <div class="form-title">Choose your languages</div>
+          </div>
+          <div class="col-5 text-right">
+            <!-- <span class="sm-btn" (click)="selectLangSet()">Add</span> -->
+          </div>
+        </div>
+        <div class="lang-select-wrap">
+            <div class="lang-select-box">
+              <div class="form-row">
+                <span class="down">
+                  <app-icon name="seldown"></app-icon>
+                </span>
+                <select class="form-control" name="translate_from" [(ngModel)]="translate_from">
+                  <option *ngFor="let language of languages" [value]="language.id+'*'+language.language_name">{{ language.language_name }}</option>
+                </select>
+              </div>
+            </div>
+            <span class="icon">
+              <i class="fas fa-exchange-alt"></i>
+            </span>
+            <div class="lang-select-box">
+              <div class="form-row">
+                <span class="down">
+                  <app-icon name="seldown"></app-icon>
+                </span>
+                <select class="form-control" name="translate_to" [(ngModel)]="translate_to">
+                  <option *ngFor="let language of languages" [value]="language.id+'*'+language.language_name">{{ language.language_name }}</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <button type="button" class="btn btn-primary" (click)="selectLangSet()">Add</button>
+            </div>
+          </div>
+          <hr>
+          <form *ngIf="langSets.length" (submit)="addLangDets()">
+            <div *ngFor="let set of langSetKeys">
+              <div class="row align-mid form-title-wrap">
+              <div class="col-12">
+                <div class="form-title">Experience Level</div>
+              </div>
+            </div>
+
+              <div class="exp-select-card">
+                <span class="del-btn" (click)="delSet(set)">&times;</span>
+                <div class="lang-set-title">
+                  <span class="sm-btn">{{ langSets[set].language_from_name }}</span>
+                  <span class="icon"><i class="fas fa-exchange-alt"></i></span>
+                  <span class="sm-btn">{{ langSets[set].language_to_name }}</span>
+                </div>
+                <hr>
+                <div class="form-row">
+                  <span class="checkbox-wrap">
+                  <input type="checkbox" id="filter{{ set }}1" name="exp_level{{ set }}" (change)="setLangSetExp(set, 1)" [value]="1" [checked]="((langSets[set].exp_level)).indexOf('1') > -1" />
+                  <label for="filter{{ set }}1">Higher level written and spoken</label>
+                </span>
+              </div>
+                <div class="form-row">
+                  <span class="checkbox-wrap">
+                  <input type="checkbox" id="filter{{ set }}2" name="exp_level{{ set }}" (change)="setLangSetExp(set, 2)" [value]="2" [checked]="((langSets[set].exp_level)).indexOf('2') > -1" />
+                  <label for="filter{{ set }}2">Legal Experience</label>
+                </span>
+              </div>
+                <div class="form-row">
+                  <span class="checkbox-wrap">
+                  <input type="checkbox" id="filter{{ set }}3" name="exp_level{{ set }}" (change)="setLangSetExp(set, 3)" [value]="3" [checked]="((langSets[set].exp_level)).indexOf('3') > -1" />
+                  <label for="filter{{ set }}3">Business Experience</label>
+                </span>
+              </div>
+                <div class="form-row">
+                  <span class="checkbox-wrap">
+                  <input type="checkbox" id="filter{{ set }}4" name="exp_level{{ set }}" (change)="setLangSetExp(set, 4)" [value]="4" [checked]="((langSets[set].exp_level)).indexOf('4') > -1" />
+                  <label for="filter{{ set }}4">Medical Experience</label>
+                </span>
+              </div>
+                <div class="form-row">
+                  <span class="checkbox-wrap">
+                  <input type="checkbox" id="filter{{ set }}0" name="exp_level{{ set }}" (change)="setLangSetExp(set, 0)" [value]="0" [checked]="((langSets[set].exp_level)).indexOf('0') > -1" />
+                  <label for="filter{{ set }}0">No Experience</label>
+                </span>
+              </div>
+              </div>
+            </div>
+
+            <div class="form-row" *ngIf="(userDets.user_type == 3)">
+            <label class="form-row-label">About</label>
+            <textarea type="text" name="about" [(ngModel)]="FormModel.about" class="form-control" placeholder="About"></textarea>
+          </div>
+
+            <div class="form-row" *ngIf="(userDets.user_type == 3)">
+            <label class="form-row-label">Experience</label>
+            <textarea type="text" name="experience_text" [(ngModel)]="FormModel.experience_text" class="form-control" placeholder="Experience"></textarea>
+          </div>
+
+            <div *ngIf="langSets.length" class="form-row">
+              <button class="btn btn-primary">Save</button>
+            </div>
+          </form>
+      </div>
+    </div>
+    <div class="row" *ngIf="activeSection == 'reviews'">
+      <div class="col-12">
+        <div class="review-wrap full" *ngIf="reviews.length > 0">
+          <div class="review-item" *ngFor="let review of reviews">
+            <div class="head">
+              <span class="img">
+                <img src="assets/images/dp.png" />
+              </span>
+              <span class="text">
+                <b>{{ review.reviewer_name }}</b>
+              </span>
+              <span class="time-ago">
+                1 day ago
+              </span>
+            </div>
+            <div class="row">
+              <div class="col-8">
+                <p><b>{{ review.conversion_language }}</b></p>
+              </div>
+              <div class="col-4 text-right">
+                <div class="star"><i class="fas fa-star"></i> {{ review.rating }}</div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-12">
+                <p>{{ review.review_text }}</p>
+              </div>
+            </div>
+            <div class="response" *ngIf="!(review.interpreter_response == null)">
+              <p><b>Your response</b></p>
+              <p>{{ review.interpreter_response }}</p>
+            </div>
+            <div class="response" *ngIf="(review.interpreter_response == null)">
+              <p><b>Your response</b></p>
+              <form (submit)="saveReviewResponse(review.id)">
+                <div class="form-row" *ngIf="(userDets.user_type == 3)">
+                  <!-- <label class="form-row-label">Type your response here.</label> -->
+                  <textarea type="text" name="response" [(ngModel)]="revModel.response" class="form-control" placeholder="Type your response here."></textarea>
+                </div>
+                <div class="form-row">
+                  <button type="submit" class="btn btn-primary">Submit Response</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  <div class="popup" [class.active]="popup.avail == 1">
+  <div class="popup-title">
+    <span class="text">Select day and time</span>
+  </div>
+  <div class="popup-content">
+    <ion-datepick type="1" (dateSet)="addDate($event)" (close)="popup.avail = 0"></ion-datepick>
+  </div>
+</div>
+</ion-content>

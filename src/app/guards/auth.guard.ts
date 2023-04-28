@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
   	}
 
 
-  	async checkLogin(route){
+  	checkLogin(route){
       // alert('called');
   		var token = localStorage.getItem('token');
       if(token){
@@ -49,7 +49,7 @@ export class AuthGuard implements CanActivate {
       var jan = new Date( 2009, 0, 1, 2, 0, 0 ), jul = new Date( 2009, 6, 1, 2, 0, 0 );
       var offset = ( jan.getTime() % 24 * 60 * 60 * 1000 ) > ( jul.getTime() % 24 * 60 * 60 * 1000 )?jan.getTimezoneOffset() : jul.getTimezoneOffset();
       var fcm = "";
-      this.platform.ready().then(async () => {
+      this.platform.ready().then(() => {
 
         var data = {
           'time_offset': offset

@@ -127,8 +127,13 @@ export class HirePage implements OnInit {
       this.misc.showToast('Please select languages');
       return;
     }
+    if(this.planId == 0){
+      this.misc.showToast('Please select Time slot');
+      return;
+    }
     this.ordSelDate = new Date().toISOString();
     this.ordSelPlan = this.planId;
+    this.misc.showLoader();
     // setTimeout(()=>{
     this.hireNowMid();
     // }, 100);
@@ -180,6 +185,7 @@ export class HirePage implements OnInit {
     });
 
     await alert.present();
+    this.misc.hideLoader();
   }
 
 	hireNowFun(){
