@@ -20,6 +20,7 @@ declare var VoIPPushNotification;
 export class LoginPage implements OnInit, OnDestroy {
 	FormModel:any = {};
     passShow:any = 0;
+    show:any = 0;
   	constructor(
       private misc:MiscService,
       private platform:Platform,
@@ -38,6 +39,9 @@ export class LoginPage implements OnInit, OnDestroy {
   	ionViewDidEnter() {
       this.misc.setUserDets(null);
       this.misc.backExitSub();
+      setTimeout(() => {
+        this.show = 1;
+      }, 1000);
     }
 
     async loginUser(){
@@ -114,6 +118,35 @@ export class LoginPage implements OnInit, OnDestroy {
             .then(async (user) => {
               console.log(user);
               data['calling_id'] = user.id;
+              if(this.platform.is('ios')){
+                var push = await VoIPPushNotification.init();
+                // push.on('notification', function(data) {
+                //     console.log("[Ionic] notification callback called");
+                //     console.log(data);
+
+                //     // do something based on received data
+                // });
+
+                push.on('error', function(e) {
+                    console.log(e);
+                });
+                await push.on('registration', (data_v) => {
+                  // alert('login2');
+                    console.log("[Ionic] voip registration callback called");
+                    console.log('voip token is ',data_v.deviceToken);
+                    //data.deviceToken;
+                    // voip_token = data_v.deviceToken;
+                    data['voip_token'] = data_v.deviceToken;
+                    this.loginUserDo(data);
+                    //do something with the device token (probably save it to your backend service)
+                });
+              }
+              else{
+                this.loginUserDo(data);
+              }
+            })
+            .catch(async (err) => {
+              data['calling_id'] = "";
               if(this.platform.is('ios')){
                 var push = await VoIPPushNotification.init();
                 // push.on('notification', function(data) {

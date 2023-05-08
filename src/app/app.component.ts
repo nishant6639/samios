@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { MiscService } from './services/misc.service';
 import { ApiService } from './services/api.service';
 // import { SplashScreen } from '@awesome-cordova-plugins/splash-screen/ngx';
@@ -21,7 +21,7 @@ declare let cordova:any;
 	templateUrl: 'app.component.html',
 	styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements AfterViewInit {
 	splash:any = 0;
 	loadCallS:any = 1;
 	loading:any = false;
@@ -90,7 +90,7 @@ export class AppComponent implements OnInit {
 		});
 	}
 
-	ngOnInit(){
+	ngAfterViewInit(){
 		
 		// this.getPermissions();
 		var permReq = window.localStorage.getItem('permReq');

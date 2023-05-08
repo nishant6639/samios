@@ -281,6 +281,107 @@
 					<div class="row">
 						<div class="col-12">
 							<div *ngFor="let log of callLog; let i = index">
+								<div class="call-log-item" *ngIf="!(log.action == 'connecting') && !(log.action == 'rejecting')">
+									<div class="icon">
+										<span *ngIf="log.action == 'init_call'">
+											<svg class="feather" *ngIf="!(userDets.user_type == 3)">
+												<use xlink:href="assets/icon/feather-sprite.svg#phone-outgoing"/>
+											</svg>
+											<svg class="feather" *ngIf="(userDets.user_type == 3)">
+												<use xlink:href="assets/icon/feather-sprite.svg#phone-incoming"/>
+											</svg>
+										</span>
+										<span *ngIf="log.action == 'no_answer'">
+											<svg class="feather">
+												<use xlink:href="assets/icon/feather-sprite.svg#phone-missed"/>
+											</svg>
+										</span>
+										<span *ngIf="log.action == 'received'">
+											<svg class="feather">
+												<use xlink:href="assets/icon/feather-sprite.svg#phone-call"/>
+											</svg>
+										</span>
+										<span *ngIf="log.action == 'disconnected'">
+											<svg class="feather">
+												<use xlink:href="assets/icon/feather-sprite.svg#phone-off"/>
+											</svg>
+										</span>
+									</div>
+									<div class="dets">
+										<span class="call-log-title" *ngIf="log.action == 'init_call'">
+											<span class="time">
+												{{ log.time | date: "shortTime" }} - 
+											</span>
+											<span *ngIf="!(userDets.user_type == 3)">
+												Outgoing Call
+											</span>
+											<span *ngIf="(userDets.user_type == 3)">
+												Incoming Call
+											</span>
+										</span>
+										<span class="call-log-subtitle" *ngIf="log.action == 'init_call'">
+											<span class="sub-item" *ngIf="!(userDets.user_type == 3)">
+												You started a call.
+											</span>
+											<span class="sub-item" *ngIf="(userDets.user_type == 3)">
+												You received a call.
+											</span>
+										</span>
+
+
+										<span class="call-log-title" *ngIf="log.action == 'received'">
+											<span class="time">
+												{{ log.time | date: "shortTime" }} - 
+											</span>
+											<span>Call Answered</span>
+										</span>
+										<span class="call-log-subtitle" *ngIf="log.action == 'received'">
+											<span class="sub-item" *ngIf="!(userDets.user_type == 3)">
+												Service Provider answered the call.
+											</span>
+											<span class="sub-item" *ngIf="(userDets.user_type == 3)">
+												You answered the call.
+											</span>
+										</span>
+
+
+										<span class="call-log-title" *ngIf="log.action == 'disconnected'">
+											<span class="time">
+												{{ log.time | date: "shortTime" }} - 
+											</span>
+											<span>Call Disconnected</span>
+										</span>
+										<span class="call-log-subtitle" *ngIf="log.action == 'disconnected'">
+											<span class="sub-item" *ngIf="!(userDets.user_type == 3)">
+												Service Provider disconnected the call.
+											</span>
+											<span class="sub-item" *ngIf="(userDets.user_type == 3)">
+												You disconnected the call.
+											</span>
+										</span>
+
+
+
+										<span class="call-log-title" *ngIf="log.action == 'no_answer'">
+											<span class="time">
+												{{ log.time | date: "shortTime" }} - 
+											</span>
+											<span *ngIf="!(userDets.user_type == 3)">Call Not Answered</span>
+											<span *ngIf="(userDets.user_type == 3)">Missed Call</span>
+										</span>
+										<span class="call-log-subtitle" *ngIf="log.action == 'no_answer'">
+											<span class="sub-item" *ngIf="!(userDets.user_type == 3)">
+												Service Provider did not answer the call.
+											</span>
+											<span class="sub-item" *ngIf="(userDets.user_type == 3)">
+												You missed the call.
+											</span>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<!-- <div *ngFor="let log of callLog; let i = index">
 								<div class="call-log-item" *ngIf="log.action == 'init_call' && (!(callLog[i+1] == undefined))">
 									<div class="icon">
 										<span *ngIf="(userDets.id == log.user_id) && (!(callLog[i+1] == undefined)) && (callLog[i+1].action == 'declined_before_connect' || callLog[i+1].action == 'declined_after_connect' || callLog[i+1].action == 'declined' || callLog[i+1].action == 'received')">
@@ -328,12 +429,6 @@
 												was unable to connect
 											</span>
 										</span>
-										<!-- <span class="title" *ngIf="log.action == 'init_call'">
-											
-										</span>
-										<span class="title" *ngIf="log.action == 'init_call'">
-											
-										</span> -->
 										<span class="call-log-subtitle" *ngIf="log.action == 'init_call'">
 											<div class="sub-item" *ngIf="!(callLog[i+1] == undefined) && !(callLog[i+1] == 'init_call')">
 												<span class="sub-time">
@@ -374,9 +469,8 @@
 											</div>
 										</span>
 									</div>
-									<!-- {{ log.user_id }} - {{ log.action }} - {{ log.time | date:"long" }} -->
 								</div>
-							</div>
+							</div> -->
 						</div>
 					</div>
 					<hr />

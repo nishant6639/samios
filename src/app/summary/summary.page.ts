@@ -60,7 +60,8 @@ export class SummaryPage implements OnInit {
 		this.summary['date'] = (new Date((this.summary['date']+" UTC").replace(/-/g, '/')));
 		this.summary['sec'] = this.getTimeInS(this.summary['date']);
 		if(!(this.summary['call_log'] == null)){
-			this.callLog = JSON.parse(this.summary['call_log'])
+			this.callLog = JSON.parse(this.summary['call_log']);
+			this.callLog.reverse();
 		}
 		else{
 			this.callLog = [];

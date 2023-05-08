@@ -53,24 +53,24 @@
 								</div> -->
 								<div class="form-row" *ngIf="!(userDets.user_type == 4)">
 									<label class="form-row-label">Full Name <sup>*</sup></label>
-									<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Full Name" required="required" />
+									<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Full Name" required="required" disabled />
 								</div>
 								<div class="form-row" *ngIf="(userDets.user_type == 4)">
 									<label class="form-row-label">Company Name <sup>*</sup></label>
-									<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Company Name" required="required" />
+									<input type="text" autocomplete="false" name="name" [(ngModel)]="FormModel.name" class="form-control" placeholder="Company Name" required="required" disabled />
 								</div>
-								<!-- <div class="form-row">
+								<div class="form-row">
 									<label class="form-row-label">Email Id <sup>*</sup></label>
-									<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" required="required" />
-								</div> -->
-								<!-- <div class="row">
+									<input type="text" autocomplete="false" name="email" [(ngModel)]="FormModel.email" class="form-control" placeholder="Email id" required="required" disabled />
+								</div>
+								<div class="row">
 									<div class="col-5">
 										<div class="form-row">
 											<label class="form-row-label">Phone Number <sup>*</sup></label>
 											<span class="down">
 						  						<app-icon name="seldown"></app-icon>
 						  					</span>
-											<select class="form-control" name="country_code" [(ngModel)]="FormModel.country_code">
+											<select class="form-control" name="country_code" [(ngModel)]="FormModel.country_code" disabled>
 												<option *ngFor="let country of countries" [value]="country.dial_code">{{ country.name }} ({{ country.dial_code }})</option>
 											</select>
 										</div>
@@ -78,10 +78,10 @@
 									<div class="col-7">
 										<div class="form-row">
 											<label class="form-row-label">&nbsp;</label>
-											<input type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
+											<input disabled type="text" autocomplete="false" name="phone_no" [(ngModel)]="FormModel.phone_no" class="form-control" placeholder="Phone number" required="required" />
 										</div>
 									</div>
-								</div> -->
+								</div>
 								<!-- <div class="form-row">
 									<label class="form-row-label">Address</label>
 									<input type="text" autocomplete="false" name="address" [(ngModel)]="FormModel.address" class="form-control" placeholder="Address" />

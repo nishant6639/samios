@@ -31,9 +31,9 @@ export class MiscService {
 			private androidPermissions: AndroidPermissions,
 			private diagnostic: Diagnostic,
 			// public foregroundService: ForegroundService,
-    	// private autostart: Autostart,
-    	private backgroundMode: BackgroundMode,
-    	// private powerManagement: PowerManagement
+			// private autostart: Autostart,
+			private backgroundMode: BackgroundMode,
+			// private powerManagement: PowerManagement
 	) {}
 
   	getCountryList(){
@@ -49,101 +49,85 @@ export class MiscService {
 
 	getAllPermissions(){
   		this.platform.ready().then(() => {
-  				if (this.platform.is('ios')) {
-      			// cordova.plugins.iosrtc.registerGlobals();
-    			}
-	      	if (this.platform.is('cordova')) {
+	      		if (this.platform.is('cordova')) {
 	      			// await OneSignal.promptForPushNotificationsWithUserResponse( async (accepted) => {
-		          //   console.log("User accepted notifications: " + accepted);
-		          //   await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-		          // });
-		          // await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-	          	this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED, this.androidPermissions.PERMISSION.CALL_PHONE]);
-	          	if((this.platform.is('ios'))) {
-				cordova.plugins.backgroundMode.setDefaults({ silent: true });
-				// cordova.plugins.backgroundMode.requestForegroundPermission();
-			  	cordova.plugins.backgroundMode.enable();
-				cordova.plugins.backgroundMode.disableBatteryOptimizations();
-				cordova.plugins.backgroundMode.disableWebViewOptimizations();
-			}
-			else{
-
-				cordova.plugins.backgroundMode.setDefaults({ silent: true });
-				// cordova.plugins.backgroundMode.requestForegroundPermission();
-			  	cordova.plugins.backgroundMode.enable();
-				  cordova.plugins.backgroundMode.disableBatteryOptimizations();
-				  cordova.plugins.backgroundMode.disableWebViewOptimizations();
-		          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
-		              	result => {
-		              		// console.log('Has permission?', result.hasPermission)
-		              		if(result.hasPermission == false){
-		              			this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA]);
-		              		}
-		              	},
-		              	err => {
-		              		// console.log(err);
-
-		              		this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
-		              	}
-		          	);
-
-		          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO).then(
-		              	result => {
-		              		// console.log('Has permission?', result.hasPermission)
-		              		if(result.hasPermission == false){
-		              			this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.RECORD_AUDIO]);
-		              		}
-		              	},
-		              	err => {
-		              		// console.log(err);
-
-		              		this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
-		              	}
-		          	);
-
-
-
-		          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED).then(
-		              	result => {
-		              		// console.log('Has permission boot?', result.hasPermission)
-		              		if(result.hasPermission == false){
-		              			this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED]);
-		              		}
-		              	},
-		              	err => {
-		              		// console.log(err);
-
-		              		this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED)
-		              	}
-		          	);
-
-		          	this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS).then(
-		              	result => {
-		              		// console.log('Has permission?', result.hasPermission)
-		              		if(result.hasPermission == false){
-		              			this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS]);
-		              		}
-		              	},
-		              	err => {
-		              		// console.log(err);
-
-		              		this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS)
-		              	}
-		          	);
-
-			      		cordova.plugins.backgroundMode.setDefaults({ silent: true });
-			      		// cordova.plugins.backgroundMode.requestForegroundPermission();
+		          	//   console.log("User accepted notifications: " + accepted);
+		          	//   await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+		          	// });
+		          	// await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
+	          		if((this.platform.is('ios'))) {
+					cordova.plugins.backgroundMode.setDefaults({ silent: true });
+					// cordova.plugins.backgroundMode.requestForegroundPermission();
 					cordova.plugins.backgroundMode.enable();
 					cordova.plugins.backgroundMode.disableBatteryOptimizations();
 					cordova.plugins.backgroundMode.disableWebViewOptimizations();
-					console.log('bac mode enable');
-					
-					// cordova.plugins.backgroundMode.on('activate', () => {
-						// console.log('enabled and activated');
-						// cordova.plugins.backgroundMode.disableWebViewOptimizations();
-					// });
-	      			}
-  			}
+				}
+				else{
+					this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED, this.androidPermissions.PERMISSION.CALL_PHONE]);
+					cordova.plugins.backgroundMode.setDefaults({ silent: true });
+					// cordova.plugins.backgroundMode.requestForegroundPermission();
+					cordova.plugins.backgroundMode.enable();
+					cordova.plugins.backgroundMode.disableBatteryOptimizations();
+					cordova.plugins.backgroundMode.disableWebViewOptimizations();
+					cordova.plugins.backgroundMode.on('activate', () => {
+						console.log('enabled and activated');
+						cordova.plugins.backgroundMode.disableWebViewOptimizations();
+					});
+					this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
+					result => {
+						// console.log('Has permission?', result.hasPermission)
+						if(result.hasPermission == false){
+							this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA]);
+						}
+					},
+					err => {
+						// console.log(err);
+
+						this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
+					});
+
+					this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO).then(
+					result => {
+						// console.log('Has permission?', result.hasPermission)
+						if(result.hasPermission == false){
+							this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.RECORD_AUDIO]);
+						}
+					},
+					err => {
+						// console.log(err);
+
+						this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
+					});
+
+
+
+					this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED).then(
+					result => {
+						// console.log('Has permission boot?', result.hasPermission)
+						if(result.hasPermission == false){
+							this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED]);
+						}
+					},
+					err => {
+						// console.log(err);
+
+						this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED)
+					});
+
+					this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS).then(
+					result => {
+						// console.log('Has permission?', result.hasPermission)
+						if(result.hasPermission == false){
+							this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS]);
+						}
+					},
+					err => {
+						// console.log(err);
+
+						this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS)
+					});
+				}
+			}
 		});
 	}
 
@@ -169,6 +153,9 @@ export class MiscService {
 		}
 		if(err.response.status == 401 && type == "login"){
 			this.showToast('Invalid Credentials');
+		}
+		else{
+			
 		}
 	}
 

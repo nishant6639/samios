@@ -153,7 +153,7 @@
 			<span class="mi green" [class.ios]="(pltfrm.is('ios'))">call</span>
 			<span class="text">Accept</span>
 		</button>
-		<button (click)="rejectCall()">
+		<button (click)="rejectCallReq()">
 			<span class="mi red" [class.ios]="(pltfrm.is('ios'))">call_end</span>
 			<span class="text">Reject</span>
 		</button>
@@ -421,3 +421,6 @@
 		</div>
 	</div>
 </div>
+
+
+<div class="show-blank" *ngIf="showBlank == 1"></div>
