@@ -226,7 +226,7 @@ ion-backdrop{
 	margin: 0px;
 	margin-bottom: 20px;
 	.form-row-label{
-		font-size: 12px;
+		font-size: 14px;
 		font-style: normal;
 		font-weight: 400;
 		line-height: 12px;
@@ -336,7 +336,7 @@ ion-backdrop{
 	60% {transform: translateY(-15px);}
 }
 .forg-pw{
-	font-size: 12px;
+	font-size: 14px;
 	font-style: italic;
 	font-weight: 300;
 	line-height: 15px;
@@ -634,12 +634,12 @@ hr{
 	    padding: 0px 5px;
 	    text-align: left;
 		.lt{
-			font-size: 12px;
+			font-size: 14px;
 			color: #777;
 		}
 	}
 	.form-req{
-		font-size: 12px;
+		font-size: 14px;
 		font-style: italic;
 		font-weight: 400;
 		line-height: 12px;
@@ -881,7 +881,7 @@ hr{
 		color: #FFF;
 		padding: 8px;
 		// margin-top: 8px;
-		font-size: 12px;
+		font-size: 14px;
 		line-height: 1.1;
 		letter-spacing: 0em;
 		&.black-text{
@@ -902,7 +902,7 @@ hr{
 	color: #FFF;
 	display: inline-block;
 	.title{
-	    font-size: 12px;
+	    font-size: 14px;
 	    font-style: normal;
 	    font-weight: 600;
 	    line-height: 14px;
@@ -998,7 +998,7 @@ hr{
 		}
 
 		.title{
-		    font-size: 12px;
+		    font-size: 14px;
 		    font-weight: 600;
 		    line-height: 13px;
 		    letter-spacing: 0em;
@@ -1049,7 +1049,7 @@ hr{
 		// padding-right: 40px;
 		// height: 100%;
 		.subdets{
-			font-size: 12px;
+			font-size: 14px;
 			font-style: normal;
 			font-weight: 400;
 			line-height: 10px;
@@ -1122,7 +1122,7 @@ hr{
 	> .icon{
         display: inline-block;
 	    vertical-align: top;
-	    font-size: 12px;
+	    font-size: 14px;
 	    margin: 5px 10px;
 	    width: 16px;
 	    stroke: #000;
@@ -1255,7 +1255,7 @@ hr{
 	    display: block;
 	    color: #f3939f;
 	    .text{
-	    	font-size: 12px;
+	    	font-size: 14px;
 	    	line-height: 1;
 	    	display: block;
 	    }
@@ -1308,7 +1308,7 @@ hr{
 	.rating{
 		text-align: center;
 		display: block;
-		font-size: 12px;
+		font-size: 14px;
 		line-height: 12px;
 		letter-spacing: 0em;
 		margin-bottom: 10px;
@@ -1395,7 +1395,7 @@ hr{
 		}
 
 		.star{
-			font-size: 12px;
+			font-size: 14px;
 			color: #FFB27D;
 		}
 
@@ -1410,7 +1410,7 @@ hr{
 		}
 
 		p{
-			font-size: 12px;
+			font-size: 14px;
 			line-height: 18px;
 			margin: 0px;
 			b{
@@ -1515,7 +1515,7 @@ hr{
 	.summary-item{
 		flex: 1;
 		.title{
-			font-size: 12px;
+			font-size: 14px;
 			font-style: normal;
 			font-weight: 400;
 			line-height: 18px;
@@ -1575,7 +1575,7 @@ hr{
 	margin-bottom: 20px;
 	p{
 		margin: 0px;
-		font-size: 12px;
+		font-size: 14px;
 		white-space: nowrap;
 	}
 }
@@ -1592,7 +1592,7 @@ hr{
 			flex: 1;
 			margin-bottom: 10px;
 			.title{
-				font-size: 12px;
+				font-size: 14px;
 				font-style: normal;
 				font-weight: 400;
 				line-height: 12px;
@@ -1644,7 +1644,7 @@ hr{
 			display: block;
 			.sub-item{
 				display: block;
-				font-size: 12px;
+				font-size: 14px;
 				line-height: 17px;
 			}
 		}
@@ -1675,7 +1675,7 @@ hr{
 		}
 	}
 	.text{
-		font-size: 12px;
+		font-size: 14px;
 		display: inline-block;
 		line-height: 20px;
 		font-weight: 600;
@@ -2091,7 +2091,7 @@ p{
 	right: 5px;
 	line-height: 18px;
 	padding: 15px;
-	font-size: 12px;
+	font-size: 14px;
 	transform: translateZ(1px);
 	background: rgba(129, 85, 254, 0.4);
 	box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.30);
@@ -2239,7 +2239,7 @@ p{
 		}
 	}
 	.hi{
-		font-size: 12px;
+		font-size: 14px;
 		color: #777;
 		line-height: 1;
 		display: block;
@@ -2265,7 +2265,7 @@ p{
 	    display: block;
 	    color: #f3939f;
 	    .text{
-	    	font-size: 12px;
+	    	font-size: 14px;
 	    	line-height: 1;
 	    	display: block;
 	    }
@@ -2289,7 +2289,7 @@ p{
 	padding: 15px;
     background-color: #FFF5F6;
     font-style: italic;
-    font-size: 12px;
+    font-size: 14px;
     border-radius: 5px;
     font-weight: 400;
 }
@@ -2556,7 +2556,7 @@ ion-refresher{
 		display: block;
 	    // background-color: #FD1231;
 	    padding: 5px 10px;
-	    font-size: 12px;
+	    font-size: 14px;
 	    text-align: center;
 	    font-weight: 400;
 	    color: #222;
@@ -2592,7 +2592,7 @@ ion-refresher{
 			    }
 			}
 			.name{
-				font-size: 12px;
+				font-size: 14px;
 				display: block;
 				font-weight: 700;
 				text-align: center;
@@ -2644,7 +2644,7 @@ ion-refresher{
 		padding: 0 10px;
 		font-weight: 700;
 		color: #EFEFEF;
-		font-size: 12px;
+		font-size: 14px;
 		position: relative;
 		z-index: 2;
 		background-color: #FFF;

@@ -42,21 +42,58 @@ export class AppComponent implements AfterViewInit {
 	// private splashScreen: SplashScreen,
 	private nativeAudio: NativeAudio) {
 		// this.misc.getAllPermissions();
-		this.platform.ready().then(() => {
+		this.platform.ready().then(async () => {
 			if(this.platform.is('cordova')){
 
 				this.misc.onesignal = OneSignal;
 				this.misc.onesignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
-				this.misc.onesignal.promptForPushNotificationsWithUserResponse((accepted) => {
+				await this.misc.onesignal.promptForPushNotificationsWithUserResponse((accepted) => {
 					console.log("User accepted notifications: " + accepted);
 				});
 			}
 			
 			this.createCallChannel();
 			if(this.platform.is('ios')){
+				await cordova.plugins.diagnostic.getPermissionAuthorizationStatus((status) => {
+				switch(status){
+					case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+						console.log("Permission granted to use the camera");
+					break;
+					case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+						console.log("Permission to use the camera has not been requested yet");
+					break;
+					case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
+						console.log("Permission denied to use the camera - ask again?");
+					break;
+					case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+						console.log("Permission permanently denied to use the camera - guess we won't be using it then!");
+					break;
+				}
+				}, (error) => {
+					console.error("The following error occurred: "+error);
+				},cordova.plugins.diagnostic.permission.CAMERA);
+
+				await cordova.plugins.diagnostic.getPermissionAuthorizationStatus((status) => {
+				switch(status){
+					case cordova.plugins.diagnostic.permissionStatus.GRANTED:
+						console.log("Permission granted to use the Microphone");
+					break;
+					case cordova.plugins.diagnostic.permissionStatus.NOT_REQUESTED:
+						console.log("Permission to use the Microphone has not been requested yet");
+					break;
+					case cordova.plugins.diagnostic.permissionStatus.DENIED_ONCE:
+						console.log("Permission denied to use the Microphone - ask again?");
+					break;
+					case cordova.plugins.diagnostic.permissionStatus.DENIED_ALWAYS:
+						console.log("Permission permanently denied to use the Microphone - guess we won't be using it then!");
+					break;
+				}
+				}, (error) => {
+					console.error("The following error occurred: "+error);
+				},cordova.plugins.diagnostic.permission.RECORD_AUDIO);
 			}
 			else{
-				cordova.plugins.diagnostic.requestRuntimePermission((status) =>{
+				await cordova.plugins.diagnostic.requestRuntimePermission((status) =>{
 					switch(status){
 					case cordova.plugins.diagnostic.permissionStatus.GRANTED:
 						

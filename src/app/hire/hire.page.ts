@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList, NgZone } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { MiscService } from '../services/misc.service';
 import { ApiService } from '../services/api.service';
@@ -33,6 +33,7 @@ export class HirePage implements OnInit {
   countPer:any = 0;
   lang_from:any = "";
   lang_to:any = "";
+  count_iter:any = 0;
   @ViewChildren('popupTemp') ces:QueryList<ElementRef>;
   @ViewChild('cnt', { static: false }) private countdown: any;
   	constructor(private router:Router,
@@ -40,9 +41,12 @@ export class HirePage implements OnInit {
     private route: ActivatedRoute,
     private misc:MiscService,
     private api:ApiService,
+    private _ngZone: NgZone,
     private calling:CallService,
     private firebase:FirebaseService,
-    public alertController: AlertController) {}
+    public alertController: AlertController) {
+      this.firebase.initUserWaitFn(this.userWait.bind(this));
+    }
 
   	ngOnInit() {
 
@@ -56,7 +60,6 @@ export class HirePage implements OnInit {
       this.ordLangSet = "";
       this.order = {};
       this.userDets = this.misc.getUserDets();
-      this.firebase.initUserWaitFn(this.userWait.bind(this));
 	    this.route.params.subscribe(params => {
 	        this.provider_id = params['id'];
 	        this.getProviderDets();
@@ -67,11 +70,11 @@ export class HirePage implements OnInit {
     // console.log(event);
     this.timeLeft = event.left;
     console.log(this.timeLeft);
-    this.timeInt = setInterval(()=>{
-      this.timeLeft = this.countdown.left;
-    });
+    // this.timeInt = setInterval(()=>{
+    //   this.timeLeft = this.countdown.left;
+    // });
     if(event.action == 'done'){
-      clearTimeout(this.timeInt);
+      clearInterval(this.timeInt);
       var data = {
         'order_id': this.order.id
       };
@@ -211,14 +214,15 @@ export class HirePage implements OnInit {
       this.api.hire(data)
       .then(response => {
         if(response.status == 201){
-          this.order = response.data.order;
-          
+          this.order = response.data.order;          
           var message = {
             'type': 'order_requested',
             'order': response.data.order
           };
           this.firebase.sendCallMsgsFn(response.data.order.service_provider_id, JSON.stringify(message));
           
+          // this.startCount();
+
           // var order_date = this.order.date+" UTC";
           // var trigger_time = new Date((new Date(new Date(order_date).getTime() - 300000)).toISOString());
           // // console.log(trigger_time);
@@ -239,6 +243,38 @@ export class HirePage implements OnInit {
         this.misc.handleError(err);
       });
 	}
+
+  startCount(){
+      var data = {
+        'order_id': this.order.id
+      };
+      this.api.getOrderDetails(data)
+      .then(resp => {
+        if((resp.data.order.status == 1)){
+          this.misc.showToast('Order Accepted by service provider.');
+          // console.log('Service provider did not accept the call request in the prescribed time.');
+          window.location.href = '/home';
+        }
+        else{
+          if(resp.data.order.status == -1){
+            this.misc.showToast('Service provider did not accept the call request in the prescribed time.');
+            //   console.log('Service provider did not accept the call request in the prescribed time.');
+            window.location.href = '/home';
+          }
+          else{
+            // this.userWait(resp.data.order);
+            setTimeout(() => {
+              if(this.count_iter < 12){
+                this.startCount();
+              }
+            }, 5000);
+          }
+        }
+      })
+      .catch(err => {
+
+      });
+  }
 
   formatAMPM(date){
     // var hours = date.getHours();
@@ -264,22 +300,66 @@ export class HirePage implements OnInit {
 
 	}
 
+
+  checkOrderDets(){
+  }
+
   userWait(order){
 
-    // var data = {
-    //   'order_id': order_id
-    // };
-    clearTimeout(this.timeInt);
-    if(!(order.status == -1 || order.status == 0)){
-      this.bookAccepted = 1;
-      clearInterval(this.timeInt);
-      this.bookData = order;
+    if(order == ""){
+      var data = {
+        order_id: this.order.id,
+        outgoing: 0
+      };
+  
+      this.api.getOrderDetails(data)
+          .then(resp => {
+            console.log(resp);
+            let order = resp.data.order;
+            if(!(order.status == -1 || order.status == 0) ){
+
+              this._ngZone.run(() => {
+                this.bookAccepted = 1;
+                clearInterval(this.timeInt);
+                this.bookData = order;
+                this.misc.showToast('Order Accepted by service provider.');
+              });
+              // window.location.href = "/home";
+            }
+            else{
+              if(order.status < 0){
+                this._ngZone.run(() => {
+                  this.bookAccepted = 0;
+                  clearInterval(this.timeInt);
+                  this.misc.showToast('Service provider declined the call request');
+                  // this.router.navigate(['/home']);
+                  window.location.href = "/home";
+                });
+              }
+            }
+  
+      });
     }
     else{
-      this.bookAccepted = 0;
+      
+      // var data = {
+      //   'order_id': order_id
+      // };
       clearInterval(this.timeInt);
-      this.misc.showToast('Service provider did not accept the call request');
-      this.router.navigate(['/home']);
+      if(!(order.status == -1 || order.status == 0)){
+        this.bookAccepted = 1;
+        clearInterval(this.timeInt);
+        this.bookData = order;
+        this.misc.showToast('Order Accepted by service provider.');
+        // window.location.href = "/home";
+      }
+      else{
+        this.bookAccepted = 0;
+        clearInterval(this.timeInt);
+        this.misc.showToast('Service provider did not accept the call request');
+        // this.router.navigate(['/home']);
+        window.location.href = "/home";
+      }
     }
     // this.api.getOrderDetails(data)
     // .then(resp => {

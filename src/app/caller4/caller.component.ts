@@ -10,7 +10,6 @@ import { FirebaseService } from '../services/firebase.service';
 // import OneSignal from 'onesignal-cordova-plugin';
 // import { FirebaseX } from '@ionic-native/firebase-x/ngx';
 import { AngularFireDatabase, AngularFireObject } from '@angular/fire/database';
-import { ThrowStmt } from '@angular/compiler';
 
 declare let cordova:any;
 declare let ConnectyCube;
@@ -31,7 +30,7 @@ const axios = require('axios').default;
 
 
 @Component({
-	selector: 'app-caller',
+	selector: 'app-caller4',
 	templateUrl: './caller.component.html',
 	styleUrls: ['./caller.component.scss'],
 })
@@ -148,11 +147,12 @@ export class CallerComponent implements AfterViewInit {
 		this.call.initDestroy(this.callDestroy.bind(this));
 		this.firebase.initSendCallMsg(this.sendCallMsgs.bind(this));
 		this.platform.ready().then(() => {
-			this.userDets = this.misc.getUserDets();
 			this.cordovaCall = cordova.plugins.CordovaCall;
 			this.cordovaCall.setAppName('Samanta');
 			this.cordovaCall.setVideo(true);
 			this.listenCordovaCallEvents();
+			
+			this.userDets = this.misc.getUserDets();
 			this.receiveMessage();
 			if(this.platform.is('cordova')){
 				this.OneSignalInit();
@@ -178,9 +178,6 @@ export class CallerComponent implements AfterViewInit {
 				// alert('false');
 			});
 			this.platform.resume.subscribe(() => {     
-				if(!(this.firebase.UserWaitFn == undefined)){
-					this.firebase.UserWaitFn("");
-				}
 				this.checkTopPerm();
 				this.getPopupEvents();
 				// this.initCallService();
@@ -349,73 +346,43 @@ export class CallerComponent implements AfterViewInit {
   	OneSignalInit(){
 
 		if(this.platform.is('cordova')){
-			this.misc.onesignal.setNotificationWillShowInForegroundHandler((notificationReceivedEvent:any) => {
-				// notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-				var data = notificationReceivedEvent.notification.additionalData;
-				console.log(notificationReceivedEvent.notification);
-				if(!(data == undefined)){
-					if(data.type == 'incoming_call'){
-						this.order_id = data.order_id;
-						this.order.id = data.order_id;
-						this.showIncomingCallModal();
-						notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-					}
-					else if (data.type == 'disconnect'){
-						if(!(this._session == null)){
-							this._session.stop();
-						}
-						notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-						this.hideOutgoingCallModal();
-						this.hideIncomingCallModal();
-						this.hideOnCallModal();
-						this.resetEvents();
-					}
-					else if(data.type == 'miss_call'){
-						if(!(this._session == null)){
-							this._session.stop();
-						}
-						this.hideIncomingCallModal();
-						if(this.on_call == 1){
-							this.hideOnCallModal();
-							this.resetEvents();
-						}
-						notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-						// this.hideOnCallModal();
-					}
-					else if (data.type == 'ong_call'){
-						notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-					}
-					else if (data.type == 'connecting'){
-						// this.showOnCallModal();
-						notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-					}
-					else if(data.type == 'normal'){
-						if(data.ctype == 'order_requested'){
-							this.showAcceptToast(data.order_id);
-							notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-						}
-						if(data.ctype == "order_accepted"){
-							this.misc.showToast('Service provider accepted the call requests.');
-							notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-							this.router.navigate(['/home']);
-						}
 
-						if(data.ctype == "order_declined"){
-							this.misc.showToast('Service provider declined the call requests.');
-							notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-							this.router.navigate(['/home']);
-						}
-					}
-					else{
-						notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-					}
+
+			// this.misc.onesignal.setNotificationWillShowInForegroundHandler((notificationReceivedEvent:any) => {
+				// notificationReceivedEvent.complete(notificationReceivedEvent.notification);
+				// this.appOpen = 1;
+				// var data = notificationReceivedEvent.notification.additionalData;
+				// console.log(notificationReceivedEvent.notification);
+				// if(!(data == undefined)){
+				// 	if(data.type == 'incoming_call'){
+				// 		// this.order_id = data.order_id;
+				// 		// this.showIncomingCallModal();
+				// 		notificationReceivedEvent.complete(notificationReceivedEvent.notification);
+				// 	}
+				// 	else if (data.type == 'disconnect'){
+				// 		var extension = {
+				// 			initiator: 0
+				// 		};
+				// 		if(!(this._session == null)){
+				// 			this._session.stop(extension);
+				// 			this.hideOutgoingCallModal();
+				// 			this.hideIncomingCallModal();
+				// 			this.hideOnCallModal();
+				// 		}
+				// 	}
+				// 	// else if (data.type == 'ong_call'){
+				// 	// 	notificationReceivedEvent.complete(null);
+				// 	// }
+				// 	else{
+				// 		notificationReceivedEvent.complete(notificationReceivedEvent.notification);
+				// 	}
 					
-				}
-				else{
-					notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-				}
+				// }
+				// else{
+				// 	notificationReceivedEvent.complete(notificationReceivedEvent.notification);
+				// }
 				// this.receiveMessages(notificationReceivedEvent.notification.additionalData);
-			});
+			// });s
 			
 			this.misc.onesignal.setNotificationOpenedHandler((jsonData:any) => {
 				console.log('notificationOpenedCallback: ', jsonData);
@@ -435,7 +402,7 @@ export class CallerComponent implements AfterViewInit {
 					// 	this.overlayMsg = "Accepting Call. Please Wait..";
 					// }
 					this.order_id = noteData.notification.additionalData.order_id;
-					// this.order.id = noteData.notification.additionalData.order_id;
+					this.order.id = noteData.notification.additionalData.order_id;
 					this.acceptCallMid();
 					return false;
 				}
@@ -454,30 +421,15 @@ export class CallerComponent implements AfterViewInit {
 
 				if(clickAction == 'end_call'){
 					this.stopCall();
-					// return false;
+					return false;
 				}
 
 				if(clickAction == undefined){
-					let data = noteData.notification.additionalData;
 					if(noteData.notification.additionalData.type == 'incoming_call'){
 						this.order_id = noteData.notification.additionalData.order_id;
 						this.order.id = noteData.notification.additionalData.order_id;
 						this.showIncomingCallModal();
-						// return false;
-					}
-					if(data.ctype == 'order_requested'){
-						this.showAcceptToast(data.order_id);
-					}
-					if(data.ctype == "order_accepted"){
-						this.misc.showToast('Service provider accepted the call requests.');
-						// notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-						this.router.navigate(['/home']);
-					}
-
-					if(data.ctype == "order_declined"){
-						this.misc.showToast('Service provider declined the call requests.');
-						// notificationReceivedEvent.complete(notificationReceivedEvent.notification);
-						this.router.navigate(['/home']);
+						return false;
 					}
 				}
 
@@ -507,34 +459,14 @@ export class CallerComponent implements AfterViewInit {
 					this.sendCallMsgs(this.userDets.id, "");
 
 					if(message.type == "order_accepted"){
-						// console.log('useracc', this.firebase.UserAcceptFn);
-						// if(!(this.firebase.UserAcceptFn == undefined)){
-						// 	this.firebase.UserAcceptFn();
-						// }
-						// console.log('userwait', this.firebase.UserWaitFn);
-						// if(!(this.firebase.UserWaitFn == undefined)){
-						// 	this.firebase.UserWaitFn(message.order)
-						// }
-						this.misc.showToast('Service provider accepted the call requests.');
-						this.router.navigate(['/home']);
-						// if(!(this.firebase.UserAcceptFn == undefined)){
-						// 	this.firebase.UserAcceptFn();
-						// }
-						// if(!(this.firebase.UserWaitFn == undefined)){
-						// 	this.firebase.UserWaitFn(message.order)
-						// }
-					}
-					if(message.type == "order_declined"){
-						// console.log('useracc', this.firebase.UserAcceptFn);
-						// if(!(this.firebase.UserAcceptFn == undefined)){
-						// 	this.firebase.UserAcceptFn();
-						// }
-						// console.log('userwait', this.firebase.UserWaitFn);
-						// if(!(this.firebase.UserWaitFn == undefined)){
-						// 	this.firebase.UserWaitFn(message.order)
-						// }
-						this.misc.showToast('Service provider declined the call requests.');
-						this.router.navigate(['/home']);
+						console.log('useracc', this.firebase.UserAcceptFn);
+						if(!(this.firebase.UserAcceptFn == undefined)){
+							this.firebase.UserAcceptFn();
+						}
+						console.log('userwait', this.firebase.UserWaitFn);
+						if(!(this.firebase.UserWaitFn == undefined)){
+							this.firebase.UserWaitFn(message.order)
+						}
 						// if(!(this.firebase.UserAcceptFn == undefined)){
 						// 	this.firebase.UserAcceptFn();
 						// }
@@ -544,10 +476,10 @@ export class CallerComponent implements AfterViewInit {
 					}
 				    
 				    	if(message.type == "order_requested"){
-				    		// if(!(this.firebase.UserAcceptFn == undefined)){
-				    		// 	this.firebase.UserAcceptFn();
-			    			// }
-				    		// this.showAcceptToast(message.order)
+				    		if(!(this.firebase.UserAcceptFn == undefined)){
+				    			this.firebase.UserAcceptFn();
+			    			}
+				    		this.showAcceptToast(message.order)
 				    	}
 
 	    				if(message.type == "extension_requested"){
@@ -586,12 +518,12 @@ export class CallerComponent implements AfterViewInit {
 						// this.hideOutgoingCallModal();
 					}
 
-					// if(message.type == 'incoming_call'){
-					// 	this.sessionID = message.sessionID;
-					// 	this.initiatorID = message.initiator;
-					// 	this.order.id = message.order_id;
-					// 	this.showIncomingCallModal();
-					// }
+					if(message.type == 'incoming_call'){
+						this.sessionID = message.sessionID;
+						this.initiatorID = message.initiator;
+						this.order.id = message.order_id;
+						this.showIncomingCallModal();
+					}
 
 					// if(message.type == ""){
 						// setTimeout(() => {
@@ -688,36 +620,20 @@ export class CallerComponent implements AfterViewInit {
 			this.cordovaCall.on('answer', (event) => {
 				console.log(event);
 				this._ngZone.run(() => {
-					this.acceptCallMid();
+					this.acceptCall();
 				});
 			});
 			this.cordovaCall.on('reject', (event) => {
-				// console.log(event);
-				this._ngZone.run(() => {
-					if(this.on_call == 0){
-						this.rejectCallReq();
-					}
-				});
+				console.log(event);
+				// this._ngZone.run(() => {
+					// this.rejectCallReq();
+				// });
 			});
 		}
 	}
 
 	answerCall(){
 
-	}
-
-	resetEvents(){
-		this._session = null;
-		ConnectyCube.videochat.onCallListener = undefined;
-		ConnectyCube.videochat.onAcceptCallListener = undefined;
-		ConnectyCube.videochat.onRemoteStreamListener = undefined;
-		ConnectyCube.videochat.onRejectCallListener = undefined;
-		ConnectyCube.videochat.onStopCallListener = undefined;
-		ConnectyCube.videochat.onUserNotAnswerListener = undefined;
-		ConnectyCube.videochat.onSessionConnectionStateChangedListener = undefined;
-		ConnectyCube.chat.disconnect();
-		ConnectyCube.logout().catch((error) => {});
-		ConnectyCube.destroySession();
 	}
 
   	listenEvents(){
@@ -823,10 +739,9 @@ export class CallerComponent implements AfterViewInit {
 			this._session = session;
 			this.order = extension.order;
 			this.other_user = extension.other_user;
-			this.acceptCall();
-			// // if(this.on_call == 0){
-			// 	this.showIncomingCallModal();
-			// // }
+			// if(this.on_call == 0){
+				this.showIncomingCallModal();
+			// }
 		});
 	}
 
@@ -873,29 +788,22 @@ export class CallerComponent implements AfterViewInit {
 
 	// Event fired when call is ended from either side.
 	onStopCallListener(session, userId, extension){
-
-		this.hideOnCallModal();
-		this.hideIncomingCallModal();
-		this.hideOutgoingCallModal();
-		if(!(this._session == null)){
-			this._session.stop({});
-			this._session = null;
-			this.resetEvents();
+		console.log('stopped by ', session);
+		console.log('current session', this._session);
+		// if(session.currentUserId == )
+		if(extension.initiator == 1){
+			let extension1 = {
+				inititator: 0
+			};
+			console.log('1');
+			if(!(this._session == null)){
+				this._session.stop(extension1);
+			}
+			this.hideOnCallModal();
+			this.hideIncomingCallModal();
+			this.hideOutgoingCallModal();
 		}
-		// console.log('stopped by ', session);
-		// console.log('current session', this._session);
-		// // if(session.currentUserId == )
-		// if(extension.initiator == 1){
-		// 	let extension1 = {
-		// 		inititator: 0
-		// 	};
-		// 	console.log('1');
-		// 	if(!(this._session == null)){
-		// 		this._session.stop(extension1);
-		// 	}
-		
-		// }
-		// // this._session.
+		// this._session.
   	}
 
 	// When call was not received on the other side.
@@ -906,7 +814,6 @@ export class CallerComponent implements AfterViewInit {
 		if(!(this._session == null)){
 			this._session.stop(extension);
 		}
-		this.hideOutgoingCallModal();
 		this.setCallLog(this.userDets.id, 'no_answer', new Date());
 		this.goToSummary();
   	}
@@ -919,12 +826,12 @@ export class CallerComponent implements AfterViewInit {
 	// Initiate outgoing call.
 	callInit(order,order_id){
 		this.showOutgoingCallModal();
-		// if(this.chat_connected == 0){
-		// 	setTimeout(() => {
-		// 		this.callInit(order, order_id);
-		// 	}, 2000);
-		// 	return false;
-		// }
+		if(this.chat_connected == 0){
+			setTimeout(() => {
+				this.callInit(order, order_id);
+			}, 2000);
+			return false;
+		}
 		console.log(order);
 		var data = {
 			'order_id': order_id,
@@ -948,68 +855,43 @@ export class CallerComponent implements AfterViewInit {
 		});
 	}
 
-	acceptCallMidOne(){
-		if(this.platform.is('ios')){
-			this.cordovaCall.endCall();
-		}
-		this.acceptCallMid();
-	}
-
 	// When call is received from button on ios, End callkit to prepare audi session for video streaming.
 	acceptCallMid(){
-		this.showOnCallModal();
+		this.setCallLog(this.userDets.id, 'connecting', new Date());
+		
+		// if(this.platform.is('ios')){
+		// 	this.cordovaCall.endCall();
+		// }
+
 		// if(this.platform.is('ios')){
 		// 	this.cordovaCall.connectCall();
 		// }
-		this.setCallLog(this.userDets.id, 'connecting', new Date());
-		// alert('sdas');
-		let CREDENTIALS = {
-			appId: 6798,
-			authKey: "KbVKtzAQvPFAdtw",
-			authSecret: "zrXRtdLamjF7fmq"
-		};
-
-		let CONFIG = {
-			chatProtocol: {
-				active:2
-			},
-			chat: {
-
-			},
-			videochat: {
-				alwaysRelayCalls:false,
-				disconnectTimeInterval: 600
-			},
-			debug: { mode: 1 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
-		};
-
-		ConnectyCube.init(CREDENTIALS, CONFIG);
-	
-		this.listenEvents();
-
-		let user = {
-			password: "supersecurepwd",
-			email: this.userDets.email
-		};
-		ConnectyCube.createSession(user)
-		.then(() => {
-			ConnectyCube.chat.connect({ userId: this.userDets.calling_id, password: "supersecurepwd" })
-			.then(() => {
-				this.chat_connected = 1;
-			});
-		});
+		this.resume = 1;
+		setTimeout(() => {
+			this.acceptCall()
+		}, 1000);
 	}
 
   	acceptCall(){
 		console.log('stats1', this.on_call);
 		console.log('stats2', this._session);
+		this.showOnCallModal();
+		// if(this.call_stopped == 1){
+		// 	this.call_stopped = 0;
+		// 	this.hideOnCallModal();
+		// 	this.hideIncomingCallModal();
+		// 	this.hideOutgoingCallModal();
+		// 	return false;
+		// }
+		if(this.on_call == 1 && this._session == null){
+			setTimeout(() => {
+				this.acceptCall();
+			},1000);
+			return false;
+		}
 
-		let mparams:any = {
-				audio: false,
-				video: true
-		};
 		this._session
-		.getUserMedia(mparams)
+		.getUserMedia(this.mediaParams)
 		.then(streamss => {
 			if(this.platform.is('ios')){
 				this.cordovaCall.endCall();
@@ -1052,24 +934,22 @@ export class CallerComponent implements AfterViewInit {
   	}
 
 	  async rejectCallReq(){
-		this.setCallLog(this.userDets.id, 'rejected', new Date());
-		this.hideIncomingCallModal();
-		// if(this.sessionID == null){
-		// 	setTimeout(() => {
-		// 		this.rejectCallReq();
-		// 	}, 1000);
-		// 	return false;
-		// }
-		// const params = { 
-		// 	sessionID: this.sessionID, 
-		// 	recipientId: this.initiatorID,
-		// 	// platform: 'android'
-		// };
+		if(this.sessionID == null){
+			setTimeout(() => {
+				this.rejectCallReq();
+			}, 1000);
+			return false;
+		}
+		const params = { 
+			sessionID: this.sessionID, 
+			recipientId: this.initiatorID,
+			// platform: 'android'
+		};
 		
-		// await ConnectyCube.videochat.callRejectRequest(params);
-		// this.sessionID = null;
-		// this.initiatorID = null;
-		// this.goToSummary();
+		await ConnectyCube.videochat.callRejectRequest(params);
+		this.sessionID = null;
+		this.initiatorID = null;
+		this.goToSummary();
 	}
 
   	rejectCall(){
@@ -1143,95 +1023,58 @@ export class CallerComponent implements AfterViewInit {
 
   	startCall(callType=null, resume=0){
 
-		this.setCallLog(this.userDets.id, 'init_call', new Date());
 		try{
-			// alert('sdas');
-			let CREDENTIALS = {
-				appId: 6798,
-				authKey: "KbVKtzAQvPFAdtw",
-				authSecret: "zrXRtdLamjF7fmq"
+			if(this.platform.is('ios')){
+				this.cordovaCall.connectCall();
+			}
+
+			var options = {
+				bandwidth: 256
 			};
-      
-		      	let CONFIG = {
-			      	chatProtocol: {
-				      active:2
-			      	},
-			      	chat: {
-      
-			      	},
-			      	videochat: {
-				      alwaysRelayCalls:false,
-				      disconnectTimeInterval: 600
-			      	},
-				debug: { mode: 1 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
-		      	};
-      
-			ConnectyCube.init(CREDENTIALS, CONFIG);
-		      
-		      	this.listenEvents();
-      
-		      	let user = {
-			      password: "supersecurepwd",
-			      email: this.userDets.email
-		      	};
-		      	ConnectyCube.createSession(user)
-		      	.then(() => {
-			      	ConnectyCube.chat.connect({ userId: this.userDets.calling_id, password: "supersecurepwd" })
-			      	.then(() => {
-				      	this.chat_connected = 1;
-				      	// this._ngZone.run(() => {
-					//       console.log('listening for events');
-				      	// });
-					      var options = {
-						bandwidth: 256
-					};
-		
-					this._session = ConnectyCube.videochat.createNewSession(
-						this.calleesIds,
-						ConnectyCube.videochat.CallType.VIDEO,
-						options
-					);
-		
-					this._session
-					.getUserMedia(this.mediaParams)
-					.then((stream) => {
-						console.log('stream got');
-						this._session.attachMediaStream("localStream", stream, {
-							muted: true,
-							mirror: true,
-						});
-		
-						let oth_us = {
-							'id': this.userDets.id,
-							'calling_id': this.userDets.calling_id,
-							'name': this.userDets.name,
-							'image_url': this.userDets.image_url
-						};
-		
-						var message = {
-							type: 'incoming_call',
-							sessionID: this._session.ID,
-							initiator: this._session.initiatorID,
-							order_id: this.order.id
-						};
-						this.sendCallMsgs(this.other_user.id, JSON.stringify(message));
-		
-						let extension = {
-							order: this.order,
-							other_user: oth_us,
-							auto_accept: 0
-						};
-						this._session.call(extension, error => {
-		
-						});
-					})
-					.catch((error) => {
-						console.log(error);
-					});
-			      	});
-		      	})
-		      	.catch((err) => {
-      
+
+			this._session = ConnectyCube.videochat.createNewSession(
+				this.calleesIds,
+				ConnectyCube.videochat.CallType.VIDEO,
+				options
+			);
+
+			this._session
+			.getUserMedia(this.mediaParams)
+			.then((stream) => {
+				console.log('stream got');
+				this._session.attachMediaStream("localStream", stream, {
+					muted: true,
+					mirror: true,
+				});
+
+				let oth_us = {
+					'id': this.userDets.id,
+					'calling_id': this.userDets.calling_id,
+					'name': this.userDets.name,
+					'image_url': this.userDets.image_url
+				};
+
+				this.setCallLog(this.userDets.id, 'init_call', new Date());
+
+				var message = {
+					type: 'incoming_call',
+					sessionID: this._session.ID,
+					initiator: this._session.initiatorID,
+					order_id: this.order.id
+				};
+				this.sendCallMsgs(this.other_user.id, JSON.stringify(message));
+
+				let extension = {
+					order: this.order,
+					other_user: oth_us,
+					auto_accept: 0
+				};
+				this._session.call(extension, error => {
+
+				});
+			})
+			.catch((error) => {
+				console.log(error);
 			});
 		}
 		catch(err){
@@ -1294,18 +1137,29 @@ export class CallerComponent implements AfterViewInit {
 	}
 
 	stopCall(befcon = 0){
+		// if(this.on_call == 1 && this._session == null){
+			// setTimeout(() => {
+				// this.stopCall();
+			// }, 1000);
+			// return false;
+		// }
+
+		let extension = {
+			initiator: 1
+		};
+
 		if(!(this._session == null)){
+
 			console.log('2');
 			if(!(this._session == null)){
-				this._session.stop({});
+				this._session.stop(extension);
 			}
-		}
-
-		if(befcon == 0){
-			this.setCallLog(this.userDets.id, 'disconnected', new Date());
-		}
-		else{
-			this.setCallLog(this.userDets.id, 'no_answer', new Date());
+			if(befcon == 1){
+				this.setCallLog(this.userDets.id, 'no_answer', new Date());
+			}
+			else{
+				this.setCallLog(this.userDets.id, 'disconnected', new Date());
+			}
 		}
 
 		this.hideOnCallModal();
@@ -1334,30 +1188,30 @@ export class CallerComponent implements AfterViewInit {
 			});
 		}
 
-		// if(iceState == ConnectyCube.videochat.SessionConnectionState.FAILED){
-		// 	// this._ngZone.run(() => {
-		// 		console.log('reconnecting after failed', this._session.state);
-		// 		// if(this._session.state == 5){
-		// 			console.log('reconnecting after failed again');
-		// 			// this.reconnecting = 1;
-		// 			// return false;
-		// 		// }
-		// 		// else{
-		// 			let extension = {};
-		// 			if(!(this._session == null)){
-		// 				this._session.stop(extension);
-		// 			}
-		// 			this._session = null;
-		// 			this.hideOutgoingCallModal();
-		// 			this.hideIncomingCallModal();
-		// 			this.hideOnCallModal();
-		// 			// if(this.userDets.user_type == 3){
-		// 			// 	this.reInitCallService();
-		// 			// }
-		// 		// }
-		// 		// this._session.peerConnections[this.other_user.calling_id].restartIce()
-		// 	// });
-		// }
+		if(iceState == ConnectyCube.videochat.SessionConnectionState.FAILED){
+			// this._ngZone.run(() => {
+				console.log('reconnecting after failed', this._session.state);
+				// if(this._session.state == 5){
+					console.log('reconnecting after failed again');
+					// this.reconnecting = 1;
+					// return false;
+				// }
+				// else{
+					let extension = {};
+					if(!(this._session == null)){
+						this._session.stop(extension);
+					}
+					this._session = null;
+					this.hideOutgoingCallModal();
+					this.hideIncomingCallModal();
+					this.hideOnCallModal();
+					// if(this.userDets.user_type == 3){
+					// 	this.reInitCallService();
+					// }
+				// }
+				// this._session.peerConnections[this.other_user.calling_id].restartIce()
+			// });
+		}
 
 
 
@@ -1489,9 +1343,9 @@ export class CallerComponent implements AfterViewInit {
     		if(this.platform.is('cordova') && this.platform.is('android')){
 			// cordova.plugins.RingtonePlayer.stop();
 		}
-		// if(this.platform.is('ios')){
-		// 	this.cordovaCall.endCall();
-		// }
+		if(this.platform.is('ios')){
+			this.cordovaCall.endCall();
+		}
   	}
 
 
@@ -1541,9 +1395,9 @@ export class CallerComponent implements AfterViewInit {
 		this.connecting = 0;
 		this._session = null;
   		this._onCallModal("hide");
-		// if(this.platform.is('ios')){
-		// 	this.cordovaCall.endCall();
-		// }
+		if(this.platform.is('ios')){
+			this.cordovaCall.endCall();
+		}
 		this.callExtendShown = 0;
 		this.callExtendRequest = 0;
 		this.rem_text = "";
@@ -1665,7 +1519,7 @@ export class CallerComponent implements AfterViewInit {
 			this.misc.hideLoader();
 			// alert('accepted');
 			var message = {
-				'type': (status == 1)?'order_accepted':'order_declined',
+				'type': 'order_accepted',
 				'order': resp.data.order
 			};
 			this.sendCallMsgs(resp.data.order.user_id, JSON.stringify(message));
@@ -1906,9 +1760,9 @@ export class CallerComponent implements AfterViewInit {
 			// this.lastUser = null;
 			window.localStorage.removeItem('token');
 			window.localStorage.removeItem('user');
-			// ConnectyCube.chat.disconnect();
-			// ConnectyCube.logout().catch((error) => {});
-			// ConnectyCube.destroySession();
+			ConnectyCube.chat.disconnect();
+			ConnectyCube.logout().catch((error) => {});
+			ConnectyCube.destroySession();
 			axios.defaults.headers.common['Authorization'] = 'Bearer ';
 			// this.router.navigate(['/login']);
 			window.location.href = "/login";

@@ -34,7 +34,7 @@
 								<img *ngIf="request.image_url == null" src="assets/images/dp.png" />
 							  	<img *ngIf="!(request.image_url == null)" [src]="request.image_url" />
 							</span>
-							<p><a>{{ request.name }}</a> requested <b>&#8364; {{ request.amount }}</b></p>
+							<p><a>{{ request.name }}</a> requested <b>CR {{ request.amount }}</b></p>
 							<span class="m20">{{ request.created_at | date:'medium' }}</span>
 							<div class="row">
 								<div class="col-6">

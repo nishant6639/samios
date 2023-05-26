@@ -450,7 +450,6 @@ export class CallerComponent implements AfterViewInit {
 				console.log(action.payload.val());
 				if(!(action.payload.val() == null) && (!(action.payload.val() == ""))){
 					var message = JSON.parse(action.payload.val());
-					this.sendCallMsgs(this.userDets.id, "");
 					if(message.type == 'incoming_call'){
 						this.bringAppToForeground();
 						this.playRingtone();
@@ -487,9 +486,11 @@ export class CallerComponent implements AfterViewInit {
 					}
 
 				    if(message.type == "order_accepted"){
+					console.log('useracc', this.firebase.UserAcceptFn);
 				    	if(!(this.firebase.UserAcceptFn == undefined)){
 				    		this.firebase.UserAcceptFn();
 				    	}
+					console.log('userwait', this.firebase.UserWaitFn);
 				    	if(!(this.firebase.UserWaitFn == undefined)){
 				    		this.firebase.UserWaitFn(message.order)
 			    		}
@@ -539,6 +540,8 @@ export class CallerComponent implements AfterViewInit {
 				    if(message.type == "video_muted"){
 				    	this.remote_video_muted = message.value;
 				    }
+				    
+				    this.sendCallMsgs(this.userDets.id, "");
 				} else {
 					// if(this.splashShown == 0){
 					// 	let splash:any = document.getElementById('splashScreen');

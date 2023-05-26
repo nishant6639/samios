@@ -43,7 +43,30 @@ export class TypePage implements OnInit {
         private misc:MiscService,
         private api:ApiService,
         // private firebasex:FirebaseX
-    ) { }
+    ) {
+
+		let CREDENTIALS = {
+			appId: 6798,
+			authKey: "KbVKtzAQvPFAdtw",
+			authSecret: "zrXRtdLamjF7fmq"
+		};
+
+		let CONFIG = {
+			chatProtocol: {
+				active:2
+			},
+			chat: {
+
+			},
+			videochat: {
+				alwaysRelayCalls:false,
+				disconnectTimeInterval: 600
+			},
+			debug: { mode: 1 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
+		};
+
+		ConnectyCube.init(CREDENTIALS, CONFIG);
+    }
 
     ngOnInit() {
     }
@@ -88,6 +111,7 @@ export class TypePage implements OnInit {
 
     saveUser(){
         if(this.tnc == 1 && this.pass_flag == 1){
+            this.misc.showLoader();
             var data = this.FormModel;
             if(this.user_type == 'interpreter'){
                 data['user_type'] = 3;
@@ -139,12 +163,12 @@ export class TypePage implements OnInit {
             // console.log(Object.keys(this.availabilities).length);
             if(Object.keys(this.availabilities).length == 0){
                 // // console.log('empty');
+                this.misc.hideLoader();
                 this.misc.showToast('Enter availabilities');
                 return;
             }
         }
         // // console.log(data);
-        this.misc.showLoader();
         this.platform.ready().then(async () => {
             if(this.platform.is('cordova') || this.platform.is('android') || this.platform.is('ios')) {
 

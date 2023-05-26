@@ -161,11 +161,11 @@
 								</div>
 								<div class="summary-item" *ngIf="!(userDets.user_type == 3)">
 									<div class="title text-right">Cost</div>
-									<div class="value text-right">&#8364; {{ summary.price }}</div>
+									<div class="value text-right">CR {{ summary.price }}</div>
 								</div>
 								<div class="summary-item" *ngIf="userDets.user_type == 3">
 									<div class="title text-right">Earning</div>
-									<div class="value text-right">&#8364; {{ summary.provider_price }}</div>
+									<div class="value text-right">CR {{ summary.provider_price }}</div>
 								</div>
 							</div>
 							<hr *ngIf="negative_credit > 0">
@@ -176,7 +176,7 @@
 								</div>
 								<div class="summary-item" *ngIf="negative_credit > 0">
 									<div class="title text-right">Your Due is</div>
-									<div class="value text-right" style="color: #FD1231;">&#8364; {{ negative_credit }}</div>
+									<div class="value text-right" style="color: #FD1231;">CR {{ negative_credit }}</div>
 								</div>
 							</div>
 							<!-- <div class="row m20" *ngIf="negative_credit > 0">

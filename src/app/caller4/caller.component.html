@@ -64,7 +64,7 @@
   	<div id="localStreamDiv" class="local-video" *ngIf="showVideoSelf == 1">
 		<div class="no-video-poster" *ngIf="video_muted == 1">
 			<span class="no-video-poster-wave" *ngIf="audio_muted == 0" [class.big]="activeScreen == 2"></span>
-			<span class="poster-img" *ngIf="!(userDets == undefined) && userDets.image_url == null" [class.big]="activeScreen == 2" style="background-image: url(assets/images/dp.png);"></span>
+			<span class="poster-img" *ngIf="!(userDets == undefined) && userDets.image_url == null" [class.big]="activeScreen == 2" style="background-image: url(assets/images/dp2.png);"></span>
 			<span class="poster-img" *ngIf="!(userDets == undefined) && !(userDets.image_url == null)" [class.big]="activeScreen == 2" style="background-image: url({{ userDets.image_url  }});"></span>
 		</div>
 		<div class="mute-poster" *ngIf="audio_muted == 1" style="left: 50%; top: 50%; transform: translate(-20px, -20px);">
@@ -76,7 +76,7 @@
   	<div id="remoteStreamDiv" class="remote-video">
 		<div class="no-video-poster" *ngIf="remote_video_muted == 1">
 			<span class="no-video-poster-wave" *ngIf="remote_audio_muted == 0" [class.big]="activeScreen == 1"></span>
-			<span class="poster-img" *ngIf="!(other_user == undefined) && other_user.image_url == null" [class.big]="activeScreen == 1" style="background-image: url(assets/images/dp.png);"></span>
+			<span class="poster-img" *ngIf="!(other_user == undefined) && other_user.image_url == null" [class.big]="activeScreen == 1" style="background-image: url(assets/images/dp2.png);"></span>
 			<span class="poster-img" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" [class.big]="activeScreen == 1" style="background-image: url({{ other_user.image_url  }});"></span>
 		</div>
 		<div class="mute-poster big-mute" *ngIf="remote_audio_muted == 1">
@@ -137,7 +137,7 @@
 	</div>
 	<div class="caller-dets-wrap">
 		<div class="caller-pic">
-			<span class="caller-pic-in" *ngIf="!(other_user == undefined) && other_user.image_url == null" style="background-image: url(assets/images/dp.png);"></span>
+			<span class="caller-pic-in" *ngIf="!(other_user == undefined) && other_user.image_url == null" style="background-image: url(assets/images/dp2.png);"></span>
 			<span class="caller-pic-in" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" style="background-image: url({{ other_user.image_url  }});"></span>
 		</div>
 		<h3 class="caller-name">{{ other_user.name }}</h3>
@@ -149,7 +149,7 @@
 		<!-- <p class="caller-activity" *ngIf="dialing == 1 && ringing == 1">The Service provider will be online soon.</p> -->
 	</div>
 	<div class="call-button-wrap">
-		<button (click)="acceptCallMidOne()">
+		<button (click)="acceptCallMid()">
 			<span class="mi green" [class.ios]="(pltfrm.is('ios'))">call</span>
 			<span class="text">Accept</span>
 		</button>
@@ -169,7 +169,7 @@
 	</div>
 	<div class="caller-dets-wrap">
 		<div class="caller-pic">
-			<span class="caller-pic-in" *ngIf="!(other_user == undefined) && other_user.image_url == null" style="background-image: url(assets/images/dp.png);"></span>
+			<span class="caller-pic-in" *ngIf="!(other_user == undefined) && other_user.image_url == null" style="background-image: url(assets/images/dp2.png);"></span>
 			<span class="caller-pic-in" *ngIf="!(other_user == undefined) && !(other_user.image_url == null)" style="background-image: url({{ other_user.image_url  }});"></span>
 		</div>
 		<h3 class="caller-name">{{ other_user.name }}</h3>
@@ -267,7 +267,7 @@
 						<div class="ord-person text-right">
 							<div class="ord-person-in">
 								<span class="img-wrap">
-									<img *ngIf="ongoingCall.user.image_url == null" src="assets/images/dp.png" />
+									<img *ngIf="ongoingCall.user.image_url == null" src="assets/images/dp2.png" />
 									<img *ngIf="!(ongoingCall.user.image_url == null)" [src]="ongoingCall.user.image_url" />
 								</span>
 								<span class="name" *ngIf="!(userDets.id == ongoingCall.user.id)">{{ ongoingCall.user.name }}</span>
@@ -278,7 +278,7 @@
 						<div class="ord-person text-left">
 							<div class="ord-person-in">
 								<span class="img-wrap">
-									<img *ngIf="ongoingCall.interpreter.image_url == null" src="assets/images/dp.png" />
+									<img *ngIf="ongoingCall.interpreter.image_url == null" src="assets/images/dp2.png" />
 									<img *ngIf="!(ongoingCall.interpreter.image_url == null)" [src]="ongoingCall.interpreter.image_url" />
 								</span>
 								<span class="name" *ngIf="!(userDets.id == ongoingCall.interpreter.id)">{{ ongoingCall.interpreter.name }}</span>

@@ -210,7 +210,7 @@ export class BookingsPage implements OnInit {
 				// });
 			}
 			var message = {
-				'type': 'order_accepted',
+				'type': (status == 1)?'order_accepted':'order_declined',
 				'order': resp.data.order
 			};
 			this.firebase.sendCallMsgsFn(resp.data.order.target_user_msg, JSON.stringify(message));

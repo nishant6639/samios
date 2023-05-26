@@ -61,18 +61,6 @@ export class LoginPage implements OnInit, OnDestroy {
         };
 
         const CONFIG = {
-          // chat: {
-          //     reconnectionTimeInterval: 1,
-          //     ping: {
-          //       enable: true,
-          //       timeInterval: 10
-          //     }
-          //   },
-          // videochat: {
-          //   alwaysRelayCalls: false,
-          //     answerTimeInterval: 600,
-          //     dialingTimeInterval: 2
-          //   },
             debug: { mode: 0 } // enable DEBUG mode (mode 0 is logs off, mode 1 -> console.log())
         };
 

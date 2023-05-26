@@ -63,7 +63,7 @@
 						<div class="summary-item">
 							<div class="title" *ngIf="userDets.user_type == 3">Total Earning</div>
 							<div class="title" *ngIf="!(userDets.user_type == 3)">Total Spend</div>
-							<div class="value">&#8364; {{ total_amount }}</div>
+							<div class="value">CR {{ total_amount }}</div>
 						</div>
 					</div>
 				</div>
@@ -108,13 +108,13 @@
 		  					<p>{{ activity.text }}</p>
 		  					<div class="row" *ngIf="activity.time_spent == null && activity.payout == null && activity.cost == null">
 		  						<div class="col-6"><span>{{ activity.created_at | date:'medium' }}</span></div>
-		  						<!-- <div class="col-6"><span>Total spent: &#8364; 40</span></div> -->
+		  						<!-- <div class="col-6"><span>Total spent: CR 40</span></div> -->
 		  					</div>
 		  					<div class="row" *ngIf="!(activity.time_spent == null && activity.payout == null && activity.cost == null)">
 		  						<div class="col-6"><span>Time spent: {{ activity.time_spent }} mins</span></div>
 		  						<div class="col-6">
-		  							<span *ngIf="userDets.user_type == 3">Total earned: &#8364; {{ activity.payout }}</span>
-		  							<span *ngIf="!(userDets.user_type == 3)">Total Spent: &#8364; {{ activity.cost }}</span>
+		  							<span *ngIf="userDets.user_type == 3">Total earned: CR {{ activity.payout }}</span>
+		  							<span *ngIf="!(userDets.user_type == 3)">Total Spent: CR {{ activity.cost }}</span>
 		  						</div>
 		  					</div>
 		  				</div>

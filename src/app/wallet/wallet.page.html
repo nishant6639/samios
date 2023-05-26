@@ -48,7 +48,7 @@
 					</div>
 					<div class="col-4 text-right">
 						<span class="amount">
-							<sup>&#8364;</sup>
+							<sup>CR</sup>
 							<span>{{ userDets.credit_balance }}</span>
 						</span>
 					</div>
@@ -178,11 +178,11 @@
 					<div *ngIf="!(userDets.user_type == 3)" class="summary-wrap">
 						<div class="summary-item">
 							<div class="title">Total Added</div>
-							<div class="value">&#8364; {{ walletData.total_added }}</div>
+							<div class="value">CR {{ walletData.total_added }}</div>
 						</div>
 						<div class="summary-item">
 							<div class="title">Total Spend</div>
-							<div class="value">&#8364; {{ walletData.total_spend }}</div>
+							<div class="value">CR {{ walletData.total_spend }}</div>
 						</div>
 					</div>
 
@@ -193,14 +193,17 @@
 						</div>
 						<div class="summary-item">
 							<div class="title">Total earned</div>
-							<div class="value">&#8364; {{ walletData.total_earned }}</div>
+							<div class="value">CR {{ walletData.total_earned }}</div>
 						</div>
 						<!-- <div class="summary-item">
 							<div class="title">Ready to withdraw</div>
-							<div class="value">&#8364; 1400</div>
+							<div class="value">CR 1400</div>
 						</div> -->
 					</div>
 				</div>
+			</div>
+			<div *ngIf="!(userDets.user_type == 5)">
+				<p style="font-size: 14px; text-align: center;margin-top: -10px;font-weight: 700;text-transform: uppercase;">(1CR = 1 Euro)</p>
 			</div>
 			<div class="row align-mid form-title-wrap">
 				<div class="col-12">
@@ -222,7 +225,7 @@
 							<div class="col-6"><span>{{ trn.created_at | date:"medium" }}</span></div>
 						</div>
 						<div class="row" *ngIf="trn.type == 'me'">
-							<!-- <div class="col-6"><span class="text-right">Total spent: &#8364; 40</span></div> -->
+							<!-- <div class="col-6"><span class="text-right">Total spent: CR 40</span></div> -->
 							<div class="col-6"><span>{{ trn.created_at | date:"medium" }}</span></div>
 						</div>
 					</div>

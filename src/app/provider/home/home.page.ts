@@ -178,45 +178,45 @@ export class HomePage implements OnInit, OnDestroy {
 		this.api.acceptOrder(data)
 		.then(resp => {
 			var order_date = new Date((resp.data.order.date + " UTC").replace(/-/g, "/"));
-			const params = {
-				name: "My meeting",
-				// start_date: order_date,
-				// end_date: new Date(order_date.setHours(order_date.getHours() + 4)),
-				attendees: [
-					{ id: parseInt(resp.data.user.calling_id)},
-					{ id: parseInt(resp.data.provider.calling_id)}
-				],
-				record: false,
-				chat: true
-			};
+			// const params = {
+			// 	name: "My meeting",
+			// 	// start_date: order_date,
+			// 	// end_date: new Date(order_date.setHours(order_date.getHours() + 4)),
+			// 	attendees: [
+			// 		{ id: parseInt(resp.data.user.calling_id)},
+			// 		{ id: parseInt(resp.data.provider.calling_id)}
+			// 	],
+			// 	record: false,
+			// 	chat: true
+			// };
 
-			ConnectyCube.meeting.create(params)
-			.then(meeting => {
-				let confRoomId = meeting._id;
-				var data1 = {
-					order_id: resp.data.order.id,
-					meeting_id: confRoomId
-				};
-				this.api.updateMeetingId(data1)
-				.then(resp => {
+			// ConnectyCube.meeting.create(params)
+			// .then(meeting => {
+			// 	let confRoomId = meeting._id;
+			// 	var data1 = {
+			// 		order_id: resp.data.order.id,
+			// 		meeting_id: confRoomId
+			// 	};
+			// 	this.api.updateMeetingId(data1)
+			// 	.then(resp => {
 
-				})
-				.catch(err => {
+			// 	})
+			// 	.catch(err => {
 
-				});
-			})
-			.catch(error => { });
-			if(status == 1){
-				// this.localNotifications.schedule({
-				//    	title: "Upcoming order.",
-				//    	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
-				//    	trigger: {at: new Date(new Date(order_date).getTime() - 300000)},
-				//    	led: 'FF0000',
-				//    	sound: null
-				// });
-			}
+			// 	});
+			// })
+			// .catch(error => { });
+			// if(status == 1){
+			// 	// this.localNotifications.schedule({
+			// 	//    	title: "Upcoming order.",
+			// 	//    	text: 'Thank you for using Samanta. Your client booking begins in five minutes. Please be online and prepared for the appointment.',
+			// 	//    	trigger: {at: new Date(new Date(order_date).getTime() - 300000)},
+			// 	//    	led: 'FF0000',
+			// 	//    	sound: null
+			// 	// });
+			// }
 			var message = {
-				'type': 'order_accepted',
+				'type': (status == 1)?'order_accepted':'order_declined',
 				'order': resp.data.order
 			};
 			this.firebase.sendCallMsgsFn(resp.data.order.target_user_msg, JSON.stringify(message));

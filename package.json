@@ -86,11 +86,11 @@
     "cordova-plugin-androidx": "^3.0.0",
     "cordova-plugin-androidx-adapter": "^1.1.3",
     "cordova-plugin-audiotoggle": "^1.0.3",
-    "cordova-plugin-background-mode": "git+https://bitbucket.org/TheBosZ/cordova-plugin-run-in-background.git",
+    "cordova-plugin-background-mode": "git+https://nishant6639@bitbucket.org/nishant6639/cordova-plugin-run-in-background.git",
     "cordova-plugin-callkit": "git+https://github.com/AleksandarTokarev/cordova-plugin-callkit.git#trusted-care-master",
     "cordova-plugin-camera": "^5.0.2",
     "cordova-plugin-datepicker": "^0.9.3",
-    "cordova-plugin-device": "^2.0.3",
+    "cordova-plugin-device": "^2.1.0",
     "cordova-plugin-doze-optimize": "^0.5.4",
     "cordova-plugin-file": "^7.0.0",
     "cordova-plugin-inappbrowser": "^5.0.0",
@@ -164,7 +164,6 @@
       "cordova-plugin-inappbrowser": {},
       "clovelced-plugin-audiomanagement": {},
       "cordova-plugin-splashscreen": {},
-      "cordova-plugin-background-mode": {},
       "cordova-plugin-android-permissions": {},
       "cordova.plugins.diagnostic": {
         "ANDROIDX_VERSION": "1.0.0",
@@ -179,7 +178,8 @@
       "cordova-plugin-ionic-keyboard": {},
       "onesignal-cordova-plugin": {},
       "cordova-plugin-audiotoggle": {},
-      "cordova-plugin-ionic-webview": {}
+      "cordova-plugin-ionic-webview": {},
+      "cordova-plugin-background-mode": {}
     },
     "platforms": [
       "android",

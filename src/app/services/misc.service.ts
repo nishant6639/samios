@@ -56,15 +56,29 @@ export class MiscService {
 		          	// });
 		          	// await OneSignal.setAppId("c9b34fe5-7aa3-47e6-864e-a526a56333d7");
 	          		if((this.platform.is('ios'))) {
-					cordova.plugins.backgroundMode.setDefaults({ silent: true });
+					cordova.plugins.backgroundMode.setDefaults({
+						silent: true,
+						title: 'Samanta is active',
+						text: 'App is listening to calling events in background',
+						icon: 'icon', // this will look for icon.png in platforms/android/res/drawable|mipmap
+						color: '#F00', // hex format like 'F14F4D'
+						resume: true,
+						hidden: true
+					 });
 					// cordova.plugins.backgroundMode.requestForegroundPermission();
 					cordova.plugins.backgroundMode.enable();
+					cordova.plugins.backgroundMode.setEnabled();
 					cordova.plugins.backgroundMode.disableBatteryOptimizations();
 					cordova.plugins.backgroundMode.disableWebViewOptimizations();
+					cordova.plugins.backgroundMode.on('activate', () => {
+						console.log('enabled and activated');
+						cordova.plugins.backgroundMode.disableWebViewOptimizations();
+					});
 				}
 				else{
 					this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO, this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS, this.androidPermissions.PERMISSION.RECEIVE_BOOT_COMPLETED, this.androidPermissions.PERMISSION.CALL_PHONE]);
-					cordova.plugins.backgroundMode.setDefaults({ silent: true });
+					cordova.plugins.backgroundMode.setDefaults({ silent: true,
+						hidden: true });
 					// cordova.plugins.backgroundMode.requestForegroundPermission();
 					cordova.plugins.backgroundMode.enable();
 					cordova.plugins.backgroundMode.disableBatteryOptimizations();
